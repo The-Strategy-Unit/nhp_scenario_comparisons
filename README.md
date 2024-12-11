@@ -12,44 +12,23 @@ We consider primarily the principal projection, and look at the impacts on deman
 
 In the case of activity mitigators, we also split these by whether they are activity avoidance or efficiency gains.
 
-+----------------------+---------------------------------+-------------------------------+
-| Activity type        | Point of delivery               | Measure                       |
-+======================+=================================+===============================+
-| Inpatients           | Elective                        | Admissions, bed days          |
-+----------------------+---------------------------------+-------------------------------+
-| Inpatients           | Day case                        | Admissions, bed days          |
-+----------------------+---------------------------------+-------------------------------+
-| Inpatients           | Non-elective                    | Admissions, bed days          |
-+----------------------+---------------------------------+-------------------------------+
-| Inpatients           | Maternity                       | Admissions, bed days          |
-+----------------------+---------------------------------+-------------------------------+
-| Outpatients          | First outpatient attendance     | Attendances, tele-attendances |
-+----------------------+---------------------------------+-------------------------------+
-| Outpatients          | Follow-up outpatient attendance | Attendances, tele-attendances |
-+----------------------+---------------------------------+-------------------------------+
-| Outpatients          | Outpatient procedure            | Attendances, tele-attendances |
-+----------------------+---------------------------------+-------------------------------+
-| A&E                  | A&E attendance                  | Arrivals                      |
-+----------------------+---------------------------------+-------------------------------+
+| Activity type | Point of delivery               | Measure                       |
+|-------------------|---------------------------|---------------------------|
+| Inpatients    | Elective                        | Admissions, bed days          |
+| Inpatients    | Day case                        | Admissions, bed days          |
+| Inpatients    | Non-elective                    | Admissions, bed days          |
+| Inpatients    | Maternity                       | Admissions, bed days          |
+| Outpatients   | First outpatient attendance     | Attendances, tele-attendances |
+| Outpatients   | Follow-up outpatient attendance | Attendances, tele-attendances |
+| Outpatients   | Outpatient procedure            | Attendances, tele-attendances |
+| A&E           | A&E attendance                  | Arrivals                      |
 
 : Intersections of activity
 
-|            | Activity avoidance | Efficiencies |
-|------------|--------------------|--------------|
-| Inpatient  | Y                  | Y            |
-| Outpatient | Y                  | Y            |
-| A&E        | Y                  | N            |
+|                | Activity avoidance | Efficiencies |
+|----------------|--------------------|--------------|
+| **Inpatient**  | Y                  | Y            |
+| **Outpatient** | Y                  | Y            |
+| **A&E**        | Y                  | N            |
 
 : Intersections of activity and mitigation type
-
-+-----------------+---------------+------------------+
-|                 | **Activity    | **Efficiencies** |
-|                 | avoidance**   |                  |
-+-----------------+---------------+------------------+
-| Accident        |               |                  |
-| and Emergency   |               |                  |
-+-----------------+---------------+------------------+
-| Inpatients      | 434           | 325              |
-+-----------------+---------------+------------------+
-| Outpatients     | 171           | 70               |
-+-----------------+---------------+------------------+
