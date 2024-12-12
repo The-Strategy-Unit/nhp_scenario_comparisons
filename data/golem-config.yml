@@ -1,0 +1,93 @@
+default:
+  golem_name: outputs
+  golem_version: 0.0.0.9000
+  app_prod: no
+
+  pod_measures:
+    ip:
+      name: "Inpatients"
+      pods:
+        ip_non-elective_admission:
+          name: "Non-Elective Admission"
+          measures:
+            - admissions
+            - beddays
+        ip_elective_admission:
+          name: "Elective Admission"
+          measures:
+            - admissions
+            - beddays
+        ip_elective_daycase:
+          name: "Daycase Admission"
+          measures:
+            - admissions
+            - beddays
+        ip_maternity_admission:
+          name: "Maternity Admission"
+          measures:
+            - admissions
+            - beddays
+        ip_regular_day_attender:
+          name: "Regular Day Attender Admission"
+          measures:
+            - admissions
+            - beddays
+        ip_regular_night_attender:
+          name: "Regular Night Attender Admission"
+          measures:
+            - admissions
+            - beddays
+    op:
+      name: "Outpatients"
+      pods:
+        op_first:
+          name: "First Outpatient Attendance"
+          measures:
+            - attendances
+            - tele_attendances
+        op_follow-up:
+          name: "Follow-up Outpatient Attendance"
+          measures:
+            - attendances
+            - tele_attendances
+        op_procedure:
+          name: "Outpatient Procedure"
+          measures:
+            - attendances
+    aae:
+      name: "A&E"
+      pods:
+        aae_type-01:
+          name: "Type 1 Department"
+          measures:
+            - walk-in
+            - ambulance
+        aae_type-02:
+          name: "Type 2 Department"
+          measures:
+            - walk-in
+            - ambulance
+        aae_type-03:
+          name: "Type 3 Department"
+          measures:
+            - walk-in
+            - ambulance
+        aae_type-04:
+          name: "Type 4 Department"
+          measures:
+            - walk-in
+            - ambulance
+
+  measures:
+    admissions: Admissions
+    beddays: Beddays
+    attendances: Attendances
+    tele_attendances: Tele-Attendances
+    walk-in: Walk-in Arrivals
+    ambulance: Ambulance Arrivals
+    arrivals: Arrivals
+
+production:
+  app_prod: yes
+dev:
+  golem_wd: !expr here::here()
