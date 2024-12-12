@@ -74,7 +74,7 @@ mod_principal_summary_data_outpatient <- function(r, sites) {
       "pod_name" = stringr::str_replace(.data$pod_name, "Admission", "Bed Days")
     )
 
-  dplyr::bind_rows(main_summary, bed_days) |>
+  dplyr::bind_rows(main_summary, tele_attendances, bed_days) |>
     dplyr::mutate(
       dplyr::across(
         "activity_type",
