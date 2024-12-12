@@ -53,6 +53,11 @@ df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
 data <- bind_rows(ndg1 = df, ndg2 = df2, .id = "scenario")
 
 
+# get the measure from the pod name
+data <- data |> 
+  mutate(measure=case_when(grepl("Admission", pod_name) ~ "Admissions",
+                           grepl("Bed Day", pod_name) ~ "Bed days",
+                           TRUE ~ "Attendance / procedure"))
 
 # visualisation function
 create_bar_plot <- function(data, chosen_activity_type, chosen_measure, title_text = "Example") {
