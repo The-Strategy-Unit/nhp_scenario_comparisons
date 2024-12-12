@@ -56,7 +56,7 @@ df2_beds <- result_ndg2 |>
 df2_ae <- result_ndg2 |>
   mod_principal_summary_data_ae(sites = NULL)
 
-df2 <- rbind(df2_inpatient,df2_outpatient,df2_ae)
+df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
 
 # data processing
 only_principal_ndg1 <- df |> select(pod_name,activity_type,principal) |> rename(principal_ndg1 = principal)
