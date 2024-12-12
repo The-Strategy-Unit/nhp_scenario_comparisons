@@ -53,16 +53,6 @@ df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
 data <- bind_rows(ndg1 = df, ndg2 = df2, .id = "scenario")
 
 
-data_ip_ad <- data |> select(pod_name,principal_ndg1,principal_ndg2)|>
-  filter(pod_name %in% c("Daycase Admission","Elective Admission","Maternity Admission","Non-Elective Admission","Regular Day Attender Admission")) |>
-  pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
-data_ip_at <- data |> select(pod_name,principal_ndg1,principal_ndg2) |>
-  filter(pod_name %in% c("Daycase Bed Days","Elective Bed Days","Maternity Bed Days","Non-Elective Bed Days","Regular Day Attender Bed Days" )) |>
-  pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
-data_outpatient <- data |> select(pod_name,principal_ndg1,principal_ndg2)  |> filter(pod_name %in% c("First Outpatient Attendance","Follow-up Outpatient Attendance","Outpatient Procedure","First Outpatient Tele-attendance","Follow-up Outpatient Tele-attendance" )) |>
-  pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
-data_ae <- data |> select(pod_name,principal_ndg1,principal_ndg2)  |> filter(pod_name == "A&E Attendance" ) |>
-  pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
 
 # visualisation function
 create_bar_plot <- function(data, pod, value, legend, title_text = "Example") {
