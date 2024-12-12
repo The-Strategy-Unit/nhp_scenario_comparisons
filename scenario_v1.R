@@ -34,7 +34,7 @@ df_outpatient <- result_ndg1 |>
 df_ae <- result_ndg1 |>
   mod_principal_summary_data_ae(sites = NULL)
 
-df <- rbind(df_inpatient,df_outpatient,df_ae)
+df2 <- bind_rows(df_inpatient,df_outpatient,df_ae)
 
 
 # read Json ndg2
