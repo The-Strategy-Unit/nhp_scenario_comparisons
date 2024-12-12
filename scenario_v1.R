@@ -55,55 +55,26 @@ data <- bind_rows(ndg1 = df, ndg2 = df2, .id = "scenario")
 
 
 # visualisation function
-create_bar_plot <- function(data, pod, value, legend, title_text = "Example") {
-
-  ggplot(data, aes_string(y = paste("reorder(", pod, ", ", value, ")"), x = value)) +
-    geom_col(aes_string(fill = legend),
-             position = position_dodge(width = 0.6), width = .6) +
-    scale_x_continuous(expand = c(0, 0, .05, 0), labels = scales::comma) +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name = "Scenario") +
+create_bar_plot <- function(data, chosen_activity_type, chosen_measure, title_text = "Example") {
+  ggplot(filter(data, activity_type==chosen_activity_type, measure==chosen_measure), 
+         aes(x=principal, y=pod_name, fill = scenario)) +
+    geom_col(position = "dodge") +
+    scale_x_continuous(labels = scales::comma) +
     ggtitle(title_text) +
-    easy_center_title() +
-    theme(text = element_text(family = "Segoe UI")) +
-    ylab("") +
-    xlab("Total Number") +
-    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(legend.title = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(legend.text = element_text(family = "Segoe UI", size = 12, color = "black"))
-}
+    ylab("Point of delivery") +
+    xlab(chosen_measure) +
+    scale_fill_discrete("Scenario")
+} 
 
+# Inpatient admissions
+create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenarios")
 
-# Visualisation
-plot_inpatient_admissions <- create_bar_plot(data = data_ip_ad,
-                                             pod = "pod_name",
-                                             value = "count",
-                                             legend = "ndg",
-                                             title_text = "Scenario Analysis of Inpatient admissions on Imperial College NDG Variance")
-plot_inpatient_admissions
+# Inpatient bed days
+create_bar_plot(data, "Inpatient", "Bed days", "Imperial NDG Inpatient Scenarios")
 
-plot_inpatient_attendaces <- create_bar_plot(data = data_ip_at,
-                                             pod = "pod_name",
-                                             value = "count",
-                                             legend = "ndg",
-                                             title_text = "Scenario Analysis of Inpatient attendances on Imperial College NDG Variance")
+# Outpatient attendances
+create_bar_plot(data, "Outpatient", "Attendance / procedure", "Imperial NDG Outpatient Scenarios")
 
-plot_inpatient_attendaces
+# A&E attendances
+create_bar_plot(data, "A&E", "Attendance / procedure", "Imperial NDG A&E Scenarios")
 
-plot_outpatient <- create_bar_plot(data = data_outpatient,
-                                             pod = "pod_name",
-                                             value = "count",
-                                             legend = "ndg",
-                                             title_text = "Scenario Analysis of Outpatient on Imperial College NDG Variance")
-
-plot_outpatient
-
-plot_ae <- create_bar_plot(data = data_ae,
-                                   pod = "pod_name",
-                                   value = "count",
-                                   legend = "ndg",
-                                   title_text = "Scenario Analysis of A&E on Imperial College NDG Variance")
-
-plot_ae
