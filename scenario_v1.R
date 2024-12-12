@@ -38,7 +38,7 @@ df <- rbind(df_inpatient,df_outpatient,df_ae)
 
 
 # read Json ndg2
-path_ndg2 <- r"{C:\Users\fikriyudin.mufasir\OneDrive - Midlands and Lancashire CSU\Documents\NHP_ndg_variance\Imperialv1-ndg2-20241023_122644.json.gz}"  # change this to the location of the json file
+path_ndg2 <- "jsons/Imperialv1-ndg2-20241023_122644.json.gz"
 
 result_ndg2 <-  path_ndg2 |>
   jsonlite::read_json() |>
