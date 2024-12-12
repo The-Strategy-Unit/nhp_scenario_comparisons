@@ -55,13 +55,14 @@ only_principal_ndg2 <- df2 |> select(principal) |> rename(principal_ndg2 = princ
 
 data <- cbind(only_principal_ndg1,only_principal_ndg2)
 
+
 data_ip_ad <- data |> select(pod_name,principal_ndg1,principal_ndg2)|>
   filter(pod_name %in% c("Daycase Admission","Elective Admission","Maternity Admission","Non-Elective Admission","Regular Day Attender Admission")) |>
   pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
 data_ip_at <- data |> select(pod_name,principal_ndg1,principal_ndg2) |>
   filter(pod_name %in% c("Daycase Bed Days","Elective Bed Days","Maternity Bed Days","Non-Elective Bed Days","Regular Day Attender Bed Days" )) |>
   pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
-data_outpatient <- data |> select(pod_name,principal_ndg1,principal_ndg2)  |> filter(pod_name %in% c("First Outpatient Attendance","Follow-up Outpatient Attendance","Outpatient Procedure" )) |>
+data_outpatient <- data |> select(pod_name,principal_ndg1,principal_ndg2)  |> filter(pod_name %in% c("First Outpatient Attendance","Follow-up Outpatient Attendance","Outpatient Procedure","First Outpatient Tele-attendance","Follow-up Outpatient Tele-attendance" )) |>
   pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
 data_ae <- data |> select(pod_name,principal_ndg1,principal_ndg2)  |> filter(pod_name == "A&E Attendance" ) |>
   pivot_longer(!pod_name, names_to = "ndg", values_to = "count")
