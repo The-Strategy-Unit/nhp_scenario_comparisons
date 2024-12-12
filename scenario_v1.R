@@ -50,10 +50,7 @@ df2_ae <- result_ndg2 |>
 df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
 
 # data processing
-only_principal_ndg1 <- df |> select(pod_name,activity_type,principal) |> rename(principal_ndg1 = principal)
-only_principal_ndg2 <- df2 |> select(principal) |> rename(principal_ndg2 = principal)
-
-data <- cbind(only_principal_ndg1,only_principal_ndg2)
+data <- bind_rows(ndg1 = df, ndg2 = df2, .id = "scenario")
 
 
 data_ip_ad <- data |> select(pod_name,principal_ndg1,principal_ndg2)|>
