@@ -19,7 +19,7 @@ source(here('R','nhp_outputs','mod_principal_summary_los.R'))
 source(here('R','nhp_outputs','mod_principal_summary.R'))
 
 # read Json ndg1
-path_ndg1 <- r"{C:\Users\fikriyudin.mufasir\OneDrive - Midlands and Lancashire CSU\Documents\NHP_ndg_variance\Imperialv1-ndg1-20241022_100916.json.gz}"  # change this to the location of the json file
+path_ndg1 <- "jsons/Imperialv1-ndg1-20241022_100916.json.gz"
 
 result_ndg1 <- path_ndg1 |>
   jsonlite::read_json() |>
