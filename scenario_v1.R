@@ -6,17 +6,8 @@ library(here)
 library(ggplot2)
 library(ggeasy)
 
-# Functions
-source(here('R','nhp_outputs','fct_get_data.R'))
-source(here('R','nhp_outputs','fct_gt_bar.R'))
-source(here('R','nhp_outputs','fct_gt_theme.R'))
-source(here('R','nhp_outputs','fct_report.R'))
-source(here('R','nhp_outputs','get_activity_type_pod_measure_options.R'))
-source(here('R','nhp_outputs','mod_info_params_fct_tables.R'))
-source(here('R','nhp_outputs','mod_model_results_distribution.R'))
-source(here('R','nhp_outputs','mod_principal_change_factor_effects.R'))
-source(here('R','nhp_outputs','mod_principal_summary_los.R'))
-source(here('R','nhp_outputs','mod_principal_summary.R'))
+file_names <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('R/nhp_outputs/',file_names), source)
 
 # read Json ndg1
 path_ndg1 <- "jsons/Imperialv1-ndg1-20241022_100916.json.gz"
