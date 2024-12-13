@@ -38,8 +38,8 @@ pcfs_ndg2 <- prepare_all_principal_change_factors(
 )
 
 #Convert Json into dataframe
-df1_convert_to_table <- as.data.frame(do.call(rbind, pcfs_ndg1))
-df2_convert_to_table <- as.data.frame(do.call(rbind, pcfs_ndg2))
+df1_convert_to_table <- as.data.frame(bind_rows(pcfs_ndg1))
+df2_convert_to_table <- as.data.frame(bind_rows(pcfs_ndg2))
 
 ### data pre-processing ####
 
