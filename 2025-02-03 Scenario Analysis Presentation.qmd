@@ -4,7 +4,9 @@ subtitle: "An update on project to date"
 author: "Gabriel Hobro and Fikriyudin Mufasir"
 date: 2025-02-03
 date-format: "D MMMM YYYY"
-format: revealjs
+format: 
+  revealjs:
+    theme: [default, su_presentation.scss]
 transition: none
 chalkboard:
   buttons: false
