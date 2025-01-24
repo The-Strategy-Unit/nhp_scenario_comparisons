@@ -77,26 +77,8 @@ ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |>
 ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |> 
   mutate(adj_lag = calc_adj_bed_percent_v2 - lag(calc_adj_bed_percent_v2))
 
-calc_change_birth <- ndg_variants_baseline_adjustment |> 
-  filter (change_factor %in% c("birth_adjustment","covid_adjustment", "health_status_adjustment" ,"demographic_adjustment","non-demographic_adjustment")) |> 
-  group_by(activity_type) |> 
-  summarise(adj_sum = sum(adj_lag), .groups = "drop") |> mutate(change_factor = "birth_adjustment",
-                                                              strategy = NA)
-
-calc_activity_avoidance <- ndg_variants_baseline_adjustment |> 
-  filter (change_factor == "activity_avoidance" ) |> group_by(activity_type) |> 
-  summarise(adj_sum = sum(adj_lag), .groups = "drop") |> mutate(change_factor = "activity_avoidance",
-                                                              strategy = "alcohol_partially_attributable_acute")
-
-calc_efficiencies <- ndg_variants_baseline_adjustment |> 
-  filter (change_factor == "efficiencies" ) |> group_by(activity_type) |> 
-  summarise(adj_sum = sum(adj_lag), .groups = "drop")  |> mutate(change_factor = "efficiencies",
-                                                               strategy = "ambulatory_emergency_care_high")
-
-calc_model_interaction_term  <- ndg_variants_baseline_adjustment |> 
-  filter (change_factor == "model_interaction_term" ) |> group_by(activity_type) |> 
-  summarise(adj_sum = sum(calc_adj_bed_percent_v2)/1661, .groups = "drop") |> mutate(change_factor = "model_interaction_term",
-                                                              strategy = NA)
+calc_agg_changes <- ndg_variants_baseline_adjustment |> 
+  summarise(adj_sum = sum(adj_lag), .by = change_factor)
 
 adj_sum <- bind_rows(calc_change_birth,
                      calc_activity_avoidance,
