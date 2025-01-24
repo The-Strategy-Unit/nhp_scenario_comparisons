@@ -37,99 +37,87 @@ pcfs_ndg2 <- prepare_all_principal_change_factors(
   site_codes = list(ip = NULL, op = NULL, aae = NULL)
 )
 
-#Convert Json into dataframe
-df1_convert_to_table <- as.data.frame(bind_rows(pcfs_ndg1))
-df2_convert_to_table <- as.data.frame(bind_rows(pcfs_ndg2))
-
-### data pre-processing ####
-
-
-ndg_variants_sc_comparison <- bind_rows(
-  ndg_1 = df1_convert_to_table,
-  ndg_2 = df2_convert_to_table,
-  .id = "scenario"
-) |>
-  mutate(strategy = fct_reorder(strategy, desc(value)))
-
 
 ### Viz ###
+
 #strategyunit_colours <-c("#686f73", "#f9bf07", "#5881c1", "#ec6555")
 
-generate_data_waterfall_ndg1 <- function(data = data, measure = measure, include_baseline = TRUE) {
+generate_waterfall_plot <- function(pcfs_ndg1, pcfs_ndg2, 
+                                    activity_type_ndg1,
+                                    activity_type_ndg2,
+                                    measure = "measure",
+                                    title = "Title", 
+                                    x_label = "X-axis", 
+                                    y_label = "Y-axis") {
   
-  activity_type <- deparse(substitute(data))
+  # Combine the specified IP columns from both data frames
+  pcfs <- bind_rows(
+    ndg1 = pcfs_ndg1[[activity_type_ndg1]],
+    ndg2 = pcfs_ndg2[[activity_type_ndg2]],
+    .id = "scenario"
+  )
   
-  result <- mod_principal_change_factor_effects_summarised_ndg1(data = data, 
-                                                               measure = measure, 
-                                                               include_baseline = include_baseline)
+  # Apply the summarization function to the combined data
+  activity <- mod_principal_change_factor_effects_summarised_grouped(
+    data = pcfs,
+    measure = measure,
+    include_baseline = TRUE
+  )
   
-  result$activity_type <- activity_type
-  result$measure <- measure
+  # Generate the plot and customize it for better aesthetics
+  plot <- mod_principal_change_factor_effects_cf_plot(activity) +
+    ggtitle(title) +
+    xlab(x_label) +
+    ylab(y_label)
   
-  return(result)
+  return(plot)
 }
 
-generate_data_waterfall_ndg2 <- function(data = data, measure = measure, include_baseline = TRUE) {
-  
-  activity_type <- deparse(substitute(data))
-  result <- mod_principal_change_factor_effects_summarised_ndg2(data = data, 
-                                                                measure = measure, 
-                                                                include_baseline = include_baseline)
-  
-  result$activity_type <- activity_type
-  result$measure <- measure
-  
-  return(result)
-}
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "ip", 
+                        activity_type_ndg2 = "ip",
+                        measure = "admissions", 
+                        title = "Inpatient admissions waterfall scenario comparison", 
+                        x_label = "Admissions", 
+                        y_label = "Change factor")
 
-ndg1_ip_ad <- generate_data_waterfall_ndg1(pcfs_ndg1$ip, "admissions", include_baseline =TRUE)
-ndg1_ip_at <- generate_data_waterfall_ndg1(pcfs_ndg1$ip, "beddays", include_baseline =TRUE)
-ndg1_op_at <- generate_data_waterfall_ndg1(pcfs_ndg1$op, "attendances", include_baseline =TRUE)
-ndg1_op_tele <- generate_data_waterfall_ndg1(pcfs_ndg1$op, "tele_attendances", include_baseline =TRUE)
-ndg1_ae_ar <- generate_data_waterfall_ndg1(pcfs_ndg1$aae,  "arrivals", include_baseline =TRUE)
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "ip",
+                        activity_type_ndg2 = "ip",
+                        measure = "beddays", 
+                        title = "Inpatient bed days waterfall scenario comparison", 
+                        x_label = "Bed days", 
+                        y_label = "Change factor")
 
-ndg2_ip_ad <- generate_data_waterfall_ndg2(pcfs_ndg2$ip, "admissions", include_baseline =TRUE)
-ndg2_ip_at <- generate_data_waterfall_ndg2(pcfs_ndg2$ip, "beddays", include_baseline =TRUE)
-ndg2_op_at <- generate_data_waterfall_ndg2(pcfs_ndg2$op, "attendances", include_baseline =TRUE)
-ndg2_op_tele <- generate_data_waterfall_ndg2(pcfs_ndg2$op, "tele_attendances", include_baseline =TRUE)
-ndg2_ae_ar <- generate_data_waterfall_ndg2(pcfs_ndg2$aae,  "arrivals", include_baseline =TRUE)
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "op",
+                        activity_type_ndg2 = "op",
+                        measure = "attendances", 
+                        title = "Outpatient attendances waterfall scenario comparison", 
+                        x_label = "Attendances", 
+                        y_label = "Change factor")
 
-data_ndg1_waterfall <- bind_rows(ndg1_ip_ad,ndg1_ip_at,ndg1_op_at,ndg1_op_tele,ndg1_ae_ar)
-data_ndg2_waterfall <- bind_rows(ndg2_ip_ad,ndg2_ip_at,ndg2_op_at,ndg2_op_tele,ndg2_ae_ar)
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "op", 
+                        activity_type_ndg2 = "op",
+                        measure = "tele_attendances",
+                        title = "Outpatient Tele-attendances waterfall scenario comparison", 
+                        x_label = "Tele-attendances", 
+                        y_label = "Change factor")
 
-combine_data_waterfall <- bind_rows(
-  ndg_1 = data_ndg1_waterfall ,
-  ndg_2 = data_ndg2_waterfall ,
-  .id = "scenario"
-) |>
-  mutate(activity_type=case_when( activity_type == "pcfs_ndg1$ip" ~ "inpatient",
-                                  activity_type == "pcfs_ndg1$op"  ~ "outpatient",
-                                  activity_type == "pcfs_ndg1$aae"  ~ "aae",
-                                  activity_type == "pcfs_ndg2$ip" ~ "inpatient",
-                                  activity_type == "pcfs_ndg2$op" ~ "outpatient",
-                                  activity_type == "pcfs_ndg2$aae" ~ "aae",
-                                  TRUE ~ "rename"))
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "aae", 
+                        activity_type_ndg2 = "aae",
+                        measure = "arrivals",
+                        title = "Outpatient arrivals waterfall scenario comparison", 
+                        x_label = "Arrivals", 
+                        y_label = "Change factor")
 
-
-water_plot_compare <- function(data,chosen_activity_type,chosen_measure, title_text = "Example") {
-  data |> 
-    filter(chosen_activity_type == activity_type, chosen_measure == measure) |> 
-    mod_principal_change_factor_effects_cf_plot() +
-    ggtitle(title_text)
-}
-
-water_plot_compare(combine_data_waterfall,"inpatient","admissions","Imperial NDG Inpatient admissions Scenarios")
-
-water_plot_compare(combine_data_waterfall,"inpatient","beddays","Imperial NDG Inpatient Bed days Scenarios")
-
-water_plot_compare(combine_data_waterfall,"outpatient","attendances","Imperial NDG Outpatient Attendances Scenarios")
-
-water_plot_compare(combine_data_waterfall,"outpatient","tele_attendances","Imperial NDG Outpatint Tele-attendances Scenarios")
-
-water_plot_compare(combine_data_waterfall, "aae","arrivals","Imperial NDG A&E Scenarios")
-
-
-#####
+# we combine the data together at this stage of the process
+ndg_variants_sc_comparison <- bind_rows(
+  ndg1 = as.data.frame(bind_rows(pcfs_ndg1)),
+  ndg2 = as.data.frame(bind_rows(pcfs_ndg2)),
+  .id = "scenario")
 
 impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, chosen_measure, title_text = "Example") {
   ggplot(filter(data, change_factor==chosen_change_factor,activity_type==chosen_activity_type, chosen_measure==measure,value != 0.00),
