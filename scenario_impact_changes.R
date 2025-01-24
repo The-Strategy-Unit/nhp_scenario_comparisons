@@ -83,7 +83,7 @@ generate_data_waterfall_ndg2 <- function(data = data, measure = measure, include
 }
 
 ndg1_ip_ad <- generate_data_waterfall_ndg1(pcfs_ndg1$ip, "admissions", include_baseline =TRUE)
-ndg1_ip_at <- generate_data_waterfall_ndg1(pcfs_ndg1$ip, "beddays", include_baseline =TRUE)
+ndg1_ip_bd <- generate_data_waterfall_ndg1(pcfs_ndg1$ip, "beddays", include_baseline =TRUE)
 ndg1_op_at <- generate_data_waterfall_ndg1(pcfs_ndg1$op, "attendances", include_baseline =TRUE)
 ndg1_op_tele <- generate_data_waterfall_ndg1(pcfs_ndg1$op, "tele_attendances", include_baseline =TRUE)
 ndg1_ae_ar <- generate_data_waterfall_ndg1(pcfs_ndg1$aae,  "arrivals", include_baseline =TRUE)
