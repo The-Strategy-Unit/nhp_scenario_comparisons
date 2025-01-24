@@ -113,7 +113,7 @@ combine_data_waterfall <- bind_rows(
 
 water_plot_compare <- function(data,chosen_activity_type,chosen_measure, title_text = "Example") {
   data |> 
-    filter(chosen_activity_type == activity_type, chosen_measure == measure) |> 
+    filter(activity_type == chosen_activity_type, measure == chosen_measure) |> 
     mod_principal_change_factor_effects_cf_plot() +
     ggtitle(title_text)
 }
