@@ -74,8 +74,8 @@ ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |>
   )
 
 
-adj_lag <- +ndg_variants_baseline_adjustment$calc_adj_bed_percent_v2 - lag(ndg_variants_baseline_adjustment$calc_adj_bed_percent_v2)
-ndg_variants_baseline_adjustment$adj_lag <- adj_lag
+ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |> 
+  mutate(adj_lag = calc_adj_bed_percent_v2 - lag(calc_adj_bed_percent_v2))
 
 calc_change_birth <- ndg_variants_baseline_adjustment |> 
   filter (change_factor %in% c("birth_adjustment","covid_adjustment", "health_status_adjustment" ,"demographic_adjustment","non-demographic_adjustment")) |> 
