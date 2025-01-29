@@ -115,7 +115,7 @@ calc_change_birth_sum <- ndg_variants_baseline_adjustment |>
 adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
   select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |> 
   filter(change_factor %in% c("activity_avoidance","efficiencies")) |> 
-  mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/0.85, digits = 4)),
+  mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)),
          adj_bed_days = abs(round(adj_bed_days,digits = 0)),
          admissions = abs(round(admissions,digits = 0))) |> 
   rename(at_85 = adj_bed_days_percent) |> ungroup() |>  arrange(desc(at_85)) 
