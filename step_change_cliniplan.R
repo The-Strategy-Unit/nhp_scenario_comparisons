@@ -137,8 +137,8 @@ calc_85_rate <- bind_rows(top_12,other,
        aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
   geom_bar(stat = "identity") +
   coord_flip()  +
-  ggtitle("Adjusted Bed Days Occupancy at 85%") +
-  ylab("Percentages") +
+  ggtitle("Adjusted Beds at 85% Occupancy") +
+  ylab("Beds") +
   xlab("Mitigator") +
     scale_fill_manual(values = c("#f9bf07","#686f73"), name="Type",
                       labels = c("Top 12", "Others")) +
