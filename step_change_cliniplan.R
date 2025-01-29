@@ -63,27 +63,15 @@ ndg_variants_baseline_adjustment <- pivot_data_adj2 |>
                                                            "demographic_adjustment","non-demographic_adjustment","activity_avoidance", "efficiencies","model_interaction_term","waiting_list_adjustment"))) |> 
   arrange(change_factor)  
 
-adj_bed_days_percent <- ndg_variants_baseline_adjustment$adj_bed_days_percent
-
-adj_bed_percent_v2_row1 <- 0
-
-adj_bed_percent_v2_row2 <- calc_baseline_adjustment 
-
-
-adj_bed_percent_v2 <- numeric(length(adj_bed_days_percent))
-
-
-adj_bed_percent_v2[1] <- adj_bed_percent_v2_row1 * (1 + adj_bed_days_percent[1]) 
-
-
-adj_bed_percent_v2[2] <- adj_bed_percent_v2_row2 * (1 + adj_bed_days_percent[2])  
-
-
-  for (i in 3:length(adj_bed_days_percent)) {
-    adj_bed_percent_v2[i] <- adj_bed_percent_v2[i - 1] * (1 + adj_bed_days_percent[i])  
-  }
-
-ndg_variants_baseline_adjustment$calc_adj_bed_percent_v2 <- adj_bed_percent_v2 
+ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |>
+  ungroup() |> 
+  mutate(
+    calc_adj_bed_percent_v2 = c(
+      NA_real_, # First row
+      calc_baseline_adjustment * (1 + adj_bed_days_percent[2]), # Second row
+      accumulate(adj_bed_days_percent[-c(1, 2)], ~ .x * (1 + .y), .init = calc_baseline_adjustment)[-1] # Rest of the rows
+    )
+  )
 
 
 adj_lag <- +ndg_variants_baseline_adjustment$calc_adj_bed_percent_v2 - lag(ndg_variants_baseline_adjustment$calc_adj_bed_percent_v2)
