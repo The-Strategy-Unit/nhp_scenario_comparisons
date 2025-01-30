@@ -302,3 +302,77 @@ read_atmpo <- function() {
       )
     )
 }
+
+
+# new function to get pod into the dataset
+prepare_all_principal_change_factors_get_pod <- function(
+    r,
+    site_codes = list(ip = NULL,  op = NULL, aae = NULL)  # character vectors
+) {
+  
+  mitigators_lookup <- read_mitigators()
+  atmpo_lookup <- read_atmpo()
+  
+  activity_types_long <- list("inpatients", "outpatients", "aae")
+  activity_types_short <- list("ip", "op", "aae")
+  
+  pods <- purrr::map(
+    activity_types_long,
+    \(x) {
+      atmpo_lookup |>
+        dplyr::filter(activity_type == x) |>
+        dplyr::pull(pod) |>
+        unique()
+    }
+  ) |>
+    purrr::set_names(activity_types_short)
+  
+  possibly_prep_principal_change_factors <-
+    purrr::possibly(prep_principal_change_factors)
+  
+  principal_change_data <- purrr::map2(
+    activity_types_short,
+    pods,
+    \(activity_type, pod) {
+      add_pod <- possibly_prep_principal_change_factors(
+        data = r,
+        site_codes = site_codes,
+        mitigators = mitigators_lookup,
+        at = activity_type,
+        pods = pod
+      )
+      
+      # Ensure 'pod' is assigned correctly for each row based on the 'activity_type'
+      if (!is.null(add_pod)) {
+        # If there are multiple pods for the activity type, assign each row a corresponding pod
+        pod <- rep(pod, length.out = nrow(add_pod))  # Repeating pod value for rows in result
+        add_pod$pod <- pod  # Add the 'pod' column
+      }
+      
+      add_pod
+    }
+  ) |>
+    purrr::set_names(activity_types_short)
+  
+  # Scenarios run under v1.0 don't have A&E data when filtering by site, so
+  # provide results for whole-scheme level.
+  if (r$params$app_version == "v1.0" & !is.null(site_codes[["aae"]])) {
+    principal_change_data[["aae"]] <-
+      possibly_prep_principal_change_factors(
+        data = r,
+        site_codes = list(aae = NULL),  # provide for whole scheme, not site
+        mitigators = mitigators_lookup,
+        at = "aae",
+        pods = pods[["aae"]]
+      )
+    # Add the pod column for the "aae" case
+    if (!is.null(principal_change_data[["aae"]])) {
+      pod_col <- rep(pods[["aae"]], length.out = nrow(principal_change_data[["aae"]]))
+      principal_change_data[["aae"]]$pod <- pod_col
+    }
+  }
+  
+  principal_change_data
+  
+}
+

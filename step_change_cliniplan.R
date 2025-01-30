@@ -111,6 +111,8 @@ calc_change_birth_sum <- ndg_variants_baseline_adjustment |>
   filter (change_factor == "birth_adjustment") |> group_by(activity_type) |> 
   summarise(adj_sum_v2 = sum(adj_sum), .groups = "drop") |> mutate(change_factor = "birth_adjustment",
                                                                 strategy = NA)
+
+occupancy_rate <- 0.85
 # create new table ro calculate 85% occupancy bed rate
 adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
   select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |> 

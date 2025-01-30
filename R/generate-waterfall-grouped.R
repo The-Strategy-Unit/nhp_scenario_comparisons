@@ -73,4 +73,54 @@ mod_principal_change_factor_effects_summarised_grouped <- function(data, measure
     dplyr::ungroup()
 }
 
+generate_waterfall_plot <- function(pcfs_ndg1, pcfs_ndg2, 
+                                    activity_type_ndg1,
+                                    activity_type_ndg2,
+                                    measure = "measure",
+                                    title = "Title", 
+                                    x_label = "X-axis", 
+                                    y_label = "Y-axis") {
+  
+  # Combine the specified IP columns from both data frames
+  pcfs <- bind_rows(
+    ndg1 = pcfs_ndg1[[activity_type_ndg1]],
+    ndg2 = pcfs_ndg2[[activity_type_ndg2]],
+    .id = "scenario"
+  )
+  
+  # Apply the summarization function to the combined data
+  activity <- mod_principal_change_factor_effects_summarised_grouped(
+    data = pcfs,
+    measure = measure,
+    include_baseline = TRUE
+  )
+  
+  # Generate the plot and customize it for better aesthetics
+  plot <- mod_principal_change_factor_effects_cf_plot(activity) +
+    ggtitle(title) +
+    xlab(x_label) +
+    ylab(y_label)
+  
+  return(plot)
+}
+
+impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, chosen_measure, title_text = "Example") {
+  ggplot(filter(data, change_factor==chosen_change_factor,activity_type==chosen_activity_type, chosen_measure==measure,value != 0.00),
+         aes(x=value, y=reorder(mitigator_name,desc(value)), fill = scenario)) +
+    geom_col(position = "dodge") +
+    scale_x_continuous(labels = scales::comma) +
+    ggtitle(title_text) +
+    ylab("Point of delivery") +
+    xlab(chosen_measure) +
+    scale_fill_discrete("Scenario") +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario") +
+    easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
+    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+}
+
 #
