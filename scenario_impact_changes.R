@@ -86,6 +86,7 @@ ndg_variants_sc_comparison <- bind_rows(
   ndg1 = as.data.frame(bind_rows(pcfs_ndg1)),
   ndg2 = as.data.frame(bind_rows(pcfs_ndg2)),
   .id = "scenario")
+
 #### Activity avoidance
 impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "admissions", "Imperial NDG Inpatient Admissions Scenarios")
 impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "beddays", "Imperial NDG Inpatient Bed Days Scenarios")

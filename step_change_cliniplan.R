@@ -135,7 +135,7 @@ calc_85_rate <- bind_rows(top_12,other,
                 mutate(strategy = factor(strategy, levels = unique(strategy)))
 
 
-  ggplot(calc_85_rate,
+ggplot(calc_85_rate,
        aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
   geom_bar(stat = "identity") +
   coord_flip()  +
