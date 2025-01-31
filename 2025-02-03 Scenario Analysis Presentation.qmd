@@ -16,14 +16,44 @@ auto-animate: true
 footer: |
   "See the (private) repo [here](https://github.com/The-Strategy-Unit/nhp_scenario_analysis)"
 ---
-  
+
 ## Overview
 
 A high-level summary
 
+-   Our MVP will be to focus on the outputs under the principal projection for the two scenarios
+
+-   In later iterations, we can include a comparison of the output distributions under each scenario and visual comparisons of the inputs provided by the scheme
+
+-   The following slides contain a breakdown of the initial suggestions, based on the existing outputs app...
+
+## test slide
+
+::: columns
+::: {.column width="40%"}
+We created a grouped bar chart. This is more text. This is more text. This is more text.
+
+I am writing more text to test the effect of more text when splitting a Quarto slide into two columns. So here is more text. And more redundant text, filling text, like a Charles Dicken novel, who was commonly said to be paid by the word as his novels were published periodically.
+:::
+
+::: {.column width="60%"}
+![](images/summary_plot_example.png)
+:::
+:::
+
 ## Summary table
 
-An example chart with some text
+::: columns
+::: {.column width="40%"}
+We have created a group bar chart with one bar for each scenario using principal projection value split by activity type/measure (inpatient admission,inpatient bed days, outpatient, ED) and point of delivery (each a subset of activity type/ measure)
+
+We have generate a function to reproduce other activity type/measure
+:::
+
+::: {.column width="60%"}
+![](images/summary_plot_example.png)
+:::
+:::
 
 ## Length of stay breakdown
 
@@ -31,11 +61,23 @@ If we have something
 
 ## Waterfalls
 
-An example chart with some text
+::: columns
+::: {.column width="40%"}
+We have generated waterfall chart from two scenarios and presented them into a single plot using the same color coding in the original version. Also, includes filters for activity type (IP,OP,ED) and measure (admissions/bed days/attendances)
+:::
+
+::: {.column width="60%"}
+<!-- ![](images/waterfall-02.png) -->
+:::
+:::
 
 ## Mitigator impact chart
 
-An example chart with some text
+-   We have created a group bar chart with filters for activity type (IP,OP,ED), point of delivery (subset of activity type), and measure (admissions) inside one function to generate other scenario comparison in efficiency and activity avoidance.
+
+<!-- ![](images/avoidance-01.png) -->
+
+<!-- ![](images/efficiencies-01.png) -->
 
 ## Activity in detail
 
@@ -43,10 +85,16 @@ If we have something
 
 ## Cliniplan
 
-Charts + text explanation (mentioning the intention to be an app with user input on occupancy)
+-   The project aimed to automate Cliniplan Workbook which takes the step counts from the excel download and then calculate various conversions.
+
+-   We have automated Cliniplan workbook into R and visualised top 12 mitigators at the impact of beds under an 85% occupancy.
+
+-   The next step for this project will probably building an app to allow user to set filter on occupancy and spesific strategies.
+
+<!-- ![](images/cliniplan-01.png) -->
 
 ## Later steps
 
-Comparison of distributions and inputs? 
+Comparison of distributions and inputs?
 
 Do the previous analyses constitute an MVP?
