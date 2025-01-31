@@ -7,6 +7,7 @@ date-format: "D MMMM YYYY"
 format: 
   revealjs:
     theme: [default, su_presentation.scss]
+    embed-resources: true
 transition: none
 chalkboard:
   buttons: false
@@ -16,6 +17,12 @@ auto-animate: true
 footer: |
   "See the (private) repo [here](https://github.com/The-Strategy-Unit/nhp_scenario_analysis)"
 ---
+
+```{r run_scripts}
+source("scenario_v1.R")
+source("scenario_impact_changes.R")
+source("step_change_cliniplan.R")
+```
 
 ## Overview
 
@@ -27,19 +34,6 @@ A high-level summary
 
 -   The following slides contain a breakdown of the initial suggestions, based on the existing outputs app...
 
-## test slide
-
-::: columns
-::: {.column width="40%"}
-We created a grouped bar chart. This is more text. This is more text. This is more text.
-
-I am writing more text to test the effect of more text when splitting a Quarto slide into two columns. So here is more text. And more redundant text, filling text, like a Charles Dicken novel, who was commonly said to be paid by the word as his novels were published periodically.
-:::
-
-::: {.column width="60%"}
-![](images/summary_plot_example.png)
-:::
-:::
 
 ## Summary table
 
@@ -51,13 +45,17 @@ We have generate a function to reproduce other activity type/measure
 :::
 
 ::: {.column width="60%"}
-![](images/summary_plot_example.png)
+```{r high-level-bar-chart}
+create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenarios")
+
+```
+
 :::
 :::
 
-## Length of stay breakdown
+<!-- ## Length of stay breakdown -->
 
-If we have something
+<!-- If we have something -->
 
 ## Waterfalls
 
@@ -67,23 +65,75 @@ We have generated waterfall chart from two scenarios and presented them into a s
 :::
 
 ::: {.column width="60%"}
-<!-- ![](images/waterfall-02.png) -->
+```{r waterfall_example}
+generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
+                        activity_type_ndg1 = "ip", 
+                        activity_type_ndg2 = "ip",
+                        measure = "admissions", 
+                        title = "Inpatient admissions waterfall scenario comparison", 
+                        x_label = "Admissions", 
+                        y_label = "Change factor")
+
+```
+
 :::
 :::
 
 ## Mitigator impact chart
 
+::: columns
+::: {.column width="40%"}
+
 -   We have created a group bar chart with filters for activity type (IP,OP,ED), point of delivery (subset of activity type), and measure (admissions) inside one function to generate other scenario comparison in efficiency and activity avoidance.
 
-<!-- ![](images/avoidance-01.png) -->
+:::
 
-<!-- ![](images/efficiencies-01.png) -->
+::: {.column width="60%"}
+```{r impact_slides}
 
-## Activity in detail
 
-If we have something
+library(cowplot)
+
+# make a plot grid consisting of two panels
+p1 <- impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "beddays", "Avoidance")
+
+p2 <- impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "ip", "beddays", "Efficiencies")
+
+plot_col <- plot_grid(p1, p2, nrow=2)
+
+# now add the title
+title <- ggdraw() + 
+  draw_label(
+    "Example mitigator impact charts",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+plot_grid(
+  title, plot_col,
+  ncol = 1,
+  # rel_heights values control vertical title margins
+  rel_heights = c(0.1, 1)
+)
+```
+
+:::
+:::
+
+<!-- ## Activity in detail -->
+
+<!-- If we have something -->
 
 ## Cliniplan
+
+::: columns
+::: {.column width="40%"}
 
 -   The project aimed to automate Cliniplan Workbook which takes the step counts from the excel download and then calculate various conversions.
 
@@ -91,7 +141,32 @@ If we have something
 
 -   The next step for this project will probably building an app to allow user to set filter on occupancy and spesific strategies.
 
-<!-- ![](images/cliniplan-01.png) -->
+:::
+
+::: {.column width="60%"}
+
+```{r clin-plan}
+ggplot(calc_85_rate,
+       aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
+  geom_bar(stat = "identity") +
+  coord_flip()  +
+  ggtitle("Adjusted Beds at 85% Occupancy") +
+  ylab("Beds") +
+  xlab("Mitigator") +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Type",
+                      labels = c("Top 12", "Others")) +
+  easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
+  theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+```
+
+
+:::
+:::
 
 ## Later steps
 
