@@ -9,8 +9,8 @@ format:
     theme: [default, su_presentation.scss]
     embed-resources: true
 transition: none
-chalkboard:
-  buttons: false
+# chalkboard:
+#   buttons: false
 preview-links: auto
 slide-number: false
 auto-animate: true
@@ -26,22 +26,21 @@ source("step_change_cliniplan.R")
 
 ## Overview
 
-A high-level summary
+Focused on adapting the existing pages of the outputs app for the principal projection.
 
--   Our MVP will be to focus on the outputs under the principal projection for the two scenarios
+In later iterations, we can include a comparison of the distributions under each scenario and of the corresponding input parameters.
 
--   In later iterations, we can include a comparison of the output distributions under each scenario and visual comparisons of the inputs provided by the scheme
-
--   The following slides contain a breakdown of the initial suggestions, based on the existing outputs app...
-
+The following slides contain a breakdown of the initial suggestions...
 
 ## Summary table
 
 ::: columns
 ::: {.column width="40%"}
-We have created a group bar chart with one bar for each scenario using principal projection value split by activity type/measure (inpatient admission,inpatient bed days, outpatient, ED) and point of delivery (each a subset of activity type/ measure)
 
-We have generate a function to reproduce other activity type/measure
+For summary table, we suggest the existing bar chart, grouped by the two scenarios.
+
+Similarly to outputs app, would provide breakdowns by activity type, pod, and measure.
+
 :::
 
 ::: {.column width="60%"}
@@ -49,7 +48,6 @@ We have generate a function to reproduce other activity type/measure
 create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenarios")
 
 ```
-
 :::
 :::
 
@@ -61,7 +59,11 @@ create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenari
 
 ::: columns
 ::: {.column width="40%"}
-We have generated waterfall chart from two scenarios and presented them into a single plot using the same color coding in the original version. Also, includes filters for activity type (IP,OP,ED) and measure (admissions/bed days/attendances)
+
+For waterfall chart, we suggest a facet of the existing chart to allow easy visual comparison on a fixed x-axis. 
+
+We developed new version of outputs app code to ensure same ordering in each chart.
+
 :::
 
 ::: {.column width="60%"}
@@ -75,7 +77,6 @@ generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2,
                         y_label = "Change factor")
 
 ```
-
 :::
 :::
 
@@ -84,8 +85,9 @@ generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2,
 ::: columns
 ::: {.column width="40%"}
 
--   We have created a group bar chart with filters for activity type (IP,OP,ED), point of delivery (subset of activity type), and measure (admissions) inside one function to generate other scenario comparison in efficiency and activity avoidance.
+Mitigator impact charts are relatively easily converted to grouped bar chart.
 
+Could add option to arrange by scenario A or scenario B (not relevant in NDG variant example)
 :::
 
 ::: {.column width="60%"}
@@ -122,7 +124,6 @@ plot_grid(
   rel_heights = c(0.1, 1)
 )
 ```
-
 :::
 :::
 
@@ -134,17 +135,14 @@ plot_grid(
 
 ::: columns
 ::: {.column width="40%"}
+   
+Cliniplan workbook takes the Excel step counts and applies a series of conversions to adjust bed days and arrive at beds under an 85% occupancy.
 
--   The project aimed to automate Cliniplan Workbook which takes the step counts from the excel download and then calculate various conversions.
-
--   We have automated Cliniplan workbook into R and visualised top 12 mitigators at the impact of beds under an 85% occupancy.
-
--   The next step for this project will probably building an app to allow user to set filter on occupancy and spesific strategies.
+We have encoded this into R, with a plan for a user input of bed occupancy rate, and have reproduced its chart of top 12 mitigators for bed impact.
 
 :::
 
 ::: {.column width="60%"}
-
 ```{r clin-plan}
 ggplot(calc_85_rate,
        aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
@@ -163,13 +161,17 @@ ggplot(calc_85_rate,
   theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
   theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
 ```
-
-
 :::
 :::
 
-## Later steps
+## Later steps / feedback
 
-Comparison of distributions and inputs?
+Remaining outputs app pages (LoS breakdown and activity in detail)
+
+Comparison of distributions and inputs
 
 Do the previous analyses constitute an MVP?
+
+Integration into outputs app
+
+
