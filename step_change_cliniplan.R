@@ -77,8 +77,26 @@ ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |>
 ndg_variants_baseline_adjustment <- ndg_variants_baseline_adjustment |> 
   mutate(adj_lag = calc_adj_bed_percent_v2 - lag(calc_adj_bed_percent_v2))
 
-calc_agg_changes <- ndg_variants_baseline_adjustment |> 
-  summarise(adj_sum = sum(adj_lag), .by = change_factor)
+calc_change_birth <- ndg_variants_baseline_adjustment |> 
+  filter (change_factor %in% c("birth_adjustment","covid_adjustment", "health_status_adjustment" ,"demographic_adjustment","non-demographic_adjustment")) |> 
+  group_by(activity_type) |> 
+  summarise(adj_sum = sum(adj_lag), .groups = "drop") |> mutate(change_factor = "birth_adjustment",
+                                                              strategy = NA)
+
+calc_activity_avoidance <- ndg_variants_baseline_adjustment |> 
+  filter (change_factor == "activity_avoidance" ) |> group_by(activity_type) |> 
+  summarise(adj_sum = sum(adj_lag), .groups = "drop") |> mutate(change_factor = "activity_avoidance",
+                                                              strategy = "alcohol_partially_attributable_acute")
+
+calc_efficiencies <- ndg_variants_baseline_adjustment |> 
+  filter (change_factor == "efficiencies" ) |> group_by(activity_type) |> 
+  summarise(adj_sum = sum(adj_lag), .groups = "drop")  |> mutate(change_factor = "efficiencies",
+                                                               strategy = "ambulatory_emergency_care_high")
+
+calc_model_interaction_term  <- ndg_variants_baseline_adjustment |> 
+  filter (change_factor == "model_interaction_term" ) |> group_by(activity_type) |> 
+  summarise(adj_sum = sum(calc_adj_bed_percent_v2)/1661, .groups = "drop") |> mutate(change_factor = "model_interaction_term",
+                                                              strategy = NA)
 
 adj_sum <- bind_rows(calc_change_birth,
                      calc_activity_avoidance,
@@ -93,11 +111,13 @@ calc_change_birth_sum <- ndg_variants_baseline_adjustment |>
   filter (change_factor == "birth_adjustment") |> group_by(activity_type) |> 
   summarise(adj_sum_v2 = sum(adj_sum), .groups = "drop") |> mutate(change_factor = "birth_adjustment",
                                                                 strategy = NA)
+
+occupancy_rate <- 0.85
 # create new table ro calculate 85% occupancy bed rate
 adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
   select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |> 
   filter(change_factor %in% c("activity_avoidance","efficiencies")) |> 
-mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)),
+  mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)),
          adj_bed_days = abs(round(adj_bed_days,digits = 0)),
          admissions = abs(round(admissions,digits = 0))) |> 
   rename(at_85 = adj_bed_days_percent) |> ungroup() |>  arrange(desc(at_85)) 
@@ -115,7 +135,7 @@ calc_85_rate <- bind_rows(top_12,other,
                 mutate(strategy = factor(strategy, levels = unique(strategy)))
 
 
-  ggplot(calc_85_rate,
+ggplot(calc_85_rate,
        aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
   geom_bar(stat = "identity") +
   coord_flip()  +
