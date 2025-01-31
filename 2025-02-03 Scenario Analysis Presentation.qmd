@@ -1,0 +1,52 @@
+---
+title: "Scenario analysis"
+subtitle: "An update on project to date"
+author: "Gabriel Hobro and Fikriyudin Mufasir"
+date: 2025-02-03
+date-format: "D MMMM YYYY"
+format: 
+  revealjs:
+    theme: [default, su_presentation.scss]
+transition: none
+chalkboard:
+  buttons: false
+preview-links: auto
+slide-number: false
+auto-animate: true
+footer: |
+  "See the (private) repo [here](https://github.com/The-Strategy-Unit/nhp_scenario_analysis)"
+---
+  
+## Overview
+
+A high-level summary
+
+## Summary table
+
+An example chart with some text
+
+## Length of stay breakdown
+
+If we have something
+
+## Waterfalls
+
+An example chart with some text
+
+## Mitigator impact chart
+
+An example chart with some text
+
+## Activity in detail
+
+If we have something
+
+## Cliniplan
+
+Charts + text explanation (mentioning the intention to be an app with user input on occupancy)
+
+## Later steps
+
+Comparison of distributions and inputs? 
+
+Do the previous analyses constitute an MVP?
