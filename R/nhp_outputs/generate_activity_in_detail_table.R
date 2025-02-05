@@ -37,21 +37,21 @@ generate_activity_in_detail_table <- function(
       change_pcnt = .data$change / .data$baseline
     )
   
-  # if (agg_col == "tretspef") {
-  #   aggregated_data <- aggregated_data |>
-  #     dplyr::left_join(
-  #       tretspefs,
-  #       by = dplyr::join_by("agg" == "Code")
-  #     ) |>
-  #     dplyr::mutate(
-  #       dplyr::across(
-  #         "Description",
-  #         \(x) dplyr::if_else(is.na(x), .data$agg, .data$Description)
-  #       ),
-  #     ) |>
-  #     dplyr::select("sex", "Description", dplyr::everything(), -"agg") |>
-  #     dplyr::rename("agg" = "Description")
-  # }
+  if (agg_col == "tretspef") {
+    aggregated_data <- aggregated_data |>
+      dplyr::left_join(
+        tretspefs,
+        by = dplyr::join_by("agg" == "Code")
+      ) |>
+      dplyr::mutate(
+        dplyr::across(
+          "Description",
+          \(x) dplyr::if_else(is.na(x), .data$agg, .data$Description)
+        ),
+      ) |>
+      dplyr::select("sex", "Description", dplyr::everything(), -"agg") |>
+      dplyr::rename("agg" = "Description")
+  }
   
   end_year <- data[["params"]][["end_year"]]
   end_fyear <- paste0(
