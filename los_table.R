@@ -78,21 +78,3 @@ create_bar_plot_los(data_combine, "Elective Admission", "Bed Days", "Imperial ND
 create_bar_plot_los(data_combine, "Daycase Admission", "Bed Days", "Imperial NDG Daycase Bed Days Scenarios Length of Stay")
 create_bar_plot_los(data_combine, "Maternity Admission", "Bed Days", "Imperial NDG Maternity Bed Days Scenarios Length of Stay")
 create_bar_plot_los(data_combine, "Regular Day Attender Admission", "Bed Days", "Imperial NDG Regular Day Attender Bed Days Scenarios Length of Stay")
-
-#####
-ggplot(filter(data_admissions, pod_name == "Non-Elective Admission"),
-       aes(x=principal, y=fct_rev(los_group), fill = scenario)) +
-  geom_col(position = "dodge") +
-  scale_x_continuous(labels = scales::comma) +
-  ggtitle(" ") +
-  ylab("Length of stay group") +
-  xlab("Number of patients") +
-  scale_fill_discrete("Scenario") +
-  scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario") +
-  easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
-  theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
