@@ -20,7 +20,8 @@ generate_activity_in_detail_table <- function(
     activity_type,
     pod,
     measure,
-    agg_col) {
+    agg_col
+) {
   aggregated_data <- data |>
     get_aggregation(pod, measure, agg_col, sites)
   
@@ -35,7 +36,13 @@ generate_activity_in_detail_table <- function(
       final = .data$principal,
       change = .data$final - .data$baseline,
       change_pcnt = .data$change / .data$baseline
-    )
+    ) |>
+    dplyr::mutate(
+      dplyr::across("sex", \(.x) ifelse(.x == 1, "Male", "Female")),
+      dplyr::across("final", scales::comma_format(1)),
+      dplyr::across("change", scales::comma_format(1)),
+      dplyr::across("change_pcnt", scales::percent_format(1))
+    ) |> dplyr::mutate(final = as.numeric(gsub(",", "", final)))
   
   if (agg_col == "tretspef") {
     aggregated_data <- aggregated_data |>
@@ -59,10 +66,50 @@ generate_activity_in_detail_table <- function(
     as.numeric(stringr::str_extract(end_year, "\\d{2}$")) + 1
   )
   
-  aggregated_data |>
-    mod_principal_detailed_table(
-      aggregation = agg_col,
-      final_year = end_fyear
-    ) |>
-    gt::tab_options(table.align = "left")
+  return(aggregated_data)
 }
+
+
+activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab = "ylab", xlab = "xlab"){
+  ggplot(filter(data, sex== chosen_sex),
+         aes(x=final, y=fct_rev(agg), fill = scenario)) +
+    geom_col(position = "dodge") +
+    scale_x_continuous(labels = scales::comma) +
+    ggtitle(title_text) +
+    ylab(ylab) +
+    xlab(xlab) +
+    scale_fill_discrete("Scenario") +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario") +
+    easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
+    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
+    theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+}
+
+
+combine_activity_data <- function(data1, data2, tretspefs, activity_type, pod, measure, agg_col) {
+  dplyr::bind_rows(ndg1 =
+                     generate_activity_in_detail_table(
+                       data = data1,
+                       sites = NULL,
+                       tretspefs = tretspefs,
+                       activity_type = activity_type,
+                       pod = pod,
+                       measure = measure,
+                       agg_col = agg_col
+                     ),
+                   ndg2 = generate_activity_in_detail_table(
+                     data = data2,
+                     sites = NULL,
+                     tretspefs = tretspefs,
+                     activity_type = activity_type,
+                     pod = pod,
+                     measure = measure,
+                     agg_col = agg_col
+                   ),.id = "scenario"
+  )
+}
+
