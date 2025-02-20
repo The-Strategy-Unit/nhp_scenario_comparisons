@@ -1,5 +1,7 @@
 scenario_1 <- "Imperialv1-ndg1-20241022_100916.json.gz"
 scenario_2 <- "Imperialv1-ndg2-20241023_122644.json.gz"
+# packages ----------------------------------------------------------------
+
 library(jsonlite)
 library(tidyverse)
 library(dplyr)
@@ -8,15 +10,20 @@ library(here)
 library(ggplot2)
 library(ggeasy)
 
-# Functions
+
+# functions ---------------------------------------------------------------
+
 file_names <- list.files(path = 'R', pattern = "\\.R$")
 lapply(paste0('R/',file_names), source)
 
 file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
-# load dataset 
-source('load-data.R')
+# load data ---------------------------------------------------------------
+
+source("load-data.R")
+
+# summary tables / plots --------------------------------------------------
 
 # Inpatient admissions
 create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenarios")
@@ -30,116 +37,119 @@ create_bar_plot(data, "Outpatient", "Attendance / procedure", "Imperial NDG Outp
 # A&E attendances
 create_bar_plot(data, "A&E", "Attendance / procedure", "Imperial NDG A&E Scenarios")
 
-# admission plot
+
+# LoS breakdowns ----------------------------------------------------------
+
+# admissions plots
 create_bar_plot_los(data_combine, "Non-Elective Admission", "admissions", "Imperial NDG Non-Elective Admission Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Elective Admission", "admissions", "Imperial NDG Elective Admission Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Daycase Admission", "admissions", "Imperial NDG Daycase Admission Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Maternity Admission", "admissions", "Imperial NDG Maternity Admission Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Regular Day Attender Admission", "admissions", "Imperial NDG Regular Day Attender Admission Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Elective Admission", "admissions", "Imperial NDG Elective Admission Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Daycase Admission", "admissions", "Imperial NDG Daycase Admission Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Maternity Admission", "admissions", "Imperial NDG Maternity Admission Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Regular Day Attender Admission", "admissions", "Imperial NDG Regular Day Attender Admission Scenarios Length of Stay")
 
 # bed days plot
 create_bar_plot_los(data_combine, "Non-Elective Admission", "Bed Days", "Imperial NDG Non-Elective Bed Days Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Elective Admission", "Bed Days", "Imperial NDG Elective Bed Days Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Daycase Admission", "Bed Days", "Imperial NDG Daycase Bed Days Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Maternity Admission", "Bed Days", "Imperial NDG Maternity Bed Days Scenarios Length of Stay")
-create_bar_plot_los(data_combine, "Regular Day Attender Admission", "Bed Days", "Imperial NDG Regular Day Attender Bed Days Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Elective Admission", "Bed Days", "Imperial NDG Elective Bed Days Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Daycase Admission", "Bed Days", "Imperial NDG Daycase Bed Days Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Maternity Admission", "Bed Days", "Imperial NDG Maternity Bed Days Scenarios Length of Stay")
+# create_bar_plot_los(data_combine, "Regular Day Attender Admission", "Bed Days", "Imperial NDG Regular Day Attender Bed Days Scenarios Length of Stay")
 
+# activity in detail - tretspef breakdown ---------------------------------
 
 #admissions
 activity_detail_bar(data_tretspef_elective_admission , "Male", "Imperial NDG Male Inpatient  Elective Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_elective_admission , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_maternity_admission , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_maternity_admission , "Female", "Imperial NDG Female Inpatient  Maternity Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_non_elective_admission , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_non_elective_admission , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_regular_day_attender_admission, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_regular_day_attender_admission, "Female", "Imperial NDG  Female Inpatient  Regular Day Attender", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_elective_daycase_admission , "Male", "Imperial NDG Male Inpatient  Elective Daycase", "Treatment Spesification","Admissions")
-activity_detail_bar(data_tretspef_elective_daycase_admission, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_elective_admission , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_maternity_admission , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_maternity_admission , "Female", "Imperial NDG Female Inpatient  Maternity Admissions", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_non_elective_admission , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_non_elective_admission , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_regular_day_attender_admission, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_regular_day_attender_admission, "Female", "Imperial NDG  Female Inpatient  Regular Day Attender", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_elective_daycase_admission , "Male", "Imperial NDG Male Inpatient  Elective Daycase", "Treatment Spesification","Admissions")
+# activity_detail_bar(data_tretspef_elective_daycase_admission, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Treatment Spesification","Admissions")
 
 #Bed Days
 activity_detail_bar(data_tretspef_elective_beddays , "Male", "Imperial NDG Male Inpatient  Elective Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_elective_beddays , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_maternity_beddays , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_maternity_beddays , "Female", "Imperial NDG Female Inpatient Maternity Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_non_elective_beddays , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_non_elective_beddays , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_regular_day_attender_beddays, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_regular_day_attender_beddays, "Female", "Imperial NDG Female Inpatient  Regular Day Attender", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_elective_daycase_beddays , "Male", "Imperial NDG Male Inpatient Elective Daycase", "Treatment Spesification","Bed Days")
-activity_detail_bar(data_tretspef_elective_daycase_beddays, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_elective_beddays , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_maternity_beddays , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_maternity_beddays , "Female", "Imperial NDG Female Inpatient Maternity Admissions", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_non_elective_beddays , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_non_elective_beddays , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_regular_day_attender_beddays, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_regular_day_attender_beddays, "Female", "Imperial NDG Female Inpatient  Regular Day Attender", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_elective_daycase_beddays , "Male", "Imperial NDG Male Inpatient Elective Daycase", "Treatment Spesification","Bed Days")
+# activity_detail_bar(data_tretspef_elective_daycase_beddays, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Treatment Spesification","Bed Days")
 
 
 ### op
 
 ## attendances
 activity_detail_bar(data_tretspef_op_first_attendance , "Male", "Imperial NDG Male Outpatient First Attendances", "Treatment Spesification","Attendances")
-activity_detail_bar(data_tretspef_op_first_attendance , "Female", "Imperial NDG Female Outpatient First Attendances", "Treatment Spesification","Attendances")
-activity_detail_bar(data_tretspef_op_followup_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Attendances", "Treatment Spesification","Attendances")
-activity_detail_bar(data_tretspef_op_followup_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Attendances", "Treatment Spesification","Attendances")
-activity_detail_bar(data_tretspef_op_procedure_attendance , "Male", "Imperial NDG Male Outpatient Procedures Attendances", "Treatment Spesification","Attendances")
-activity_detail_bar(data_tretspef_op_procedure_attendance , "Female", "Imperial NDG Female Outpatient Procedures Attendances", "Treatment Spesification","Attendances")
+# activity_detail_bar(data_tretspef_op_first_attendance , "Female", "Imperial NDG Female Outpatient First Attendances", "Treatment Spesification","Attendances")
+# activity_detail_bar(data_tretspef_op_followup_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Attendances", "Treatment Spesification","Attendances")
+# activity_detail_bar(data_tretspef_op_followup_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Attendances", "Treatment Spesification","Attendances")
+# activity_detail_bar(data_tretspef_op_procedure_attendance , "Male", "Imperial NDG Male Outpatient Procedures Attendances", "Treatment Spesification","Attendances")
+# activity_detail_bar(data_tretspef_op_procedure_attendance , "Female", "Imperial NDG Female Outpatient Procedures Attendances", "Treatment Spesification","Attendances")
 
 ## tele-attendances
 activity_detail_bar(data_tretspef_op_first_tele_attendance , "Male", "Imperial NDG Male Outpatient First Tele-attendances", "Treatment Spesification","Tele-attendances")
-activity_detail_bar(data_tretspef_op_first_tele_attendance , "Female", "Imperial NDG Female Outpatient First Tele-attendances", "Treatment Spesification","Tele-attendances")
-activity_detail_bar(data_tretspef_op_followup_tele_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Tele-attendances", "Treatment Spesification","Tele-attendances")
-activity_detail_bar(data_tretspef_op_followup_tele_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Tele-attendances", "Treatment Spesification","Tele-attendances")
-activity_detail_bar(data_tretspef_op_procedure_tele_attendance , "Male", "Imperial NDG Male Outpatient Procedures Tele-attendances", "Treatment Spesification","Tele-attendances")
-activity_detail_bar(data_tretspef_op_procedure_tele_attendance , "Female", "Imperial NDG Female Outpatient Procedures Tele-attendances", "Treatment Spesification","Tele-attendances")
+# activity_detail_bar(data_tretspef_op_first_tele_attendance , "Female", "Imperial NDG Female Outpatient First Tele-attendances", "Treatment Spesification","Tele-attendances")
+# activity_detail_bar(data_tretspef_op_followup_tele_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Tele-attendances", "Treatment Spesification","Tele-attendances")
+# activity_detail_bar(data_tretspef_op_followup_tele_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Tele-attendances", "Treatment Spesification","Tele-attendances")
+# activity_detail_bar(data_tretspef_op_procedure_tele_attendance , "Male", "Imperial NDG Male Outpatient Procedures Tele-attendances", "Treatment Spesification","Tele-attendances")
+# activity_detail_bar(data_tretspef_op_procedure_tele_attendance , "Female", "Imperial NDG Female Outpatient Procedures Tele-attendances", "Treatment Spesification","Tele-attendances")
 
-
-## age-group
+# activity in detail - age group breakdown --------------------------------
 
 #Admissions
 activity_detail_bar(data_age_elective_admission , "Male", "Imperial NDG Male Inpatient  Elective Admissions", "Age Group","Admissions")
-activity_detail_bar(data_age_elective_admission , "Female", "Imperial NDG Female Inpatient  Elective Admissions",  "Age Group","Admissions")
-activity_detail_bar(data_age_maternity_admission , "Male", "Imperial NDG Male Inpatient  Maternity Admissions",  "Age Group","Admissions")
-activity_detail_bar(data_age_maternity_admission , "Female", "Imperial NDG Female Inpatient  Maternity Admissions",  "Age Group","Admissions")
-activity_detail_bar(data_age_non_elective_admission , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions",  "Age Group","Admissions")
-activity_detail_bar(data_age_non_elective_admission , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions",  "Age Group","Admissions")
-activity_detail_bar(data_age_regular_day_attender_admission, "Male", "Imperial NDG Male Inpatient  Regular Day Attender",  "Age Group","Admissions")
-activity_detail_bar(data_age_regular_day_attender_admission, "Female", "Imperial NDG  Female Inpatient  Regular Day Attender",  "Age Group","Admissions")
-activity_detail_bar(data_age_elective_daycase_admission , "Male", "Imperial NDG Male Inpatient  Elective Daycase",  "Age Group","Admissions")
-activity_detail_bar(data_age_elective_daycase_admission, "Female", "Imperial NDG Female Inpatient  Elective Daycase",  "Age Group","Admissions")
+# activity_detail_bar(data_age_elective_admission , "Female", "Imperial NDG Female Inpatient  Elective Admissions",  "Age Group","Admissions")
+# activity_detail_bar(data_age_maternity_admission , "Male", "Imperial NDG Male Inpatient  Maternity Admissions",  "Age Group","Admissions")
+# activity_detail_bar(data_age_maternity_admission , "Female", "Imperial NDG Female Inpatient  Maternity Admissions",  "Age Group","Admissions")
+# activity_detail_bar(data_age_non_elective_admission , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions",  "Age Group","Admissions")
+# activity_detail_bar(data_age_non_elective_admission , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions",  "Age Group","Admissions")
+# activity_detail_bar(data_age_regular_day_attender_admission, "Male", "Imperial NDG Male Inpatient  Regular Day Attender",  "Age Group","Admissions")
+# activity_detail_bar(data_age_regular_day_attender_admission, "Female", "Imperial NDG  Female Inpatient  Regular Day Attender",  "Age Group","Admissions")
+# activity_detail_bar(data_age_elective_daycase_admission , "Male", "Imperial NDG Male Inpatient  Elective Daycase",  "Age Group","Admissions")
+# activity_detail_bar(data_age_elective_daycase_admission, "Female", "Imperial NDG Female Inpatient  Elective Daycase",  "Age Group","Admissions")
 
 #Bed Days
 activity_detail_bar(data_age_elective_beddays , "Male", "Imperial NDG Male Inpatient  Elective Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_elective_beddays , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_maternity_beddays , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_maternity_beddays , "Female", "Imperial NDG Female Inpatient Maternity Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_non_elective_beddays , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_non_elective_beddays , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Age Group","Bed Days")
-activity_detail_bar(data_age_regular_day_attender_beddays, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Age Group","Bed Days")
-activity_detail_bar(data_age_regular_day_attender_beddays, "Female", "Imperial NDG Female Inpatient  Regular Day Attender", "Age Group","Bed Days")
-activity_detail_bar(data_age_elective_daycase_beddays , "Male", "Imperial NDG Male Inpatient Elective Daycase", "Age Group","Bed Days")
-activity_detail_bar(data_age_elective_daycase_beddays, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Age Group","Bed Days")
+# activity_detail_bar(data_age_elective_beddays , "Female", "Imperial NDG Female Inpatient  Elective Admissions", "Age Group","Bed Days")
+# activity_detail_bar(data_age_maternity_beddays , "Male", "Imperial NDG Male Inpatient  Maternity Admissions", "Age Group","Bed Days")
+# activity_detail_bar(data_age_maternity_beddays , "Female", "Imperial NDG Female Inpatient Maternity Admissions", "Age Group","Bed Days")
+# activity_detail_bar(data_age_non_elective_beddays , "Male", "Imperial NDG Male Inpatient  Non-Elective Admissions", "Age Group","Bed Days")
+# activity_detail_bar(data_age_non_elective_beddays , "Female", "Imperial NDG Female Inpatient  Non-Elective Admissions", "Age Group","Bed Days")
+# activity_detail_bar(data_age_regular_day_attender_beddays, "Male", "Imperial NDG Male Inpatient  Regular Day Attender", "Age Group","Bed Days")
+# activity_detail_bar(data_age_regular_day_attender_beddays, "Female", "Imperial NDG Female Inpatient  Regular Day Attender", "Age Group","Bed Days")
+# activity_detail_bar(data_age_elective_daycase_beddays , "Male", "Imperial NDG Male Inpatient Elective Daycase", "Age Group","Bed Days")
+# activity_detail_bar(data_age_elective_daycase_beddays, "Female", "Imperial NDG Female Inpatient  Elective Daycase", "Age Group","Bed Days")
 
 ## op 
 
 ## attendances
 activity_detail_bar(data_age_op_first_attendance , "Male", "Imperial NDG Male Outpatient First Attendances", "Age_group","Attendances")
-activity_detail_bar(data_age_op_first_attendance , "Female", "Imperial NDG Female Outpatient First Attendances", "Age_group","Attendances")
-activity_detail_bar(data_age_op_followup_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Attendances", "Age_group","Attendances")
-activity_detail_bar(data_age_op_followup_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Attendances", "Age_group","Attendances")
-activity_detail_bar(data_age_op_procedure_attendance , "Male", "Imperial NDG Male Outpatient Procedures Attendances", "Age_group","Attendances")
-activity_detail_bar(data_age_op_procedure_attendance , "Female", "Imperial NDG Female Outpatient Procedures Attendances", "Age_group","Attendances")
+# activity_detail_bar(data_age_op_first_attendance , "Female", "Imperial NDG Female Outpatient First Attendances", "Age_group","Attendances")
+# activity_detail_bar(data_age_op_followup_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Attendances", "Age_group","Attendances")
+# activity_detail_bar(data_age_op_followup_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Attendances", "Age_group","Attendances")
+# activity_detail_bar(data_age_op_procedure_attendance , "Male", "Imperial NDG Male Outpatient Procedures Attendances", "Age_group","Attendances")
+# activity_detail_bar(data_age_op_procedure_attendance , "Female", "Imperial NDG Female Outpatient Procedures Attendances", "Age_group","Attendances")
 
 ## tele-attendances
 activity_detail_bar(data_age_op_first_tele_attendance , "Male", "Imperial NDG Male Outpatient First Tele-attendances", "Age group","Tele-attendances")
-activity_detail_bar(data_age_op_first_tele_attendance , "Female", "Imperial NDG Female Outpatient First Tele-attendances", "Age group","Tele-attendances")
-activity_detail_bar(data_age_op_followup_tele_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Tele-attendances", "Age group","Tele-attendances")
-activity_detail_bar(data_age_op_followup_tele_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Tele-attendances", "Age group","Tele-attendances")
-activity_detail_bar(data_age_op_procedure_tele_attendance , "Male", "Imperial NDG Male Outpatient Procedures Tele-attendances", "Age group","Tele-attendances")
-activity_detail_bar(data_age_op_procedure_tele_attendance , "Female", "Imperial NDG Female Outpatient Procedures Tele-attendances", "Age group","Tele-attendances")
+# activity_detail_bar(data_age_op_first_tele_attendance , "Female", "Imperial NDG Female Outpatient First Tele-attendances", "Age group","Tele-attendances")
+# activity_detail_bar(data_age_op_followup_tele_attendance , "Male", "Imperial NDG Male Outpatient Follow-up Tele-attendances", "Age group","Tele-attendances")
+# activity_detail_bar(data_age_op_followup_tele_attendance , "Female", "Imperial NDG Female Outpatient Follow-up Tele-attendances", "Age group","Tele-attendances")
+# activity_detail_bar(data_age_op_procedure_tele_attendance , "Male", "Imperial NDG Male Outpatient Procedures Tele-attendances", "Age group","Tele-attendances")
+# activity_detail_bar(data_age_op_procedure_tele_attendance , "Female", "Imperial NDG Female Outpatient Procedures Tele-attendances", "Age group","Tele-attendances")
 
 ### A&E
 
 #### ambulance
 activity_detail_bar(data_age_aae_type1_ambulance , "Male", "Imperial NDG Male A&E Ambulance", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type1_ambulance, "Female", "Imperial NDG Female A&E Ambulance", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type2_ambulance , "Male", "Imperial NDG Male A&E  Ambulance", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type2_ambulance , "Female", "Imperial NDG Female A&E  Ambulance", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type1_ambulance, "Female", "Imperial NDG Female A&E Ambulance", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type2_ambulance , "Male", "Imperial NDG Male A&E  Ambulance", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type2_ambulance , "Female", "Imperial NDG Female A&E  Ambulance", "Age_group","Admissions")
 
 # Walk-in
 activity_detail_bar(data_age_aae_type1_walkin , "Male", "Imperial NDG Male A&E Walk-in", "Age_group","Admissions")
@@ -147,9 +157,7 @@ activity_detail_bar(data_age_aae_type1_walkin , "Male", "Imperial NDG Male A&E W
 # activity_detail_bar(data_age_aae_type2_walkin , "Male", "Imperial NDG Male A&E  Walk-in", "Age_group","Admissions")
 # activity_detail_bar(data_age_aae_type2_walkin , "Female", "Imperial NDG Female A&E Walk-in", "Age_group","Admissions")
 
-
 # waterfalls --------------------------------------------------------------
-
 
 generate_waterfall_plot(
   pcfs_1, 
@@ -197,6 +205,7 @@ generate_waterfall_plot(
   y_label = "Change factor")
 
 
+# mitigator impacts bar charts --------------------------------------------
 
 #### Activity avoidance
 impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "admissions", "Imperial NDG Inpatient Admissions Scenarios")
@@ -251,5 +260,4 @@ ggplot(calc_85_rate,
   theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
   theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
   theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
-
 

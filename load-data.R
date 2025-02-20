@@ -27,6 +27,9 @@ data <- data |>
 
 
 
+# LoS summary -------------------------------------------------------------
+
+
 ## admissions dataset
 data_1_adm <- result_1 |> 
   mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
@@ -47,6 +50,11 @@ data_bed <- bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "s
 data_combine <- bind_rows("Bed Days" = data_bed, admissions = data_admissions, .id = "measure")
 
 
+# impacts -----------------------------------------------------------------
+
+
+
+
 # Prep a list of summary dataframes, one per activity type
 pcfs_1 <- prepare_all_principal_change_factors(
   r = result_1,
@@ -63,6 +71,11 @@ ndg_variants_sc_comparison <- bind_rows(
   scenario_2 = as.data.frame(bind_rows(pcfs_2)),
   .id = "scenario")
 
+
+
+
+# activity in detail - treatment specialty --------------------------------
+
 # load the tretspef lookup
 tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
                                        simplifyVector = TRUE
@@ -74,7 +87,6 @@ tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
   dplyr::select(-"Group") |>
   dplyr::add_row(Code = "&", Description = "Not known")  # as per HES dictionary 
 
-## Activity in Details
 
 data_tretspef_elective_admission <- combine_activity_data(data1 = result_1,
                                                           data2 = result_2,
@@ -358,8 +370,8 @@ data_age_aae_type2_walkin <- combine_activity_data(data1 = result_1,
                                                    agg_col ="age_group")
 
 
+# Cliniplan stuff ---------------------------------------------------------
 
-# Cliniplan Nottingham ICB dataset
 result_notts  <- "jsons/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
   jsonlite::read_json() |>
   parse_results() 
@@ -376,7 +388,7 @@ df1_convert_to_table <- as.data.frame(bind_rows(result_notts$results$step_counts
   summarize(value = sum(value))
 
 
-### data pre-processing ####
+### data pre-processing
 
 ### creating step change 
 
@@ -455,3 +467,4 @@ calc_change_birth_sum <- ndg_variants_baseline_adjustment |>
   filter (change_factor == "birth_adjustment") |> group_by(activity_type) |> 
   summarise(adj_sum_v2 = sum(adj_sum), .groups = "drop") |> mutate(change_factor = "birth_adjustment",
                                                                    strategy = NA)
+
