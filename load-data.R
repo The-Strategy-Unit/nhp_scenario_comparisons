@@ -12,29 +12,8 @@ result_ndg2 <- "jsons/Imperialv1-ndg2-20241023_122644.json.gz" |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the data
 
-
-df_inpatient <- result_ndg1 |>
-  mod_principal_summary_data_inpatient(sites = NULL)
-
-df_outpatient <- result_ndg1 |>
-  mod_principal_summary_data_outpatient(sites = NULL)
-
-df_ae <- result_ndg1 |>
-  mod_principal_summary_data_ae(sites = NULL)
-
-df <- bind_rows(df_inpatient,df_outpatient,df_ae)
-
-
-df2_inpatient <- result_ndg2 |>
-  mod_principal_summary_data_inpatient(sites = NULL)
-
-df2_outpatient <- result_ndg2 |>
-  mod_principal_summary_data_outpatient(sites = NULL)
-
-df2_ae <- result_ndg2 |>
-  mod_principal_summary_data_ae(sites = NULL)
-
-df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
+df1 <- mod_principal_summary_data(result_1, sites = NULL)
+df2 <- mod_principal_summary_data(result_2, sites = NULL)
 
 # data processing
 data <- bind_rows(scenario_1 = df1, scenario_2 = df2, .id = "scenario")
