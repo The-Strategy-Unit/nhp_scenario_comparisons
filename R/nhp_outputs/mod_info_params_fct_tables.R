@@ -43,8 +43,8 @@ info_params_table_expat_repat_adjustment <- function(
 
 info_params_fix_data <- function(
     df,
-    specs_path = "data/tx-lookup.json",
-    mitigators_path = "data/mitigators.json"
+    specs_path = "supporting_data/tx-lookup.json",
+    mitigators_path = "supporting_data/mitigators.json"
 ) {
   at <- get_activity_type_pod_measure_options() |>
     dplyr::distinct(

@@ -2,7 +2,7 @@ get_activity_type_pod_measure_options <- function() {
 
   # Read locally instead of get_golem_config("pod_measures") in nhp_outputs
   pod_measures <- yaml::read_yaml(
-    "data/golem-config.yml",
+    "supporting_data/golem-config.yml",
     eval.expr = FALSE
   ) |>
     _$default$pod_measures

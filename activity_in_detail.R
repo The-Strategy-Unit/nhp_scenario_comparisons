@@ -25,7 +25,7 @@ result_ndg2 <- "jsons/Imperialv1-ndg2-20241023_122644.json.gz" |>
 
 p <- result_ndg1[["results"]][["sex+tretspef"]][["pod"]] |> unique()
 # load the tretspef lookup
-tretspef_lookup <- jsonlite::read_json("data/tx-lookup.json",
+tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
                                        simplifyVector = TRUE
 ) |>
   dplyr::mutate(

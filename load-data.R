@@ -81,7 +81,7 @@ pcfs_ndg2 <- prepare_all_principal_change_factors(
 
 
 # load the tretspef lookup
-tretspef_lookup <- jsonlite::read_json("data/tx-lookup.json",
+tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
                                        simplifyVector = TRUE
 ) |>
   dplyr::mutate(
