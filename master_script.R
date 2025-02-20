@@ -221,6 +221,8 @@ impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "attendances", 
 impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "tele_attendances", "Imperial NDG outpatient Tele-attendances Scenarios")
 impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "aae", "arrivals", "Imperial NDG A&E Scenarios")
 
+# clini-plan --------------------------------------------------------------
+
 occupancy_rate <- 0.85
 # create new table ro calculate 85% occupancy bed rate
 adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
