@@ -14,7 +14,7 @@ file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
 # load dataset 
-source(here('R', 'load-data.R'))
+source('load-data.R')
 
 # Inpatient admissions
 create_bar_plot(data, "Inpatient", "Admissions", "Imperial NDG Inpatient Scenarios")
