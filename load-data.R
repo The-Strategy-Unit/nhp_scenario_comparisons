@@ -2,13 +2,13 @@ library(here)
 library(jsonlite)
 library(tidyverse)
 
-# read Json ndg1
-result_ndg1  <- "jsons/Imperialv1-ndg1-20241022_100916.json.gz" |>
+# read Json 1
+result_1  <- here("jsons", scenario_1) |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the
 
-# read Json ndg2
-result_ndg2 <- "jsons/Imperialv1-ndg2-20241023_122644.json.gz" |>
+# read Json 2
+result_2 <- here("jsons", scenario_2) |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the data
 

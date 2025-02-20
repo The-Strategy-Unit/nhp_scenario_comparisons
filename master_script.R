@@ -1,3 +1,5 @@
+scenario_1 <- "Imperialv1-ndg1-20241022_100916.json.gz"
+scenario_2 <- "Imperialv1-ndg2-20241023_122644.json.gz"
 library(jsonlite)
 library(tidyverse)
 library(dplyr)
