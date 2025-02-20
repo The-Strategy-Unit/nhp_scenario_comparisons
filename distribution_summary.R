@@ -15,9 +15,14 @@ lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
 # load dataset 
 #source(here('R', 'load-data.R'))
-data_distribution_summary <- bind_rows(ndg1 = result_ndg1$results$default, ndg2 = result_ndg2$results$default, .id = "scenario")
-#p <- mod_model_results_distribution_get_data(result_ndg1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
-data_distribution_summary <- data_distribution_summary |> select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
+data_distribution_summary <- bind_rows(
+  scenario_1 = result_1$results$default, 
+  scenario_2 = result_2$results$default, 
+  .id = "scenario")
+
+#p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
+data_distribution_summary <- data_distribution_summary |> 
+  select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
       group_by(scenario,pod,measure) |> 
       summarise(principal = sum(principal),
                 lwr_ci = sum(lwr_ci),

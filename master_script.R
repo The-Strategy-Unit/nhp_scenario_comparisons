@@ -141,50 +141,58 @@ activity_detail_bar(data_age_aae_type2_ambulance , "Female", "Imperial NDG Femal
 
 # Walk-in
 activity_detail_bar(data_age_aae_type1_walkin , "Male", "Imperial NDG Male A&E Walk-in", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type1_walkin, "Female", "Imperial NDG Female A&E Walk-in", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type2_walkin , "Male", "Imperial NDG Male A&E  Walk-in", "Age_group","Admissions")
-activity_detail_bar(data_age_aae_type2_walkin , "Female", "Imperial NDG Female A&E Walk-in", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type1_walkin, "Female", "Imperial NDG Female A&E Walk-in", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type2_walkin , "Male", "Imperial NDG Male A&E  Walk-in", "Age_group","Admissions")
+# activity_detail_bar(data_age_aae_type2_walkin , "Female", "Imperial NDG Female A&E Walk-in", "Age_group","Admissions")
 
 
-generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
-                        activity_type_ndg1 = "ip", 
-                        activity_type_ndg2 = "ip",
-                        measure = "admissions", 
-                        title = "Inpatient admissions waterfall scenario comparison", 
-                        x_label = "Admissions", 
-                        y_label = "Change factor")
+# waterfalls --------------------------------------------------------------
 
-generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
-                        activity_type_ndg1 = "ip",
-                        activity_type_ndg2 = "ip",
-                        measure = "beddays", 
-                        title = "Inpatient bed days waterfall scenario comparison", 
-                        x_label = "Bed days", 
-                        y_label = "Change factor")
 
-generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
-                        activity_type_ndg1 = "op",
-                        activity_type_ndg2 = "op",
-                        measure = "attendances", 
-                        title = "Outpatient attendances waterfall scenario comparison", 
-                        x_label = "Attendances", 
-                        y_label = "Change factor")
+generate_waterfall_plot(
+  pcfs_1, 
+  pcfs_2, 
+  activity_type = "ip", 
+  measure = "admissions", 
+  title = "Inpatient admissions waterfall scenario comparison", 
+  x_label = "Admissions", 
+  y_label = "Change factor")
 
-generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
-                        activity_type_ndg1 = "op", 
-                        activity_type_ndg2 = "op",
-                        measure = "tele_attendances",
-                        title = "Outpatient Tele-attendances waterfall scenario comparison", 
-                        x_label = "Tele-attendances", 
-                        y_label = "Change factor")
+generate_waterfall_plot(
+  pcfs_1, 
+  pcfs_2, 
+  activity_type = "ip",
+  measure = "beddays", 
+  title = "Inpatient bed days waterfall scenario comparison", 
+  x_label = "Bed days", 
+  y_label = "Change factor")
 
-generate_waterfall_plot(pcfs_ndg1, pcfs_ndg2, 
-                        activity_type_ndg1 = "aae", 
-                        activity_type_ndg2 = "aae",
-                        measure = "arrivals",
-                        title = "Outpatient arrivals waterfall scenario comparison", 
-                        x_label = "Arrivals", 
-                        y_label = "Change factor")
+generate_waterfall_plot(
+  pcfs_1, 
+  pcfs_2, 
+  activity_type = "op",
+  measure = "attendances", 
+  title = "Outpatient attendances waterfall scenario comparison", 
+  x_label = "Attendances", 
+  y_label = "Change factor")
+
+generate_waterfall_plot(
+  pcfs_1, 
+  pcfs_2, 
+  activity_type = "op", 
+  measure = "tele_attendances",
+  title = "Outpatient Tele-attendances waterfall scenario comparison", 
+  x_label = "Tele-attendances", 
+  y_label = "Change factor")
+
+generate_waterfall_plot(
+  pcfs_1, 
+  pcfs_2, 
+  activity_type = "aae", 
+  measure = "arrivals",
+  title = "Outpatient arrivals waterfall scenario comparison", 
+  x_label = "Arrivals", 
+  y_label = "Change factor")
 
 
 

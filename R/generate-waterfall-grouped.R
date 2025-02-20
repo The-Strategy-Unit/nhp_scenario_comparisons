@@ -49,16 +49,16 @@ mod_principal_change_factor_effects_summarised_grouped <- function(data, measure
     # DIFF: have to calculate the estimates for both scenarios
     dplyr::bind_rows(
       dplyr::tibble(
-        scenario = "ndg1",
+        scenario = "scenario_1",
         change_factor = "Estimate",
-        value = sum(data$value[data$scenario=="ndg1"]),
+        value = sum(data$value[data$scenario=="scenario_1"]),
         hidden = 0,
         colour = "#ec6555"
       ),
       dplyr::tibble(
-        scenario = "ndg2",
+        scenario = "scenario_2",
         change_factor = "Estimate",
-        value = sum(data$value[data$scenario=="ndg2"]),
+        value = sum(data$value[data$scenario=="scenario_2"]),
         hidden = 0,
         colour = "#ec6555"
       )
@@ -73,18 +73,19 @@ mod_principal_change_factor_effects_summarised_grouped <- function(data, measure
     dplyr::ungroup()
 }
 
-generate_waterfall_plot <- function(pcfs_ndg1, pcfs_ndg2, 
-                                    activity_type_ndg1,
-                                    activity_type_ndg2,
-                                    measure = "measure",
-                                    title = "Title", 
-                                    x_label = "X-axis", 
-                                    y_label = "Y-axis") {
+generate_waterfall_plot <- function(
+    pcfs_1, 
+    pcfs_2, 
+    activity_type,
+    measure = "measure",
+    title = "Title", 
+    x_label = "X-axis", 
+    y_label = "Y-axis") {
   
   # Combine the specified IP columns from both data frames
   pcfs <- bind_rows(
-    ndg1 = pcfs_ndg1[[activity_type_ndg1]],
-    ndg2 = pcfs_ndg2[[activity_type_ndg2]],
+    scenario_1 = pcfs_1[[activity_type]],
+    scenario_2 = pcfs_2[[activity_type]],
     .id = "scenario"
   )
   

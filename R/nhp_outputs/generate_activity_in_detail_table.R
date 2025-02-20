@@ -91,25 +91,26 @@ activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab =
 
 
 combine_activity_data <- function(data1, data2, tretspefs, activity_type, pod, measure, agg_col) {
-  dplyr::bind_rows(ndg1 =
-                     generate_activity_in_detail_table(
-                       data = data1,
-                       sites = NULL,
-                       tretspefs = tretspefs,
-                       activity_type = activity_type,
-                       pod = pod,
-                       measure = measure,
-                       agg_col = agg_col
-                     ),
-                   ndg2 = generate_activity_in_detail_table(
-                     data = data2,
-                     sites = NULL,
-                     tretspefs = tretspefs,
-                     activity_type = activity_type,
-                     pod = pod,
-                     measure = measure,
-                     agg_col = agg_col
-                   ),.id = "scenario"
+  dplyr::bind_rows(
+    scenario_1 = generate_activity_in_detail_table(
+      data = data1,
+      sites = NULL,
+      tretspefs = tretspefs,
+      activity_type = activity_type,
+      pod = pod,
+      measure = measure,
+      agg_col = agg_col
+      ),
+    scenario_2 = generate_activity_in_detail_table(
+      data = data2,
+      sites = NULL,
+      tretspefs = tretspefs,
+      activity_type = activity_type,
+      pod = pod,
+      measure = measure,
+      agg_col = agg_col
+      ),
+    .id = "scenario"
   )
 }
 

@@ -37,7 +37,7 @@ df2_ae <- result_ndg2 |>
 df2 <- bind_rows(df2_inpatient,df2_outpatient,df2_ae)
 
 # data processing
-data <- bind_rows(ndg1 = df, ndg2 = df2, .id = "scenario")
+data <- bind_rows(scenario_1 = df1, scenario_2 = df2, .id = "scenario")
 
 
 # get the measure from the pod name
@@ -49,36 +49,40 @@ data <- data |>
 
 
 ## admissions dataset
-data_ndg1_adm <- result_ndg1 |> 
+data_1_adm <- result_1 |> 
   mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
 
-data_ndg2_adm <- result_ndg2 |> 
+data_2_adm <- result_2 |> 
   mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
 
 ## Bed days dataset
-data_ndg1_bed <- result_ndg1 |> 
+data_1_bed <- result_1 |> 
   mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
 
-data_ndg2_bed <- result_ndg2 |> 
+data_2_bed <- result_2 |> 
   mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
 
 # data processing
-data_admissions <- bind_rows(ndg1 = data_ndg1_adm, ndg2 = data_ndg2_adm, .id = "scenario")
-data_bed <- bind_rows(ndg1 = data_ndg1_bed, ndg2 = data_ndg2_bed, .id = "scenario")
+data_admissions <- bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
+data_bed <- bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario")
 data_combine <- bind_rows("Bed Days" = data_bed, admissions = data_admissions, .id = "measure")
 
 
 # Prep a list of summary dataframes, one per activity type
-pcfs_ndg1 <- prepare_all_principal_change_factors(
-  r = result_ndg1,
+pcfs_1 <- prepare_all_principal_change_factors(
+  r = result_1,
   site_codes = list(ip = NULL, op = NULL, aae = NULL)
 )
 
-pcfs_ndg2 <- prepare_all_principal_change_factors(
-  r = result_ndg2,
+pcfs_2 <- prepare_all_principal_change_factors(
+  r = result_2,
   site_codes = list(ip = NULL, op = NULL, aae = NULL)
 )
 
+ndg_variants_sc_comparison <- bind_rows(
+  scenario_1 = as.data.frame(bind_rows(pcfs_1)),
+  scenario_2 = as.data.frame(bind_rows(pcfs_2)),
+  .id = "scenario")
 
 # load the tretspef lookup
 tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
@@ -93,16 +97,16 @@ tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
 
 ## Activity in Details
 
-data_tretspef_elective_admission <- combine_activity_data(data1 = result_ndg1,
-                                                          data2 = result_ndg2,
+data_tretspef_elective_admission <- combine_activity_data(data1 = result_1,
+                                                          data2 = result_2,
                                                           tretspefs = tretspef_lookup,
                                                           activity_type = "ip",
                                                           pod = "ip_elective_admission",
                                                           measure = "admissions",
                                                           agg_col ="tretspef")
 
-data_tretspef_maternity_admission <- combine_activity_data(data1 = result_ndg1,
-                                                           data2 = result_ndg2,
+data_tretspef_maternity_admission <- combine_activity_data(data1 = result_1,
+                                                           data2 = result_2,
                                                            tretspefs = tretspef_lookup,
                                                            activity_type = "ip",
                                                            pod = "ip_maternity_admission",
@@ -110,24 +114,24 @@ data_tretspef_maternity_admission <- combine_activity_data(data1 = result_ndg1,
                                                            agg_col ="tretspef") 
 
 
-data_tretspef_elective_daycase_admission <- combine_activity_data(data1 = result_ndg1,
-                                                                  data2 = result_ndg2,
+data_tretspef_elective_daycase_admission <- combine_activity_data(data1 = result_1,
+                                                                  data2 = result_2,
                                                                   tretspefs = tretspef_lookup,
                                                                   activity_type = "ip",
                                                                   pod = "ip_elective_daycase",
                                                                   measure = "admissions",
                                                                   agg_col ="tretspef") 
 
-data_tretspef_regular_day_attender_admission <- combine_activity_data(data1 = result_ndg1,
-                                                                      data2 = result_ndg2,
+data_tretspef_regular_day_attender_admission <- combine_activity_data(data1 = result_1,
+                                                                      data2 = result_2,
                                                                       tretspefs = tretspef_lookup,
                                                                       activity_type = "ip",
                                                                       pod = "ip_regular_day_attender",
                                                                       measure = "admissions",
                                                                       agg_col ="tretspef")
 
-data_tretspef_non_elective_admission <- combine_activity_data(data1 = result_ndg1,
-                                                              data2 = result_ndg2,
+data_tretspef_non_elective_admission <- combine_activity_data(data1 = result_1,
+                                                              data2 = result_2,
                                                               tretspefs = tretspef_lookup,
                                                               activity_type = "ip",
                                                               pod = "ip_non-elective_admission",
@@ -135,16 +139,16 @@ data_tretspef_non_elective_admission <- combine_activity_data(data1 = result_ndg
                                                               agg_col ="tretspef") 
 
 
-data_tretspef_elective_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                        data2 = result_ndg2,
+data_tretspef_elective_beddays <- combine_activity_data(data1 = result_1,
+                                                        data2 = result_2,
                                                         tretspefs = tretspef_lookup,
                                                         activity_type = "ip",
                                                         pod = "ip_elective_admission",
                                                         measure = "beddays",
                                                         agg_col ="tretspef")
 
-data_tretspef_maternity_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                         data2 = result_ndg2,
+data_tretspef_maternity_beddays <- combine_activity_data(data1 = result_1,
+                                                         data2 = result_2,
                                                          tretspefs = tretspef_lookup,
                                                          activity_type = "ip",
                                                          pod = "ip_maternity_admission",
@@ -152,40 +156,40 @@ data_tretspef_maternity_beddays <- combine_activity_data(data1 = result_ndg1,
                                                          agg_col ="tretspef") 
 
 
-data_tretspef_elective_daycase_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                                data2 = result_ndg2,
+data_tretspef_elective_daycase_beddays <- combine_activity_data(data1 = result_1,
+                                                                data2 = result_2,
                                                                 tretspefs = tretspef_lookup,
                                                                 activity_type = "ip",
                                                                 pod = "ip_elective_daycase",
                                                                 measure = "beddays",
                                                                 agg_col ="tretspef") 
 
-data_tretspef_regular_day_attender_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                                    data2 = result_ndg2,
+data_tretspef_regular_day_attender_beddays <- combine_activity_data(data1 = result_1,
+                                                                    data2 = result_2,
                                                                     tretspefs = tretspef_lookup,
                                                                     activity_type = "ip",
                                                                     pod = "ip_regular_day_attender",
                                                                     measure = "beddays",
                                                                     agg_col ="tretspef")
 
-data_tretspef_non_elective_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                            data2 = result_ndg2,
+data_tretspef_non_elective_beddays <- combine_activity_data(data1 = result_1,
+                                                            data2 = result_2,
                                                             tretspefs = tretspef_lookup,
                                                             activity_type = "ip",
                                                             pod = "ip_non-elective_admission",
                                                             measure = "beddays",
                                                             agg_col ="tretspef") 
 
-data_tretspef_op_procedure_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                               data2 = result_ndg2,
+data_tretspef_op_procedure_attendance <- combine_activity_data(data1 = result_1,
+                                                               data2 = result_2,
                                                                tretspefs = tretspef_lookup,
                                                                activity_type = "op",
                                                                pod = "op_procedure",
                                                                measure = "attendances",
                                                                agg_col ="tretspef")
 
-data_tretspef_op_followup_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                              data2 = result_ndg2,
+data_tretspef_op_followup_attendance <- combine_activity_data(data1 = result_1,
+                                                              data2 = result_2,
                                                               tretspefs = tretspef_lookup,
                                                               activity_type = "op",
                                                               pod = "op_follow-up",
@@ -193,24 +197,24 @@ data_tretspef_op_followup_attendance <- combine_activity_data(data1 = result_ndg
                                                               agg_col ="tretspef") 
 
 
-data_tretspef_op_first_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                           data2 = result_ndg2,
+data_tretspef_op_first_attendance <- combine_activity_data(data1 = result_1,
+                                                           data2 = result_2,
                                                            tretspefs = tretspef_lookup,
                                                            activity_type = "op",
                                                            pod = "op_first",
                                                            measure = "attendances",
                                                            agg_col ="tretspef") 
 
-data_tretspef_op_procedure_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                                    data2 = result_ndg2,
+data_tretspef_op_procedure_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                                    data2 = result_2,
                                                                     tretspefs = tretspef_lookup,
                                                                     activity_type = "op",
                                                                     pod = "op_procedure",
                                                                     measure = "tele_attendances",
                                                                     agg_col ="tretspef")
 
-data_tretspef_op_followup_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                                   data2 = result_ndg2,
+data_tretspef_op_followup_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                                   data2 = result_2,
                                                                    tretspefs = tretspef_lookup,
                                                                    activity_type = "op",
                                                                    pod = "op_follow-up",
@@ -218,8 +222,8 @@ data_tretspef_op_followup_tele_attendance <- combine_activity_data(data1 = resul
                                                                    agg_col ="tretspef") 
 
 
-data_tretspef_op_first_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                                data2 = result_ndg2,
+data_tretspef_op_first_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                                data2 = result_2,
                                                                 tretspefs = tretspef_lookup,
                                                                 activity_type = "op",
                                                                 pod = "op_first",
@@ -227,156 +231,153 @@ data_tretspef_op_first_tele_attendance <- combine_activity_data(data1 = result_n
                                                                 agg_col ="tretspef") 
 
 
-data_age_elective_admission <- combine_activity_data(data1 = result_ndg1,
-                                                     data2 = result_ndg2,
+# activity in detail - age group ------------------------------------------
+
+data_age_elective_admission <- combine_activity_data(data1 = result_1,
+                                                     data2 = result_2,
                                                      activity_type = "ip",
                                                      pod = "ip_elective_admission",
                                                      measure = "admissions",
                                                      agg_col ="age_group")
 
-data_age_maternity_admission <- combine_activity_data(data1 = result_ndg1,
-                                                      data2 = result_ndg2,
+data_age_maternity_admission <- combine_activity_data(data1 = result_1,
+                                                      data2 = result_2,
                                                       activity_type = "ip",
                                                       pod = "ip_maternity_admission",
                                                       measure = "admissions",
                                                       agg_col ="age_group") 
 
 
-data_age_elective_daycase_admission <- combine_activity_data(data1 = result_ndg1,
-                                                             data2 = result_ndg2,
+data_age_elective_daycase_admission <- combine_activity_data(data1 = result_1,
+                                                             data2 = result_2,
                                                              activity_type = "ip",
                                                              pod = "ip_elective_daycase",
                                                              measure = "admissions",
                                                              agg_col ="age_group") 
 
-data_age_regular_day_attender_admission <- combine_activity_data(data1 = result_ndg1,
-                                                                 data2 = result_ndg2,
+data_age_regular_day_attender_admission <- combine_activity_data(data1 = result_1,
+                                                                 data2 = result_2,
                                                                  activity_type = "ip",
                                                                  pod = "ip_regular_day_attender",
                                                                  measure = "admissions",
                                                                  agg_col ="age_group")
 
-data_age_non_elective_admission <- combine_activity_data(data1 = result_ndg1,
-                                                         data2 = result_ndg2,
+data_age_non_elective_admission <- combine_activity_data(data1 = result_1,
+                                                         data2 = result_2,
                                                          activity_type = "ip",
                                                          pod = "ip_non-elective_admission",
                                                          measure = "admissions",
                                                          agg_col ="age_group")
 
-data_age_elective_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                   data2 = result_ndg2,
+data_age_elective_beddays <- combine_activity_data(data1 = result_1,
+                                                   data2 = result_2,
                                                    activity_type = "ip",
                                                    pod = "ip_elective_admission",
                                                    measure = "beddays",
                                                    agg_col ="age_group")
 
-data_age_maternity_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                    data2 = result_ndg2,
+data_age_maternity_beddays <- combine_activity_data(data1 = result_1,
+                                                    data2 = result_2,
                                                     activity_type = "ip",
                                                     pod = "ip_maternity_admission",
                                                     measure = "beddays",
                                                     agg_col ="age_group") 
 
 
-data_age_elective_daycase_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                           data2 = result_ndg2,
+data_age_elective_daycase_beddays <- combine_activity_data(data1 = result_1,
+                                                           data2 = result_2,
                                                            activity_type = "ip",
                                                            pod = "ip_elective_daycase",
                                                            measure = "beddays",
                                                            agg_col ="age_group") 
 
-data_age_regular_day_attender_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                               data2 = result_ndg2,
+data_age_regular_day_attender_beddays <- combine_activity_data(data1 = result_1,
+                                                               data2 = result_2,
                                                                activity_type = "ip",
                                                                pod = "ip_regular_day_attender",
                                                                measure = "beddays",
                                                                agg_col ="age_group")
 
-data_age_non_elective_beddays <- combine_activity_data(data1 = result_ndg1,
-                                                       data2 = result_ndg2,
+data_age_non_elective_beddays <- combine_activity_data(data1 = result_1,
+                                                       data2 = result_2,
                                                        activity_type = "ip",
                                                        pod = "ip_non-elective_admission",
                                                        measure = "beddays",
                                                        agg_col ="age_group") 
 
-data_age_op_procedure_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                          data2 = result_ndg2,
+data_age_op_procedure_attendance <- combine_activity_data(data1 = result_1,
+                                                          data2 = result_2,
                                                           activity_type = "op",
                                                           pod = "op_procedure",
                                                           measure = "attendances",
                                                           agg_col ="age_group")
 
-data_age_op_followup_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                         data2 = result_ndg2,
+data_age_op_followup_attendance <- combine_activity_data(data1 = result_1,
+                                                         data2 = result_2,
                                                          activity_type = "op",
                                                          pod = "op_follow-up",
                                                          measure = "attendances",
                                                          agg_col ="age_group") 
 
 
-data_age_op_first_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                      data2 = result_ndg2,
+data_age_op_first_attendance <- combine_activity_data(data1 = result_1,
+                                                      data2 = result_2,
                                                       activity_type = "op",
                                                       pod = "op_first",
                                                       measure = "attendances",
                                                       agg_col ="age_group")
 
 
-data_age_op_procedure_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                               data2 = result_ndg2,
+data_age_op_procedure_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                               data2 = result_2,
                                                                activity_type = "op",
                                                                pod = "op_procedure",
                                                                measure = "tele_attendances",
                                                                agg_col ="age_group")
 
-data_age_op_followup_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                              data2 = result_ndg2,
+data_age_op_followup_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                              data2 = result_2,
                                                               activity_type = "op",
                                                               pod = "op_follow-up",
                                                               measure = "tele_attendances",
                                                               agg_col ="age_group") 
 
 
-data_age_op_first_tele_attendance <- combine_activity_data(data1 = result_ndg1,
-                                                           data2 = result_ndg2,
+data_age_op_first_tele_attendance <- combine_activity_data(data1 = result_1,
+                                                           data2 = result_2,
                                                            activity_type = "op",
                                                            pod = "op_first",
                                                            measure = "tele_attendances",
                                                            agg_col ="age_group") 
 
-data_age_aae_type1_ambulance <- combine_activity_data(data1 = result_ndg1,
-                                                      data2 = result_ndg2,
+data_age_aae_type1_ambulance <- combine_activity_data(data1 = result_1,
+                                                      data2 = result_2,
                                                       activity_type = "aae",
                                                       pod = "aae_type-01",
                                                       measure = "ambulance",
                                                       agg_col ="age_group")
 
-data_age_aae_type2_ambulance <- combine_activity_data(data1 = result_ndg1,
-                                                      data2 = result_ndg2,
+data_age_aae_type2_ambulance <- combine_activity_data(data1 = result_1,
+                                                      data2 = result_2,
                                                       activity_type = "aae",
                                                       pod = "aae_type-02",
                                                       measure = "ambulance",
                                                       agg_col ="age_group")
 
-data_age_aae_type1_walkin <- combine_activity_data(data1 = result_ndg1,
-                                                   data2 = result_ndg2,
+data_age_aae_type1_walkin <- combine_activity_data(data1 = result_1,
+                                                   data2 = result_2,
                                                    activity_type = "aae",
                                                    pod = "aae_type-01",
                                                    measure = "walk-in",
                                                    agg_col ="age_group")
 
-data_age_aae_type2_walkin <- combine_activity_data(data1 = result_ndg1,
-                                                   data2 = result_ndg2,
+data_age_aae_type2_walkin <- combine_activity_data(data1 = result_1,
+                                                   data2 = result_2,
                                                    activity_type = "aae",
                                                    pod = "aae_type-02",
                                                    measure = "walk-in",
                                                    agg_col ="age_group")
 
-# we combine the data together at this stage of the process
-ndg_variants_sc_comparison <- bind_rows(
-  ndg1 = as.data.frame(bind_rows(pcfs_ndg1)),
-  ndg2 = as.data.frame(bind_rows(pcfs_ndg2)),
-  .id = "scenario")
 
 
 # Cliniplan Nottingham ICB dataset
