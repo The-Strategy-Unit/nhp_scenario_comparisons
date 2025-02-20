@@ -3,12 +3,12 @@ library(jsonlite)
 library(tidyverse)
 
 # read Json ndg1
-result_ndg1  <- "data/Imperialv1-ndg1-20241022_100916.json.gz" |>
+result_ndg1  <- "jsonsImperialv1-ndg1-20241022_100916.json.gz" |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the
 
 # read Json ndg2
-result_ndg2 <- "data/Imperialv1-ndg2-20241023_122644.json.gz" |>
+result_ndg2 <- "jsonsImperialv1-ndg2-20241023_122644.json.gz" |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the data
 
@@ -380,7 +380,7 @@ ndg_variants_sc_comparison <- bind_rows(
 
 
 # Cliniplan Nottingham ICB dataset
-result_notts  <- "data/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
+result_notts  <- "jsonsrx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
   jsonlite::read_json() |>
   parse_results() 
 
