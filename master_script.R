@@ -121,6 +121,13 @@ impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "attendances", 
 impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "tele_attendances", "Imperial NDG outpatient Tele-attendances Scenarios")
 impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "aae", "arrivals", "Imperial NDG A&E Scenarios")
 
+
+# CI bar plots ------------------------------------------------------------
+
+# can do this for each pod and it will generate the value for each measure with 
+# an error line for the 80% CI
+create_bar_plot_distribution(data_distribution_summary,"ip_elective_admission","Imperial NDG Inpatient elective admissions Scenarios")
+
 # clini-plan --------------------------------------------------------------
 
 occupancy_rate <- 0.85
