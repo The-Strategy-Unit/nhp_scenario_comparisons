@@ -75,6 +75,16 @@ ndg_variants_sc_comparison <- bind_rows(
 
 # activity in detail  -----------------------------------------------------
 
+tretspef_lookup <- jsonlite::read_json("supporting_data/tx-lookup.json",
+                                       simplifyVector = TRUE
+) |>
+  dplyr::mutate(
+    dplyr::across("Description", \(x) stringr::str_remove(x, " Service$")),
+    dplyr::across("Description", \(x) paste0(.data$Code, ": ", .data$Description)),
+  ) |>
+  dplyr::select(-"Group") |>
+  dplyr::add_row(Code = "&", Description = "Not known")  # as per HES dictionary 
+
 ## We get a list of all the combinations of activity type, pod, measure and 
 # aggregation we are interested in
 
@@ -104,7 +114,10 @@ aae_parameter_matrix <- expand.grid(
   stringsAsFactors = FALSE)
 
 # combine them all together
-parameter_matrix <- bind_rows(ip_combos, op_combos, aae_combos)
+parameter_matrix <- bind_rows(
+  ip_parameter_matrix,
+  op_parameter_matrix, 
+  aae_parameter_matrix)
 
 
 
