@@ -153,6 +153,44 @@ data_distribution_summary <- data_distribution_summary |>
     )
   ) |> relocate(activity_type, .before = 1)
 
+
+
+# model run distributions --------------------------------------------------
+
+scenario_1_ip_admission_dist <- get_model_run_distribution(
+  result_1, 
+  pod = c("ip_elective_daycase", 
+          "ip_non-elective_admission",
+          "ip_regular_day_attender", 
+          "ip_elective_admission", 
+          "ip_maternity_admission"
+  ),
+  measure = "admissions",
+  site_codes = NULL
+)
+
+# ndg 2
+scenario_2_ip_admission_dist <- get_model_run_distribution(
+  result_2, 
+  pod = c("ip_elective_daycase", 
+          "ip_non-elective_admission",
+          "ip_regular_day_attender", 
+          "ip_elective_admission", 
+          "ip_maternity_admission"
+  ),
+  measure = "admissions",
+  site_codes = NULL
+)
+
+# join them together
+ip_admissions_dist_comparison <- dplyr::bind_rows(
+  scenario_1 = scenario_1_ip_admission_dist,
+  scenario_2 = scenario_2_ip_admission_dist,
+  .id = "scenario"
+)
+
+
+
 # Cliniplan stuff ---------------------------------------------------------
 
 result_notts  <- "jsons/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
