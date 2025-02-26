@@ -1,0 +1,947 @@
+[
+  {
+    "Code": "100",
+    "Description": "General Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "101",
+    "Description": "Urology Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "102",
+    "Description": "Transplant Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "103",
+    "Description": "Breast Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "104",
+    "Description": "Colorectal Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "105",
+    "Description": "Hepatobiliary and Pancreatic Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "106",
+    "Description": "Upper Gastrointestinal Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "107",
+    "Description": "Vascular Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "108",
+    "Description": "Spinal Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "109",
+    "Description": "Bariatric Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "110",
+    "Description": "Trauma and Orthopaedic Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "111",
+    "Description": "Orthopaedic Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "113",
+    "Description": "Endocrine Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "115",
+    "Description": "Trauma Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "120",
+    "Description": "Ear Nose and Throat Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "130",
+    "Description": "Ophthalmology Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "140",
+    "Description": "Oral Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "141",
+    "Description": "Restorative Dentistry Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "143",
+    "Description": "Orthodontic Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "144",
+    "Description": "Maxillofacial Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "145",
+    "Description": "Oral and Maxillofacial Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "150",
+    "Description": "Neurosurgical Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "160",
+    "Description": "Plastic Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "161",
+    "Description": "Burns Care Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "170",
+    "Description": "Cardiothoracic Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "172",
+    "Description": "Cardiac Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "173",
+    "Description": "Thoracic Surgery Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "174",
+    "Description": "Cardiothoracic Transplantation Service",
+    "Group": "Surgical Specialties"
+  },
+  {
+    "Code": "191",
+    "Description": "Pain Management Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "142",
+    "Description": "Paediatric Dentistry Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "171",
+    "Description": "Paediatric Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "211",
+    "Description": "Paediatric Urology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "212",
+    "Description": "Paediatric Transplantation Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "213",
+    "Description": "Paediatric Gastrointestinal Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "214",
+    "Description": "Paediatric Trauma and Orthopaedic Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "215",
+    "Description": "Paediatric Ear Nose and Throat Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "216",
+    "Description": "Paediatric Ophthalmology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "217",
+    "Description": "Paediatric Oral and Maxillofacial Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "218",
+    "Description": "Paediatric Neurosurgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "219",
+    "Description": "Paediatric Plastic Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "220",
+    "Description": "Paediatric Burns Care Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "221",
+    "Description": "Paediatric Cardiac Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "222",
+    "Description": "Paediatric Thoracic Surgery Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "223",
+    "Description": "Paediatric Epilepsy Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "230",
+    "Description": "Paediatric Clinical Pharmacology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "240",
+    "Description": "Paediatric Palliative Medicine Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "241",
+    "Description": "Paediatric Pain Management Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "242",
+    "Description": "Paediatric Intensive Care Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "250",
+    "Description": "Paediatric Hepatology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "251",
+    "Description": "Paediatric Gastroenterology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "252",
+    "Description": "Paediatric Endocrinology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "253",
+    "Description": "Paediatric Clinical Haematology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "254",
+    "Description": "Paediatric Audio Vestibular Medicine Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "255",
+    "Description": "Paediatric Clinical Immunology and Allergy Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "256",
+    "Description": "Paediatric Infectious Diseases Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "257",
+    "Description": "Paediatric Dermatology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "258",
+    "Description": "Paediatric Respiratory Medicine Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "259",
+    "Description": "Paediatric Nephrology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "260",
+    "Description": "Paediatric Medical Oncology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "261",
+    "Description": "Paediatric Inherited Metabolic Medicine Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "262",
+    "Description": "Paediatric Rheumatology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "263",
+    "Description": "Paediatric Diabetes Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "264",
+    "Description": "Paediatric Cystic Fibrosis Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "270",
+    "Description": "Paediatric Emergency Medicine Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "280",
+    "Description": "Paediatric Interventional Radiology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "290",
+    "Description": "Community Paediatric Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "291",
+    "Description": "Paediatric Neurodisability Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "321",
+    "Description": "Paediatric Cardiology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "421",
+    "Description": "Paediatric Neurology Service",
+    "Group": "Other Children's Specialist Services"
+  },
+  {
+    "Code": "180",
+    "Description": "Emergency Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "190",
+    "Description": "Anaesthetic Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "192",
+    "Description": "Intensive Care Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "200",
+    "Description": "Aviation and Space Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "300",
+    "Description": "General Internal Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "301",
+    "Description": "Gastroenterology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "302",
+    "Description": "Endocrinology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "303",
+    "Description": "Clinical Haematology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "304",
+    "Description": "Clinical Physiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "305",
+    "Description": "Clinical Pharmacology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "306",
+    "Description": "Hepatology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "307",
+    "Description": "Diabetes Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "308",
+    "Description": "Blood and Marrow Transplantation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "309",
+    "Description": "Haemophilia Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "310",
+    "Description": "Audio Vestibular Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "311",
+    "Description": "Clinical Genetics Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "313",
+    "Description": "Clinical Immunology and Allergy Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "314",
+    "Description": "Rehabilitation Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "315",
+    "Description": "Palliative Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "316",
+    "Description": "Clinical Immunology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "317",
+    "Description": "Allergy Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "318",
+    "Description": "Intermediate Care Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "319",
+    "Description": "Respite Care Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "320",
+    "Description": "Cardiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "322",
+    "Description": "Clinical Microbiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "323",
+    "Description": "Spinal Injuries Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "324",
+    "Description": "Anticoagulant Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "325",
+    "Description": "Sport and Exercise Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "326",
+    "Description": "Acute Internal Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "327",
+    "Description": "Cardiac Rehabilitation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "328",
+    "Description": "Stroke Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "329",
+    "Description": "Transient Ischaemic Attack Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "330",
+    "Description": "Dermatology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "331",
+    "Description": "Congenital Heart Disease Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "333",
+    "Description": "Rare Disease Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "335",
+    "Description": "Inherited Metabolic Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "340",
+    "Description": "Respiratory Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "341",
+    "Description": "Respiratory Physiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "342",
+    "Description": "Pulmonary Rehabilitation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "343",
+    "Description": "Adult Cystic Fibrosis Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "344",
+    "Description": "Complex Specialised Rehabilitation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "345",
+    "Description": "Specialist Rehabilitation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "346",
+    "Description": "Local Specialist Rehabilitation Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "347",
+    "Description": "Sleep Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "348",
+    "Description": "Post-COVID-19 Syndrome Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "350",
+    "Description": "Infectious Diseases Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "352",
+    "Description": "Tropical Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "360",
+    "Description": "Genitourinary Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "361",
+    "Description": "Renal Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "370",
+    "Description": "Medical Oncology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "371",
+    "Description": "Nuclear Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "400",
+    "Description": "Neurology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "401",
+    "Description": "Clinical Neurophysiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "410",
+    "Description": "Rheumatology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "420",
+    "Description": "Paediatric Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "422",
+    "Description": "Neonatal Critical Care Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "424",
+    "Description": "Well Baby Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "430",
+    "Description": "Elderly Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "431",
+    "Description": "Orthogeriatric Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "450",
+    "Description": "Dental Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "451",
+    "Description": "Special Care Dentistry Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "460",
+    "Description": "Medical Ophthalmology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "461",
+    "Description": "Ophthalmic and Vision Science Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "501",
+    "Description": "Obstetrics Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "502",
+    "Description": "Gynaecology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "503",
+    "Description": "Gynaecological Oncology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "504",
+    "Description": "Community Sexual and Reproductive Health Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "505",
+    "Description": "Fetal Medicine Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "510",
+    "Description": "Retired but retained for historical purposes",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "520",
+    "Description": "Retired but retained for historical purposes",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "560",
+    "Description": "Midwifery Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "610",
+    "Description": "Retired but retained for historical purposes",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "620",
+    "Description": "Retired but retained for historical purposes",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "656",
+    "Description": "Clinical Psychology Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "700",
+    "Description": "Learning Disability Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "710",
+    "Description": "Adult Mental Health Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "711",
+    "Description": "Child and Adolescent Psychiatry Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "712",
+    "Description": "Forensic Psychiatry Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "713",
+    "Description": "Medical Psychotherapy Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "715",
+    "Description": "Old Age Psychiatry Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "720",
+    "Description": "Eating Disorders Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "721",
+    "Description": "Addiction Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "722",
+    "Description": "Liaison Psychiatry Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "723",
+    "Description": "Psychiatric Intensive Care Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "724",
+    "Description": "Perinatal Mental Health Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "725",
+    "Description": "Mental Health Recovery and Rehabilitation Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "726",
+    "Description": "Mental Health Dual Diagnosis Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "727",
+    "Description": "Dementia Assessment Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "730",
+    "Description": "Neuropsychiatry Service",
+    "Group": "Mental Health Services"
+  },
+  {
+    "Code": "800",
+    "Description": "Clinical Oncology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "810",
+    "Description": "Radiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "811",
+    "Description": "Interventional Radiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "812",
+    "Description": "Diagnostic Imaging Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "822",
+    "Description": "Chemical Pathology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "823",
+    "Description": "Haematology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "831",
+    "Description": "Medical Microbiology and Virology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "832",
+    "Description": "Neuropathology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "833",
+    "Description": "Medical Microbiology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "834",
+    "Description": "Medical Virology Service",
+    "Group": "Medical Specialties"
+  },
+  {
+    "Code": "650",
+    "Description": "Physiotherapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "651",
+    "Description": "Occupational Therapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "652",
+    "Description": "Speech and Language Therapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "653",
+    "Description": "Podiatry Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "654",
+    "Description": "Dietetics Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "655",
+    "Description": "Orthoptics Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "657",
+    "Description": "Prosthetics Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "658",
+    "Description": "Orthotics Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "659",
+    "Description": "Dramatherapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "660",
+    "Description": "Art Therapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "661",
+    "Description": "Music Therapy Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "662",
+    "Description": "Optometry Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "663",
+    "Description": "Podiatric Surgery Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "670",
+    "Description": "Urological Physiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "673",
+    "Description": "Vascular Physiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "675",
+    "Description": "Cardiac Physiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "677",
+    "Description": "Gastrointestinal Physiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "840",
+    "Description": "Audiology Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "900",
+    "Description": "Community Medicine Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "920",
+    "Description": "Diabetic Education Service",
+    "Group": "Other Services"
+  },
+  {
+    "Code": "990",
+    "Description": "Joint Consultant Clinics Service",
+    "Group": "Other Services"
+  }
+]

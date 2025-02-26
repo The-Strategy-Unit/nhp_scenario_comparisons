@@ -9,7 +9,7 @@
 #' @examples \dontrun{construct_scheme_name("XYZ")}
 make_scheme_name <- function(
     scheme_code,
-    lookup_path = "data/scheme-lookup.csv",
+    lookup_path = "supporting_data/scheme-lookup.csv",
     as_filestring = FALSE
 ) {
 

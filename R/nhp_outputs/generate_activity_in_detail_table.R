@@ -91,25 +91,51 @@ activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab =
 
 
 combine_activity_data <- function(data1, data2, tretspefs, activity_type, pod, measure, agg_col) {
-  dplyr::bind_rows(ndg1 =
-                     generate_activity_in_detail_table(
-                       data = data1,
-                       sites = NULL,
-                       tretspefs = tretspefs,
-                       activity_type = activity_type,
-                       pod = pod,
-                       measure = measure,
-                       agg_col = agg_col
-                     ),
-                   ndg2 = generate_activity_in_detail_table(
-                     data = data2,
-                     sites = NULL,
-                     tretspefs = tretspefs,
-                     activity_type = activity_type,
-                     pod = pod,
-                     measure = measure,
-                     agg_col = agg_col
-                   ),.id = "scenario"
+  dplyr::bind_rows(
+    scenario_1 = generate_activity_in_detail_table(
+      data = data1,
+      sites = NULL,
+      tretspefs = tretspefs,
+      activity_type = activity_type,
+      pod = pod,
+      measure = measure,
+      agg_col = agg_col
+      ),
+    scenario_2 = generate_activity_in_detail_table(
+      data = data2,
+      sites = NULL,
+      tretspefs = tretspefs,
+      activity_type = activity_type,
+      pod = pod,
+      measure = measure,
+      agg_col = agg_col
+      ),
+    .id = "scenario"
   )
 }
 
+# Function to generate names based on combinations of parameters
+generate_name <- function(pod, measure, agg_col) {
+  paste(pod, measure, agg_col, sep = "_")
+}
+
+# Function to apply `combine_activity_data` over all combinations and store results as a named list
+run_combinations_list <- function(parameters, data1, data2) {
+  results <- pmap(
+    parameters, 
+    ~ combine_activity_data(
+      data1 = data1,
+      data2 = data2,
+      tretspefs = tretspef_lookup,
+      activity_type = ..1,
+      pod = ..2,
+      measure = ..3,
+      agg_col = ..4
+    )
+  )
+  
+  # Set names based on the combinations
+  names(results) <- pmap_chr(select(parameters, pod, measure, agg_col), generate_name)
+  
+  return(results)
+}
