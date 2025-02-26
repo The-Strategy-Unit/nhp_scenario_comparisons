@@ -126,7 +126,7 @@ parameter_matrix <- bind_rows(
 detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
 
 
-# distributions -----------------------------------------------------------
+# 80% CI -----------------------------------------------------------
 
 # load dataset 
 data_distribution_summary <- bind_rows(
