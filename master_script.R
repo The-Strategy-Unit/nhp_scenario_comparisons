@@ -128,6 +128,15 @@ impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "aae", "arrivals", "I
 # an error line for the 80% CI
 create_bar_plot_distribution(data_distribution_summary,"ip_elective_admission","Imperial NDG Inpatient elective admissions Scenarios")
 
+
+# ecdf and beeswarm -------------------------------------------------------
+
+mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) +
+  ggtitle("Beeswarm plot for two scenarios")
+
+mod_model_results_distribution_ecdf_plot_scenario(ip_admissions_dist_comparison, show_origin = FALSE) +
+  ggtitle("ECDF plot two scenarios")
+
 # clini-plan --------------------------------------------------------------
 
 occupancy_rate <- 0.85
