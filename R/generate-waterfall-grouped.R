@@ -113,8 +113,7 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     ggtitle(title_text) +
     ylab("Point of delivery") +
     xlab(chosen_measure) +
-    scale_fill_discrete("Scenario") +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario") +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
     easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
     theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +

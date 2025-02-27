@@ -12,6 +12,10 @@ result_2 <- here("jsons", scenario_2) |>
   jsonlite::read_json() |>
   parse_results()  # will apply necessary patches to the data
 
+# grab the scenario_names
+scenario_1_name <- result_1$params$scenario
+scenario_2_name <- result_2$params$scenario
+
 df1 <- mod_principal_summary_data(result_1, sites = NULL)
 df2 <- mod_principal_summary_data(result_2, sites = NULL)
 
