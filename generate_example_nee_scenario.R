@@ -78,3 +78,7 @@ nee |>
 # <dbl>   <dbl>
 # 83.6    99.6
 
+## changing the meta data
+nottingham_nee$params$user <- "ghobro"
+nottingham_nee$params$scenario <- "20240227-Nottingham-NEE-example-scenario"
+
