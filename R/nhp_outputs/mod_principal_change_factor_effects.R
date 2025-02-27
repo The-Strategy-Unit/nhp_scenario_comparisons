@@ -2,6 +2,9 @@
 
 
 mod_principal_change_factor_effects_cf_plot <- function(data) {
+  
+  labels <- c("scenario_1" = scenario_1_name, "scenario_2" = scenario_2_name)
+  
   data |>
     dplyr::mutate(
       tooltip = ifelse(
@@ -35,7 +38,10 @@ mod_principal_change_factor_effects_cf_plot <- function(data) {
       labels = scales::comma
     ) +
     ggplot2::scale_y_discrete(labels = snakecase::to_title_case) +
-    ggplot2::labs(x = "", y = "") + ggplot2::facet_grid(rows = vars(scenario)) 
+    ggplot2::labs(x = "", y = "") + 
+    ggplot2::facet_grid(
+      rows = vars(scenario),
+      labeller = labeller(scenario = labels))
 }
 
 mod_principal_change_factor_effects_ind_plot <- function(data, change_factor, colour, title, x_axis_label) {

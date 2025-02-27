@@ -7,7 +7,7 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
     ggtitle(title_text) +
     ylab("measure") +
     xlab("Principal Projection") +
-    scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario") +
+    scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario", labels = c(scenario_1_name, scenario_2_name)) +
     easy_center_title() + 
     theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
@@ -44,7 +44,8 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, show_ori
       )
     ) +
     # new line here for manually setting the colours
-    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue")) +
+    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"), 
+                                labels = c(scenario_1_name, scenario_2_name)) +
     ggplot2::geom_hline(yintercept = b, colour = "dimgrey") +
     # two lines instead of 1 below for the separate principal projections
     ggplot2::geom_hline(yintercept = p1, linetype = "dashed", colour = "red") +
@@ -131,7 +132,8 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(data, show_origin)
       expand = c(0, 0)
     ) +
     ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
-    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue")) 
+    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"),
+                                labels = c(scenario_1_name, scenario_2_name)) 
     
 }
 

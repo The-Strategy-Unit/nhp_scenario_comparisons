@@ -78,8 +78,7 @@ activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab =
     ggtitle(title_text) +
     ylab(ylab) +
     xlab(xlab) +
-    scale_fill_discrete("Scenario") +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario") +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
     easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
     theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
