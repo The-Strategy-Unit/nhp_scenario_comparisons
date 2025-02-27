@@ -45,7 +45,9 @@ update_intervals <- function(r, lookup) {
     for (strategy in valid_strategies) {
       match_row <- lookup[lookup$param_name == strategy, ]
       if (nrow(match_row) > 0) {
-        sublist[[strategy]]$interval <- list(match_row$LowerCI, match_row$UpperCI)
+        sublist[[strategy]]$interval <- list(
+          match_row$LowerCI/100, 
+          match_row$UpperCI/100)
       }
     }
     
