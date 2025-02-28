@@ -1,3 +1,20 @@
+---
+title: "Scenario comparison summary"
+subtitle: "An update on project to date"
+author: "Gabriel Hobro and Fikriyudin Mufasir"
+date: 2025-03-01
+date-format: "MMMM YYYY"
+format: 
+  html:
+    warning: false
+    include: false
+    message: false
+    embed-resources: true
+    toc: true
+    code-fold: true
+---
+
+
 scenario_1 <- "Imperialv1-ndg1-20241022_100916.json.gz"
 scenario_2 <- "Imperialv1-ndg2-20241023_122644.json.gz"
 # packages ----------------------------------------------------------------
