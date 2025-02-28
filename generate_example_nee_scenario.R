@@ -82,3 +82,19 @@ nee |>
 nottingham_nee$params$user <- "ghobro"
 nottingham_nee$params$scenario <- "20240227-Nottingham-NEE-example-scenario"
 
+
+# running the JSONs  ------------------------------------------------------
+
+httr::POST(
+  Sys.getenv("AZ_NHP_API"),
+  path = c("api", "run_model"),
+  query = list(
+    app_version = "latest",
+    code = Sys.getenv("AZ_NHP_API_CODE")
+  ),
+  body = nottingham_nee$params,
+  encode = "json"
+)
+
+# NB: we can check the status of the run at the link below:
+# https://nhp-api.azurewebsites.net/api/list_current_model_runs?code=i0PyXFnGyIAASS0roKcrSRVSt-NJN29Iv_bdvK0fsIK4AzFuX2065w==
