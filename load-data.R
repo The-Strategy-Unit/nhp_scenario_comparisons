@@ -140,11 +140,11 @@ data_distribution_summary <- bind_rows(
 
 #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
 data_distribution_summary <- data_distribution_summary |> 
-  select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
+  select(scenario,pod,measure,principal,lwr_pi,upr_pi) |> 
   group_by(scenario,pod,measure) |> 
   summarise(principal = sum(principal),
-            lwr_ci = sum(lwr_ci),
-            upr_ci = sum(upr_ci)) |> 
+            lwr_ci = sum(lwr_pi),
+            upr_ci = sum(upr_pi)) |> 
   ungroup()
 
 data_distribution_summary <- data_distribution_summary |> 
@@ -170,7 +170,7 @@ scenario_1_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  site_codes = NULL
+  sites = NULL
 )
 
 # ndg 2
@@ -183,7 +183,7 @@ scenario_2_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  site_codes = NULL
+  sites = NULL
 )
 
 # join them together
@@ -199,7 +199,7 @@ ip_admissions_dist_comparison <- dplyr::bind_rows(
 
 result_notts  <- "jsons/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
   jsonlite::read_json() |>
-  parse_results() 
+  parse_results_nott() 
 
 #Convert Json into dataframe
 df1_convert_to_table <- as.data.frame(bind_rows(result_notts$results$step_counts))|> 
