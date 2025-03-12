@@ -199,7 +199,7 @@ ip_admissions_dist_comparison <- dplyr::bind_rows(
 
 result_notts  <- "jsons/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
   jsonlite::read_json() |>
-  parse_results_nott() 
+  parse_results() 
 
 #Convert Json into dataframe
 df1_convert_to_table <- as.data.frame(bind_rows(result_notts$results$step_counts))|> 
