@@ -1,0 +1,491 @@
+---
+title: "Scenario comparison summary"
+subtitle: "An update on project to date"
+author: "Gabriel Hobro and Fikriyudin Mufasir"
+date: 2025-03-01
+date-format: "MMMM YYYY"
+format: 
+  html:
+    warning: false
+    include: true
+    message: false
+    embed-resources: true
+    toc: true
+    code-fold: true
+    echo: false
+#server: shiny
+# output: html_document
+---
+
+```{r}
+#scenario_1 <- "Imperialv1-ndg1-20241022_100916.json.gz"
+#scenario_2 <- "Imperialv1-ndg2-20241023_122644.json.gz"
+scenario_1 <- "national-wp1a-community-growth-ndg3-20240211-000000_results.json"
+scenario_2 <- "national-wp1a-do-nothing-ndg2-20240211-000000_results.json"
+```
+
+# Introduction
+
+This summary report for comparing a given New Hospital Programme (NHP) scheme's Demand and Capacity (D&C) Model runs to one another.
+
+A scheme might have runs where they have used the principal non-demographic growth (NDG) variant and another where they have used the second variant.
+
+And there may be high mitigation / low mitigation scenarios.
+
+We consider primarily the principal projection, and look at the impacts on demand by activity type (inpatients, outpatients, A&E), pod (e.g. elective, non-elective, maternity, outpatient, etc.), measure (e.g. admissions, attendances, bed days, etc.).
+
+The following section below will show an example on our approach in comparing the principal projection using some charts for each content in the output Shiny application shared to all schemes.
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+
+```
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+file_names <- list.files(path = 'R', pattern = "\\.R$")
+lapply(paste0('R/',file_names), source)
+
+file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
+```
+
+```{r}
+# load data ---------------------------------------------------------------
+source("load-data.R")
+```
+
+# Summary tables / plots
+
+We suggest the existing bar chart below, grouped by the two scenarios.Similarly to outputs app, would provide breakdowns by activity type, pod, and measure. We can apply two filters on activity type and measure to view other activities.
+
+Cuts of this data:
+
+
+| Chart (activity type)| Pods (bars)                  |
+|----------------------|------------------------------|
+| Inpatient admissions |Day case, elective, maternity,non-elective, regular day attender |
+| Inpatient bed days   |Same as above |
+| Outpatient	         |First / follow-up  tele-/attendances, procedures  |
+| A&E	Attendances      |Attendances |
+
+: Summary table {.striped .hover}
+
+```{r}
+#| fig-width: 20
+#| fig-height: 10
+##| fig-height: 20
+
+# selectInput(inputId = "type",
+#             label = strong("Activity Type"),
+#             choices = unique(data$activity_type),
+#             selected = "Inpatient")
+# # 
+# selectInput(inputId = "type",
+#             label = strong("Measure"),
+#             choices = unique(data$measure),
+#             selected = "Admissions")
+
+#   selectInput("Inpatient", "Choose Activity Type", choices = unique(data$activity_type), selected = "Inpatient")
+#       selectInput("Admissions", "Choose Measures", choices = unique(data$measure), selected = "Admissions") 
+# 
+# mainPanel(
+#   plotOutput("barPlot"),
+# )
+# # 
+# output$barPlot <- renderPlot({
+#     # Ensure create_bar_plot is defined
+#     create_bar_plot(data, input$Inpatient, input$Admissions, "Imperial NDG Inpatient Scenarios")
+#   })
+
+# shinyApp(
+#  ui <- fluidPage(
+#   titlePanel("Reactive Bar Plot Example"),
+#   sidebarLayout(
+#     sidebarPanel(
+#       selectInput("Inpatient", "Choose Activity Type", choices = unique(data$activity_type), selected = "Inpatient"),
+#       selectInput("Admissions", "Choose Measures", choices = unique(data$measure), selected = "Admissions")
+#     ),
+#     mainPanel(
+#       plotOutput("barPlot")
+#     )
+#   )
+# ),
+# 
+# 
+# server <- function(input, output) {
+# 
+#   output$barPlot <- renderPlot({
+#     create_bar_plot(data, input$Inpatient, input$Admissions, "Imperial NDG Inpatient Scenarios")
+#   })
+# })
+# 
+
+
+
+create_bar_plot(data, "Inpatient", "Admissions", "Inpatient admissions summary comparison")
+# create_bar_plot(data, "Inpatient", "Bed days", "Imperial NDG Inpatient Scenarios")
+# create_bar_plot(data, "Outpatient", "Attendance / procedure", "Imperial NDG Outpatient Scenarios")
+# create_bar_plot(data, "A&E", "Attendance / procedure", "Imperial NDG A&E Scenarios")
+```
+
+
+```{r}
+# inputPanel(
+#   shiny::selectInput("Inpatient", "Choose Activity Type", choices = unique(data$activity_type), selected = "Inpatient"),
+#  selectInput("Admissions", "Choose Measures", choices = unique(data$measure), selected = "Admissions") 
+# )
+```
+
+
+```{r}
+
+# output$barPlot <- renderPlot({
+#  y <- create_bar_plot(data, input$Inpatient, input$Admissions, "Imperial NDG Inpatient Scenarios")
+#    })
+# 
+# plotOutput("barplot")
+```
+
+```{r}
+# selectInput("Inpatient", "Choose Activity Type", choices = unique(data$activity_type), selected = "Inpatient")
+# 
+# selectInput("Admissions", "Choose Measures", choices = unique(data$measure), selected = "Admissions") 
+```
+
+```{r}
+# mainPanel(
+#   plotOutput(outputId = "barplot", 
+#              height = "300px"),
+# )
+```
+
+```{r}
+# output$barPlot <- renderPlot({
+#      create_bar_plot(data, input$Inpatient, input$Admissions, "Imperial NDG Scenarios")
+#    })
+```
+
+# Length of Stay Breakdowns
+
+We may produce for any combination containing breakdowns of inpatient point of delivery (i.e. elective, non-elective, maternity, day case, etc.) and measures (admissions and bed days) using grouped bar chart.
+
+Cuts of this data:
+
+
+| Chart (Pods)         | Length of Stay Breakdowns (bars)|
+|----------------------|------------------------------    |
+|Non-Elective admission / bed days|0 days,1 day,2 days,3 days, 4-7                            days, 8-14 days, 15-21 days, 22+                           days                              |
+|Elective admission / bed days   |Same as above                      |
+|Daycase admission / bed days    |0 days, 4-7 days                   |
+|Maternity admission / bed days  |0 days,1 day,2 days,3 days, 4-7                            days, 8-14 days, 15-21 days, 22+                           days                               |
+|Regular day attender admission / bed days|0 days                    |
+|Regular night attender admission / bed days    |1 day,2 days        |
+
+: Length of Stay {.striped .hover}
+
+```{r}
+#| include: true
+#| fig-width: 20
+#| fig-height: 10
+
+create_bar_plot_los(data_combine, "Non-Elective Admission", "admissions", "Non-Elective Admission Scenarios Length of Stay Comparison")
+```
+
+# Activity in Detail
+
+We may produce for any combination of pod, measure and aggregation (age/tretspef) using grouped bar chart.
+
+Cuts of this data:
+
+: Activity in detail table
+
+| Chart (Gender,pod,measures) | bars (Treatment specification ) | bars (age group) |
+|-----------------------------|---------------------------------|------------------|
+| Inpatient admissions male/ female |"100: General Surgery", "101: Urology", "102: Transplant Surgery",etc  | 0,1-4,5-9,10-15,16-17,18-34,35-49,50-64,65-74,75-84,85+|
+| Inpatient bed days male/ female   | Same as above             | Same as above  |
+| Outpatient gender male/ female    | Same as above             |  Same as above  |
+|  A&E	Attendances male/ female    |Same as above              | Same as above  | 
+
+::: panel-tabset
+## Treatment Spesification
+
+```{r}
+#| include: true
+#| fig-width: 20
+#| fig-height: 20
+
+activity_detail_bar(
+  detailed_activity_data$ip_elective_admission_admissions_tretspef, 
+  chosen_sex = "Male", 
+  title_text = "Male Inpatient Elective Admissions Comparison", 
+  ylab = "Treatment Specification",
+  xlab = "Admissions")
+```
+
+## Age group
+```{r}
+#| include: true
+#| fig-width: 20
+#| fig-height: 20
+
+activity_detail_bar(
+  detailed_activity_data$ip_elective_admission_beddays_age_group, 
+  chosen_sex = "Male", 
+  title_text = "Male Inpatient Elective Admissions Comparison", 
+  ylab = "Age Group",
+  xlab = "Admissions")
+```
+
+:::
+
+# Waterfalls
+
+For waterfall chart, we suggest a facet of the existing chart to allow easy visual comparison on a fixed x-axis.We have developed new version of outputs app code to ensure same ordering in each chart. Also it includes filters for activity type (IP, OP, ED) and measure (bed days / admissions / attendances, etc).
+
+Cuts of this data:
+
+
+| Chart (Pod and measure ) | bars (Impact of changes) |
+|----------------------|------------------------------|
+|Inpatient elective admission,inpatient daycase admission,inpatient maternity admission,inpatient non-elective admission,inpatient regular day attender admission | Baseline, demographic adjustment, non-demographic adjustment, covid adjustment, birth adjustment, waiting list adjustment, efficiencies,activity avoidance, health status adjustment, model interaction term, estimate 
+|Inpatient elective bed days,inpatient daycase bed days,inpatient maternity  bed days,inpatient non-elective bed days,inpatient regular day attender bed days  | Same as above
+|First outpatient tele-/attendance,follow-up outpatient tele-/attendance, outpatient procedure  | Same as above
+|A&E type 1 department arrival,A&E type 1 department arrival  | Same as above |
+
+
+: Waterfall table {.striped .hover}
+
+```{r}
+#| include: true
+generate_waterfall_plot(
+   pcfs_1, 
+   pcfs_2, 
+   activity_type = "ip", 
+   measure = "admissions", 
+   title = "Inpatient admissions waterfall scenario comparison", 
+   x_label = "Admissions", 
+   y_label = "Change factor")
+# 
+# generate_waterfall_plot(
+#   pcfs_1, 
+#   pcfs_2, 
+#   activity_type = "ip",
+#   measure = "beddays", 
+#   title = "Inpatient bed days waterfall scenario comparison", 
+#   x_label = "Bed days", 
+#   y_label = "Change factor")
+# 
+# generate_waterfall_plot(
+#   pcfs_1, 
+#   pcfs_2, 
+#   activity_type = "op",
+#   measure = "attendances", 
+#   title = "Outpatient attendances waterfall scenario comparison", 
+#   x_label = "Attendances", 
+#   y_label = "Change factor")
+# 
+# generate_waterfall_plot(
+#   pcfs_1, 
+#   pcfs_2, 
+#   activity_type = "op", 
+#   measure = "tele_attendances",
+#   title = "Outpatient Tele-attendances waterfall scenario comparison", 
+#   x_label = "Tele-attendances", 
+#   y_label = "Change factor")
+
+# generate_waterfall_plot(
+#   pcfs_1, 
+#   pcfs_2, 
+#   activity_type = "aae", 
+#   measure = "arrivals",
+#   title = "Outpatient arrivals waterfall scenario comparison", 
+#   x_label = "Arrivals", 
+#   y_label = "Change factor")
+
+```
+
+# Mitigator Impacts Bar Charts
+
+Mitigator impact charts are relatively easily converted to grouped bar chart arrange by descending/ascending order.We can modify the chart based on change factor, activity type and measures.
+
+::: panel-tabset
+## Activity avoidance
+
+Cuts of this data:
+
+
+| Chart (activity type and measure)| bars (mitigator)                |
+|----------------------|--------------------------------------|
+| Inpatient admissions |Ambulatory Care Sensitive Admissions (Chronic Conditions),Interventions with                            Limited Evidence (MSK),Obesity Related Admissions,etc |
+| Inpatient bed days   |Same as above |
+| Outpatient	         |Outpatient Followup Appointment Reduction (Adult, Surgical), Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical), Outpatient Consultant to Consultant Referrals (Adult, Non-Surgical),etc 
+| A&E	Attendances      | N/A                                                           |
+
+: Activity avoidance table {.striped .hover}
+
+```{r}
+#| include: true
+#| fig-width: 20
+#| fig-height: 20
+
+impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "admissions", "Inpatient Admissions Activity Avoidance Comparison")
+#impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "ip", "beddays", "Imperial NDG Inpatient Bed Days Scenarios")
+#impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "op", "attendances", "Imperial NDG outpatient Attendances Scenarios")
+# impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "op", "tele_attendances", "Imperial NDG outpatient Tele-attendances Scenarios")
+# impact_bar_plot(ndg_variants_sc_comparison,"activity_avoidance", "aae", "arrivals", "Imperial NDG A&E Scenarios")
+
+
+```
+
+## Efficiencies
+
+Cuts of this data:
+
+
+| Chart (activity type and measure)| bars (mitigator)                     |
+|----------------------|---------------------------------------------     |
+| Inpatient admissions | Ambulatory Emergency Care (High Potential),Ambulatory Emergency Care (Very                               High Potential),Enhanced Recovery (Hip),etc    |
+| Inpatient bed days   |Same as above                                     |
+| Outpatient	         |N/A                                               |
+| A&E	Attendances      | N/A                                              |
+
+: Efficiencies table {.striped .hover}
+
+```{r}
+#|include: true
+#| fig-width: 20
+#| fig-height: 20
+
+impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "ip", "beddays", "Inpatient Bed days Efficiencies Comparison")
+```
+
+```{r}
+
+
+
+#impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "ip", "admissions", "Imperial NDG Inpatient Admissions Scenarios")
+#impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "ip", "beddays", "Imperial NDG Inpatient Bed days Scenarios")
+#impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "attendances", "Imperial NDG outpatient Attendances Scenarios")
+#impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "op", "tele_attendances", "Imperial NDG outpatient Tele-attendances Scenarios")
+# impact_bar_plot(ndg_variants_sc_comparison,"efficiencies", "aae", "arrivals", "Imperial NDG A&E Scenarios")
+
+#:::
+```
+:::
+
+# CI bar plots
+
+We can do this for each pod and it will generate the value for each measure with an error line for the 80% CI
+
+Cuts of this data:
+
+
+| Chart per pod        | bars (measure)                |
+|----------------------|--------------------------------------|
+| Inpatient elective admission, Inpatient daycase admission,Inpatient maternity admission,Inpatient non-elective admission,Inpatient regular day attender admission     |Admissions , bed days , procedures
+| First outpatient tele-/attendance,follow-up outpatient tele-/attendance, outpatient procedure     | Attedances or tele-attendances
+| A&E type1/2 | Ambulance / walking |
+
+: CI barplot table {.striped .hover}
+
+```{r}
+#| include: true
+#| fig-width: 20
+#| fig-height: 10
+create_bar_plot_distribution(data_distribution_summary,"ip_elective_admission","Inpatient elective admissions Confidence Interval Comparison")
+```
+
+# Beeswarm
+
+Beeswarm presents the projected caseload under each individual model run as a point with the vertical axis indicating density. A single chart present both scenarios with different colours in legend. The distribution chart is filterable by activity type and measures.
+
+```{r}
+##| include: true
+##| fig-width: 10
+#mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) +
+#  ggtitle("Beeswarm plot for two scenarios")
+```
+
+```{r}
+#| include: true
+#| fig-width: 10
+mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) + facet_grid(vars(scenario))+
+  ggtitle("Beeswarm plot for two scenarios") 
+```
+
+
+# Ecdf (S-curve)
+
+S-curve shows the percentage of model runs (y-axis) that have a projected caseload less than or equal to caseload on x-axis. A single chart present both scenarios with different colours in legend. The S-curve chart is filterable by activity type and measures.
+
+```{r}
+#| include: true
+#| fig-width: 10
+mod_model_results_distribution_ecdf_plot_scenario(ip_admissions_dist_comparison, show_origin = FALSE) +
+  ggtitle("ECDF plot two scenarios")
+```
+
+# Cliniplan
+
+Cliniplan workbook takes the Excel step counts and applies a series of conversions to adjust bed days and arrive at beds under an 85% occupancy.We have encoded this into R, with a plan for a user input of bed.
+
+```{r}
+occupancy_rate <- 0.85
+```
+
+```{r}
+adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
+  select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |> 
+  filter(change_factor %in% c("activity_avoidance","efficiencies")) |> 
+  mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)),
+         adj_bed_days = abs(round(adj_bed_days,digits = 0)),
+         admissions = abs(round(admissions,digits = 0))) |> 
+  rename(at_85 = adj_bed_days_percent) |> ungroup() |>  arrange(desc(at_85)) 
+
+top_12 <- head(adjusted_bed_table, 12) |> ungroup()  |>  arrange(desc(at_85)) |> ungroup()
+other <- adjusted_bed_table[-(1:12), ]  |>  arrange(desc(at_85)) |> group_by(activity_type) |> 
+  summarise(admissions = sum(admissions),
+            adj_bed_days = sum(adj_bed_days),
+            at_85 = sum(at_85),
+            .groups = "drop") |> ungroup() |> mutate(change_factor = "other_mitigator",
+                                                     strategy = "other_mitigator") 
+```
+
+```{r}
+#| include: true
+calc_85_rate <- bind_rows(top_12,other,
+                          .id = "Type") |>  
+  mutate(strategy = factor(strategy, levels = unique(strategy)))
+
+
+ggplot(calc_85_rate,
+       aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
+  geom_bar(stat = "identity") +
+  coord_flip()  +
+  ggtitle("Adjusted Beds at 85% Occupancy") +
+  ylab("Beds") +
+  xlab("Mitigator") +
+  scale_fill_manual(values = c("#f9bf07","#686f73"), name="Type",
+                    labels = c("Top 12", "Others")) +
+  easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
+  theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
+  theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+```

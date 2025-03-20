@@ -140,11 +140,11 @@ data_distribution_summary <- bind_rows(
 
 #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
 data_distribution_summary <- data_distribution_summary |> 
-  select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
+  select(scenario,pod,measure,principal,lwr_pi,upr_pi) |> 
   group_by(scenario,pod,measure) |> 
   summarise(principal = sum(principal),
-            lwr_ci = sum(lwr_ci),
-            upr_ci = sum(upr_ci)) |> 
+            lwr_ci = sum(lwr_pi),
+            upr_ci = sum(upr_pi)) |> 
   ungroup()
 
 data_distribution_summary <- data_distribution_summary |> 
@@ -170,7 +170,7 @@ scenario_1_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  site_codes = NULL
+  sites = NULL
 )
 
 # ndg 2
@@ -183,7 +183,7 @@ scenario_2_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  site_codes = NULL
+  sites = NULL
 )
 
 # join them together
