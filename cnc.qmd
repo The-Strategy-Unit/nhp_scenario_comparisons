@@ -190,6 +190,6 @@ mod_model_results_distribution_ecdf_plot_scenario(ip_admissions_dist_comparison,
 
 ## Challenges
 
--   We have tried to incorporate Shiny but it did not work.
+-   We tried to incorporate Shiny but it did not work.
 
 -   We can't move into another code or content until the review process is completed.
