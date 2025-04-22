@@ -59,7 +59,7 @@ source("load-data.R")
 
 The users find it a bit challenging to compare two scenarios from the the New Hospital Programme (NHP) demand model output app because they have run two output side by side manually.
 
-We have Focused on adapting the existing pages of the NHP outputs app for the principal projection.
+We have focused on adapting the existing pages of the NHP Outputs App for the principal projection and distributions.
 
 ## Summary and length of stay
 
