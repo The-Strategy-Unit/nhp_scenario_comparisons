@@ -150,7 +150,9 @@ create_bar_plot_distribution(data_distribution_summary,"ip_elective_admission","
 
 ::: columns
 ::: {.column width="55%"}
-Beeswarm presents the projected caseload under each individual model run as a point with the vertical axis indicating density.
+Beeswarms uses points to present the distribution of model runs with the y-axis indicating density.
+
+Facetting by scenario provided an easy comparison.
 :::
 
 ::: {.column width="45%"}
