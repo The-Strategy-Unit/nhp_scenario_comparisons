@@ -2,7 +2,7 @@
 title: "Scenario analysis"
 subtitle: "Coffee and Code"
 author: "Fikriyudin Mufasir"
-date: 2025-04-08
+date: 2025-04-24
 date-format: "D MMMM YYYY"
 format: 
   revealjs:
