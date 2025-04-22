@@ -113,7 +113,7 @@ plot_grid(
 
 ::: columns
 ::: {.column width="40%"}
-The comparison was done by combining two scenarios into a chart.
+The comparison was made by facetting on scenario to ensure the waterfalls had the same x-axis scale.
 :::
 
 ::: {.column width="60%"}
