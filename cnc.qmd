@@ -1,0 +1,195 @@
+---
+title: "Scenario analysis"
+subtitle: "Coffee and Code"
+author: "Fikriyudin Mufasir"
+date: 2025-04-24
+date-format: "D MMMM YYYY"
+format: 
+  revealjs:
+    theme: [default, su_presentation.scss]
+    embed-resources: true
+transition: none
+# chalkboard:
+#   buttons: false
+preview-links: auto
+slide-number: false
+auto-animate: true
+footer: |
+  "See the (private) repo [here](https://github.com/The-Strategy-Unit/nhp_scenario_analysis)"
+---
+
+```{r}
+scenario_1 <- "national-wp1a-community-growth-ndg3-20240211-000000_results.json"
+scenario_2 <- "national-wp1a-do-nothing-ndg2-20240211-000000_results.json"
+```
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+
+```
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+file_names <- list.files(path = 'R', pattern = "\\.R$")
+lapply(paste0('R/',file_names), source)
+
+file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
+```
+
+```{r}
+# load data ---------------------------------------------------------------
+source("load-data.R")
+```
+
+## Overview
+
+The users find it a bit challenging to compare two scenarios from the the New Hospital Programme (NHP) demand model output app because they have run two output side by side manually.
+
+We have focused on adapting the existing pages of the NHP Outputs App for the principal projection and distributions.
+
+## Summary and length of stay
+
+::: columns
+::: {.column width="30%"}
+We have created a grouped bar charts to summarise two scenarios
+:::
+
+::: {.column width="70%"}
+```{r high-level-bar-chart}
+
+
+
+
+
+library(cowplot)
+
+# make a plot grid consisting of two panels
+p1 <- create_bar_plot(data, "Inpatient", "Admissions", "Inpatient admissions summary comparison")
+
+p2 <- create_bar_plot_los(data_combine, "Non-Elective Admission", "admissions", "Non-Elective Admission Scenarios Length of Stay Comparison")
+
+plot_col <- plot_grid(p1, p2, nrow=2)
+
+# now add the title
+title <- ggdraw() + 
+  draw_label(
+    "Example grouped bar charts",
+    fontface = 'bold',
+    x = 0,
+    hjust = 0
+  ) +
+  theme(
+    # add margin on the left of the drawing canvas,
+    # so title is aligned with left edge of first plot
+    plot.margin = margin(0, 0, 0, 7)
+  )
+
+plot_grid(
+  title, plot_col,
+  ncol = 1,
+  # rel_heights values control vertical title margins
+  rel_heights = c(0.1, 1)
+)
+
+```
+:::
+:::
+
+## Waterfalls
+
+::: columns
+::: {.column width="40%"}
+The comparison was made by facetting on scenario to ensure the waterfalls had the same x-axis scale.
+:::
+
+::: {.column width="60%"}
+```{r waterfall_example}
+generate_waterfall_plot(
+   pcfs_1, 
+   pcfs_2, 
+   activity_type = "ip", 
+   measure = "admissions", 
+   title = "Inpatient admissions waterfall scenario comparison", 
+   x_label = "Admissions", 
+   y_label = "Change factor")
+
+```
+:::
+:::
+
+## CI bar plots
+
+::: columns
+::: {.column width="40%"}
+We have added confidence interval range in the chart.
+:::
+
+::: {.column width="60%"}
+```{r ci_bar}
+create_bar_plot_distribution(data_distribution_summary,"ip_elective_admission","Inpatient elective admissions Confidence Interval Comparison")
+
+```
+:::
+:::
+
+## Beeswarm
+
+::: columns
+::: {.column width="55%"}
+Beeswarms uses points to present the distribution of model runs with the y-axis indicating density.
+
+Facetting by scenario provided an easy comparison.
+:::
+
+::: {.column width="45%"}
+```{r Beeswarm}
+mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) + facet_grid(vars(scenario))+
+  ggtitle("Beeswarm plot for two scenarios") 
+
+```
+:::
+:::
+
+## Ecdf (S-curve)
+
+::: columns
+::: {.column width="40%"}
+S-curve shows the percentage of model runs (y-axis) that have a projected caseload less than or equal to caseload on x-axis.
+:::
+
+::: {.column width="60%"}
+```{r Ecdf}
+mod_model_results_distribution_ecdf_plot_scenario(ip_admissions_dist_comparison, show_origin = FALSE) +
+  ggtitle("ECDF plot two scenarios")
+
+```
+:::
+:::
+
+## Experiences
+
+-   Quarto is highly adaptable for reproducible analysis.
+
+-   Github helps to speed up review process.
+
+-   Github can be used as a problem structuring tool by creating issues and branch
+
+## Challenges
+
+-   We tried to incorporate Shiny but it did not work.
+
+-   We struggled to move onto further products until existing PRs were merged, due to conflicts.
