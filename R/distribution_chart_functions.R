@@ -21,6 +21,9 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
 # new function for beeswarm -----------------------------------------------
 
 mod_model_results_distribution_beeswarm_plot_scenario <- function(data, show_origin) {
+  
+  labels <- c("scenario_1" = scenario_1_name, "scenario_2" = scenario_2_name)
+  
   b <- data$baseline[[1]]
   # two lines instead of 1 below for the separate principal projections
   p1 <- data$principal[data$scenario=="scenario_1"][[1]]
