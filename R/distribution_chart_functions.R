@@ -67,7 +67,10 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, show_ori
       # keep y-axis labels to help line up beeswarm/ECDF, but make 'invisible'
       axis.text.y = ggplot2::element_text(colour = "white"),
       axis.title.y = ggplot2::element_text(colour = "white")
-    ) 
+    ) +
+    ggplot2::facet_grid(
+      rows = vars(scenario),
+      labeller = labeller(scenario = labels))
 }
 
 
