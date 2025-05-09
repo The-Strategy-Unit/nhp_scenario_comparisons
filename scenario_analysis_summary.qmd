@@ -423,8 +423,8 @@ Beeswarm presents the projected caseload under each individual model run as a po
 ```{r}
 #| include: true
 #| fig-width: 10
-mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) + facet_grid(vars(scenario))+
-  ggtitle("Beeswarm plot for two scenarios") 
+mod_model_results_distribution_beeswarm_plot_scenario(ip_admissions_dist_comparison, FALSE) + 
+  ggtitle("Beeswarm plot for two scenarios")  
 ```
 
 
