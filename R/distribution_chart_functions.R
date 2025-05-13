@@ -199,7 +199,8 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(data, show_origin)
     ) +
     ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
     ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"),
-                                labels = c(scenario_1_name, scenario_2_name)) 
+                                labels = c(scenario_1_name, scenario_2_name)) +
+    ggplot2::theme(legend.position = "bottom")
     
 }
 
