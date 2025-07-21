@@ -67,7 +67,13 @@ server <- function(input, output, session) {
   
   observeEvent(input$render_quarto, {
     if (input$scenario_1 != input$scenario_2) {
-      quarto::quarto_render("scenario_analysis_summary.qmd", output_file = "scenario_analysis_summary.html")
+      quarto::quarto_render(
+        "scenario_analysis_summary.qmd", 
+        output_file = "scenario_analysis_summary.html", 
+        execute_params = list(
+          scenario_1 = input$scenario_1,
+          scenario_2 = input$scenario_1
+        ))
       output$quarto_summary <- renderUI({
         includeHTML("scenario_analysis_summary.html")
       })
