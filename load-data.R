@@ -2,15 +2,20 @@ library(here)
 library(jsonlite)
 library(tidyverse)
 
-# read Json 1
-result_1  <- here("jsons", scenario_1) |>
-  jsonlite::read_json() |>
-  parse_results()  # will apply necessary patches to the
+# load the result sets from Azure
+nhp_model_runs <- get_nhp_result_sets()
 
-# read Json 2
-result_2 <- here("jsons", scenario_2) |>
-  jsonlite::read_json() |>
-  parse_results()  # will apply necessary patches to the data
+scenario_1_file <- nhp_model_runs |> 
+  filter(scenario == scenario_1) |> 
+  pull(file)
+
+scenario_2_file <- nhp_model_runs |> 
+  filter(scenario == scenario_2) |> 
+  pull(file)
+
+result_1 <- get_nhp_results(file = scenario_1_file)
+result_2 <- get_nhp_results(file = scenario_2_file)
+
 
 # grab the scenario_names
 scenario_1_name <- result_1$params$scenario
