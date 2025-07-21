@@ -1,8 +1,8 @@
 ---
 title: "Scenario comparison summary"
-subtitle: "An update on project to date"
+subtitle: "A comparison of `r params$scenario_1` and `r params$scenario_2` results"
 author: "Gabriel Hobro and Fikriyudin Mufasir"
-date: 2025-03-01
+date: today
 date-format: "MMMM YYYY"
 format: 
   html:
@@ -13,15 +13,17 @@ format:
     toc: true
     code-fold: true
     echo: false
+params:
+  scenario_1: NULL
+  scenario_2: NULL
+  
 #server: shiny
 # output: html_document
 ---
 
 ```{r}
-#scenario_1 <- "Imperialv1-ndg1-20241022_100916.json.gz"
-#scenario_2 <- "Imperialv1-ndg2-20241023_122644.json.gz"
-scenario_1 <- "national-wp1a-community-growth-ndg3-20240211-000000_results.json"
-scenario_2 <- "national-wp1a-do-nothing-ndg2-20240211-000000_results.json"
+scenario_1 <- params$scenario_1
+scenario_2 <- params$scenario_2
 ```
 
 # Introduction
