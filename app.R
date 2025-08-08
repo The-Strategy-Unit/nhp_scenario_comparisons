@@ -72,7 +72,7 @@ server <- function(input, output, session) {
         output_file = "scenario_analysis_summary.html", 
         execute_params = list(
           scenario_1 = input$scenario_1,
-          scenario_2 = input$scenario_1
+          scenario_2 = input$scenario_2
         ))
       output$quarto_summary <- renderUI({
         includeHTML("scenario_analysis_summary.html")
