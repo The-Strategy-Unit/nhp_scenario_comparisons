@@ -202,9 +202,13 @@ ip_admissions_dist_comparison <- dplyr::bind_rows(
 
 # Cliniplan stuff ---------------------------------------------------------
 
-result_notts  <- "jsons/rx1-241204-rx1-low-sc04-01-20241206-165358_results.json" |>
-  jsonlite::read_json() |>
-  parse_results() 
+notts_file = nhp_model_runs |> 
+  # there are duplicates for this one, meaning we must specify the user too
+  filter(scenario == "241204-RX1-LOW-SC04-01" & user == "ds-team") |> 
+  pull(file)
+
+
+result_notts  <- get_nhp_results(file = notts_file)
 
 #Convert Json into dataframe
 df1_convert_to_table <- as.data.frame(bind_rows(result_notts$results$step_counts))|> 
