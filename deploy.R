@@ -1,5 +1,5 @@
 rsconnect::deployApp(
-  appFiles = c("R/", "scenario_analysis_summary.qmd", "app.R", "load-data.R", "R/nhp_outputs/"),
+  appFiles = c("R/", "scenario_analysis_summary.qmd", "app.R", "load-data.R", "R/nhp_outputs/", "supporting-data/"),
   appName = "scenario-comparison-app",
   appTitle = "Scenario comparisons app prototype",
   server = "connect.strategyunitwm.nhs.uk",
