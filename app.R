@@ -19,7 +19,7 @@ ui <- bslib::page_sidebar(
     shiny::selectInput("scenario_1", "Select Scenario 1", choices = NULL),
     shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
     shiny::actionButton("render_quarto", "Render Quarto Summary"),
-    shiny::textOutput("warning_text")
+    uiOutput("warning_text")
   ),
   bslib::card(
     bslib::card_header("Result"),
@@ -55,14 +55,31 @@ server <- function(input, output, session) {
     s1 <- nhp_model_runs |> filter(scenario == input$scenario_1, dataset == input$selected_scheme)
     s2 <- nhp_model_runs |> filter(scenario == input$scenario_2, dataset == input$selected_scheme)
     
+    # test that there is exactly one run for each scenario
+    one_run_s1 <- nrow(s1) == 1
+    one_run_s2 <- nrow(s2) == 1
+    
+    # tests that the start and end years match
+    starts_match <- identical(s1$start_year, s2$start_year) 
+    ends_match <- identical(s1$end_year, s2$end_year)  # fixed typo
+    
+    # collect warnings
+    warnings <- c()
+    
     if (input$scenario_1 == input$scenario_2) {
-      "Warning: Scenario 1 and Scenario 2 must be different."
-    } else if (nrow(s1) > 0 && nrow(s2) > 0 &&
-               (s1$start_year != s2$start_year || s1$end_year != s2$end_year)) {
-      "Warning: The start and end years of the selected scenarios must match."
-    } else {
-      ""
+      warnings <- c(warnings, "Warning: Scenario 1 and Scenario 2 must be different.")
     }
+    
+    if (!one_run_s1 || !one_run_s2) {
+      warnings <- c(warnings, "Warning: There are more than one model runs for at least one of the selected scenarios.")
+    }
+    
+    if (!starts_match || !ends_match) {
+      warnings <- c(warnings, "Warning: The start and end years of the selected scenarios must match.")
+    }
+    
+    # collapse into a single string, separated by new lines
+    HTML(paste(warnings, collapse = "<br>"))
   })
   
   observeEvent(input$render_quarto, {
