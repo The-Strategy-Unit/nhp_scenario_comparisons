@@ -1,24 +1,3 @@
-# get_container <- function() {
-#   ep_uri <- Sys.getenv("AZ_STORAGE_EP")
-#   app_id <- Sys.getenv("AZ_APP_ID")
-#   
-#   token <- if (app_id != "") {
-#     AzureAuth::get_azure_token(
-#       "https://storage.azure.com",
-#       tenant = Sys.getenv("AZ_TENANT_ID"),
-#       app = app_id,
-#       auth_type = "device_code",
-#       use_cache = TRUE
-#     )
-#   } else {
-#     AzureAuth::get_managed_token("https://storage.azure.com/") |>
-#       AzureAuth::extract_jwt()
-#   }
-#   
-#   ep_uri |>
-#     AzureStor::blob_endpoint(token = token) |>
-#     AzureStor::storage_container(Sys.getenv("AZ_STORAGE_CONTAINER"))
-# }
 
 get_params <- function(r) {
   is_scalar_numeric <- \(x) rlang::is_scalar_atomic(x) && is.numeric(x)
