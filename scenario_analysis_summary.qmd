@@ -1,7 +1,6 @@
 ---
 title: "Scenario comparison summary"
 subtitle: "A comparison of `r params$scenario_1` and `r params$scenario_2` results"
-author: "Gabriel Hobro and Fikriyudin Mufasir"
 date: today
 date-format: "MMMM YYYY"
 format: 
