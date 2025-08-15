@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 *.xlsx
+.Renviron
+rsconnect/*
+*.html
