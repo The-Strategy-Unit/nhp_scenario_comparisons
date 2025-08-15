@@ -439,53 +439,53 @@ mod_model_results_distribution_ecdf_plot_scenario(ip_admissions_dist_comparison,
   ggtitle("ECDF plot two scenarios")
 ```
 
-# Cliniplan
+<!-- # Cliniplan -->
 
-Cliniplan workbook takes the Excel step counts and applies a series of conversions to adjust bed days and arrive at beds under an 85% occupancy.We have encoded this into R, with a plan for a user input of bed.
+<!-- Cliniplan workbook takes the Excel step counts and applies a series of conversions to adjust bed days and arrive at beds under an 85% occupancy.We have encoded this into R, with a plan for a user input of bed. -->
 
-```{r}
-occupancy_rate <- 0.85
-```
+<!-- ```{r} -->
+<!-- occupancy_rate <- 0.85 -->
+<!-- ``` -->
 
-```{r}
-adjusted_bed_table <- ndg_variants_baseline_adjustment |> 
-  select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |> 
-  filter(change_factor %in% c("activity_avoidance","efficiencies")) |> 
-  mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)),
-         adj_bed_days = abs(round(adj_bed_days,digits = 0)),
-         admissions = abs(round(admissions,digits = 0))) |> 
-  rename(at_85 = adj_bed_days_percent) |> ungroup() |>  arrange(desc(at_85)) 
+<!-- ```{r} -->
+<!-- adjusted_bed_table <- ndg_variants_baseline_adjustment |>  -->
+<!--   select(activity_type,change_factor,strategy,admissions,adj_bed_days,adj_bed_days_percent) |>  -->
+<!--   filter(change_factor %in% c("activity_avoidance","efficiencies")) |>  -->
+<!--   mutate(adj_bed_days_percent = abs(round(adj_bed_days/365/occupancy_rate, digits = 4)), -->
+<!--          adj_bed_days = abs(round(adj_bed_days,digits = 0)), -->
+<!--          admissions = abs(round(admissions,digits = 0))) |>  -->
+<!--   rename(at_85 = adj_bed_days_percent) |> ungroup() |>  arrange(desc(at_85))  -->
 
-top_12 <- head(adjusted_bed_table, 12) |> ungroup()  |>  arrange(desc(at_85)) |> ungroup()
-other <- adjusted_bed_table[-(1:12), ]  |>  arrange(desc(at_85)) |> group_by(activity_type) |> 
-  summarise(admissions = sum(admissions),
-            adj_bed_days = sum(adj_bed_days),
-            at_85 = sum(at_85),
-            .groups = "drop") |> ungroup() |> mutate(change_factor = "other_mitigator",
-                                                     strategy = "other_mitigator") 
-```
+<!-- top_12 <- head(adjusted_bed_table, 12) |> ungroup()  |>  arrange(desc(at_85)) |> ungroup() -->
+<!-- other <- adjusted_bed_table[-(1:12), ]  |>  arrange(desc(at_85)) |> group_by(activity_type) |>  -->
+<!--   summarise(admissions = sum(admissions), -->
+<!--             adj_bed_days = sum(adj_bed_days), -->
+<!--             at_85 = sum(at_85), -->
+<!--             .groups = "drop") |> ungroup() |> mutate(change_factor = "other_mitigator", -->
+<!--                                                      strategy = "other_mitigator")  -->
+<!-- ``` -->
 
-```{r}
-#| include: true
-calc_85_rate <- bind_rows(top_12,other,
-                          .id = "Type") |>  
-  mutate(strategy = factor(strategy, levels = unique(strategy)))
+<!-- ```{r} -->
+<!-- #| include: true -->
+<!-- calc_85_rate <- bind_rows(top_12,other, -->
+<!--                           .id = "Type") |>   -->
+<!--   mutate(strategy = factor(strategy, levels = unique(strategy))) -->
 
 
-ggplot(calc_85_rate,
-       aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) + 
-  geom_bar(stat = "identity") +
-  coord_flip()  +
-  ggtitle("Adjusted Beds at 85% Occupancy") +
-  ylab("Beds") +
-  xlab("Mitigator") +
-  scale_fill_manual(values = c("#f9bf07","#686f73"), name="Type",
-                    labels = c("Top 12", "Others")) +
-  easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
-  theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
-  theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
-```
+<!-- ggplot(calc_85_rate, -->
+<!--        aes(x=reorder(strategy,at_85), y=at_85, fill = Type)) +  -->
+<!--   geom_bar(stat = "identity") + -->
+<!--   coord_flip()  + -->
+<!--   ggtitle("Adjusted Beds at 85% Occupancy") + -->
+<!--   ylab("Beds") + -->
+<!--   xlab("Mitigator") + -->
+<!--   scale_fill_manual(values = c("#f9bf07","#686f73"), name="Type", -->
+<!--                     labels = c("Top 12", "Others")) + -->
+<!--   easy_center_title() + theme(text = element_text(family = "Segoe UI")) + -->
+<!--   theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) + -->
+<!--   theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) + -->
+<!--   theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) + -->
+<!--   theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) + -->
+<!--   theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) + -->
+<!--   theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black")) -->
+<!-- ``` -->
