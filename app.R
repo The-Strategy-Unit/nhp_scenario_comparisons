@@ -32,6 +32,16 @@ ui <- bslib::page_sidebar(
 
 # Define server
 server <- function(input, output, session) {
+  
+  get_runtime_choices <- function(data, scheme, chosen_scenario) {
+    data |>
+      filter(dataset == scheme, scenario == chosen_scenario) |>
+      pull(create_datetime) |>
+      unique() |>
+      sort() |>
+      rev()
+  }
+  
   # Dynamically update scenarios when scheme is selected
   observe({
     selected_scheme <- input$selected_scheme
