@@ -17,7 +17,9 @@ ui <- bslib::page_sidebar(
     title = "Scenario selection",
     shiny::selectInput("selected_scheme", "Select scheme", choices = unique(nhp_model_runs$dataset)),
     shiny::selectInput("scenario_1", "Select Scenario 1", choices = NULL),
+    shiny::selectInput("scenario_1_runtime", "Scenario 1 runtime", choices = NULL),
     shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
+    shiny::selectInput("scenario_2_runtime", "Scenario 2 runtime", choices = NULL),
     shiny::actionButton("render_quarto", "Render Quarto Summary"),
     uiOutput("warning_text")
   ),
