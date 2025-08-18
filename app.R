@@ -53,6 +53,18 @@ server <- function(input, output, session) {
     updateSelectInput(session, "scenario_2", choices = filtered_scenarios)
   })
   
+  
+  observeEvent(list(input$selected_scheme, input$scenario_1, input$scenario_2), {
+    purrr::walk(c("scenario_1", "scenario_2"), function(scn) {
+      runtimes <- get_runtime_choices(
+        nhp_model_runs, 
+        input$selected_scheme, 
+        input[[scn]]
+      )
+      updateSelectInput(session, paste0(scn, "_runtime"), choices = runtimes)
+    })
+  })
+  
   output$result_text <- renderText({
     paste("You have selected",
           input$scenario_1,
