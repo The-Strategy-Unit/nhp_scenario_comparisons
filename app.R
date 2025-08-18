@@ -82,9 +82,15 @@ server <- function(input, output, session) {
           input$selected_scheme)
   })
   
-  output$warning_text <- renderText({
-    s1 <- nhp_model_runs |> filter(scenario == input$scenario_1, dataset == input$selected_scheme)
-    s2 <- nhp_model_runs |> filter(scenario == input$scenario_2, dataset == input$selected_scheme)
+  output$warning_text <- renderUI({
+    s1 <- nhp_model_runs |> filter(
+      scenario == input$scenario_1, 
+      dataset == input$selected_scheme,
+      create_datetime == input$scenario_1_runtime)
+    s2 <- nhp_model_runs |> filter(
+      scenario == input$scenario_2, 
+      dataset == input$selected_scheme,
+      create_datetime == input$scenario_2_runtime)
     
     # test that there is exactly one run for each scenario
     one_run_s1 <- nrow(s1) == 1
