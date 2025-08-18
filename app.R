@@ -43,10 +43,9 @@ server <- function(input, output, session) {
   }
   
   # Dynamically update scenarios when scheme is selected
-  observe({
-    selected_scheme <- input$selected_scheme
+  observeEvent(input$selected_scheme, {
     filtered_scenarios <- nhp_model_runs |> 
-      dplyr::filter(dataset == selected_scheme) |> 
+      filter(dataset == input$selected_scheme) |> 
       pull(scenario) |> 
       unique()
     
