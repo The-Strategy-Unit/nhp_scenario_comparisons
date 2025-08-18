@@ -68,8 +68,16 @@ server <- function(input, output, session) {
   output$result_text <- renderText({
     paste("You have selected",
           input$scenario_1,
+          paste0(
+            "(",
+            lubridate::as_datetime(input$scenario_1_runtime),
+            ")"),
           "and",
           input$scenario_2,
+          paste0(
+            "(",
+            lubridate::as_datetime(input$scenario_2_runtime),
+            ")"),
           "from the scheme",
           input$selected_scheme)
   })
