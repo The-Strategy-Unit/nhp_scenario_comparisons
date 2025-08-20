@@ -8,12 +8,12 @@ mod_principal_los_pods <- function() {
 
 mod_principal_summary_los_data <- function(r, sites, measure) {
   pods <- mod_principal_los_pods()
-
-  has_tretspef_los <- !is.null(r$results[["tretspef_raw+los_group"]])
-
+  
+  has_tretspef_los <- !is.null(r$results[["tretspef+los_group"]])
+  
   if (has_tretspef_los) {
-    los_data <- r$results[["tretspef_raw+los_group"]] |>
-      dplyr::select(-"tretspef_raw")
+    los_data <- r$results[["tretspef+los_group"]] |>
+      dplyr::select(-"tretspef")
   }
 
   if (!has_tretspef_los) {
