@@ -85,12 +85,10 @@ server <- function(input, output, session) {
   output$warning_text <- renderUI({
     s1 <- nhp_model_runs |> filter(
       scenario == input$scenario_1, 
-      dataset == input$selected_scheme,
-      create_datetime == input$scenario_1_runtime)
+      dataset == input$selected_scheme)
     s2 <- nhp_model_runs |> filter(
       scenario == input$scenario_2, 
-      dataset == input$selected_scheme,
-      create_datetime == input$scenario_2_runtime)
+      dataset == input$selected_scheme)
     
     # test that there is exactly one run for each scenario
     one_run_s1 <- nrow(s1) == 1
@@ -108,7 +106,7 @@ server <- function(input, output, session) {
     }
     
     if (!one_run_s1 || !one_run_s2) {
-      warnings <- c(warnings, "Warning: There are more than one model runs for at least one of the selected scenarios.")
+      warnings <- c(warnings, "Warning: There are more than one model runs for at least one of the selected scenarios - APP WILL FAIL.")
     }
     
     if (!starts_match || !ends_match) {
