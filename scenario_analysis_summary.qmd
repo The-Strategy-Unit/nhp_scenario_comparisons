@@ -14,8 +14,8 @@ format:
     code-fold: true
     echo: false
 params:
-  scenario_1: NULL
-  scenario_2: NULL
+  scenario_1: "rcx-2324-y18-ndglow-modelv33-01-uq-20250808-092415_results.json"
+  scenario_2: "rcx-2324-y18-ndglow-modelv33-01-uq-512runs-test-20250815-123325_results.json"
   
 #server: shiny
 # output: html_document
