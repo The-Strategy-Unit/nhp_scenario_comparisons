@@ -25,8 +25,12 @@ generate_activity_in_detail_table <- function(
   aggregated_data <- data |>
     get_aggregation(pod, measure, agg_col, sites)
   
+  
   # if a site is selected then there are no rows for A&E
-  if (nrow(aggregated_data) == 0) stop("No data")
+  if (nrow(aggregated_data) == 0) {
+    stop("No data")
+  }
+  
   
   aggregated_data <- aggregated_data |>
     dplyr::transmute(
@@ -36,13 +40,8 @@ generate_activity_in_detail_table <- function(
       final = .data$principal,
       change = .data$final - .data$baseline,
       change_pcnt = .data$change / .data$baseline
-    ) |>
-    dplyr::mutate(
-      dplyr::across("sex", \(.x) ifelse(.x == 1, "Male", "Female")),
-      dplyr::across("final", scales::comma_format(1)),
-      dplyr::across("change", scales::comma_format(1)),
-      dplyr::across("change_pcnt", scales::percent_format(1))
-    ) |> dplyr::mutate(final = as.numeric(gsub(",", "", final)))
+    )
+  
   
   if (agg_col == "tretspef") {
     aggregated_data <- aggregated_data |>
@@ -60,15 +59,27 @@ generate_activity_in_detail_table <- function(
       dplyr::rename("agg" = "Description")
   }
   
+  
   end_year <- data[["params"]][["end_year"]]
   end_fyear <- paste0(
-    end_year, "/",
+    end_year,
+    "/",
     as.numeric(stringr::str_extract(end_year, "\\d{2}$")) + 1
   )
   
-  return(aggregated_data)
+  
+  aggregated_data |>
+    mod_principal_detailed_table(
+      aggregation = agg_col,
+      final_year = end_fyear
+    ) |>
+    gt::tab_options(table.align = "left")
 }
 
+possibly_generate_activity_in_detail_table <- purrr::possibly(
+  generate_activity_in_detail_table,
+  otherwise = NULL
+)
 
 activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab = "ylab", xlab = "xlab"){
   ggplot(filter(data, sex== chosen_sex),
@@ -91,7 +102,7 @@ activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab =
 
 combine_activity_data <- function(data1, data2, tretspefs, activity_type, pod, measure, agg_col) {
   dplyr::bind_rows(
-    scenario_1 = generate_activity_in_detail_table(
+    scenario_1 = possibly_generate_activity_in_detail_table(
       data = data1,
       sites = NULL,
       tretspefs = tretspefs,
@@ -100,7 +111,7 @@ combine_activity_data <- function(data1, data2, tretspefs, activity_type, pod, m
       measure = measure,
       agg_col = agg_col
       ),
-    scenario_2 = generate_activity_in_detail_table(
+    scenario_2 = possibly_generate_activity_in_detail_table(
       data = data2,
       sites = NULL,
       tretspefs = tretspefs,
@@ -123,13 +134,13 @@ run_combinations_list <- function(parameters, data1, data2) {
   results <- pmap(
     parameters, 
     ~ combine_activity_data(
-      data1 = data1,
-      data2 = data2,
-      tretspefs = tretspef_lookup,
-      activity_type = ..1,
-      pod = ..2,
-      measure = ..3,
-      agg_col = ..4
+        data1 = data1,
+        data2 = data2,
+        tretspefs = tretspef_lookup,
+        activity_type = ..1,
+        pod = ..2,
+        measure = ..3,
+        agg_col = ..4
     )
   )
   

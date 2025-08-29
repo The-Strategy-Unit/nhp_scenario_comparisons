@@ -6,20 +6,25 @@ mod_principal_los_pods <- function() {
     dplyr::mutate(dplyr::across("pod_name", forcats::fct_inorder))
 }
 
+
 mod_principal_summary_los_data <- function(r, sites, measure) {
   pods <- mod_principal_los_pods()
-
-  has_tretspef_los <- !is.null(r$results[["tretspef_raw+los_group"]])
-
+  
+  
+  has_tretspef_los <- !is.null(r$results[["tretspef+los_group"]])
+  
+  
   if (has_tretspef_los) {
-    los_data <- r$results[["tretspef_raw+los_group"]] |>
-      dplyr::select(-"tretspef_raw")
+    los_data <- r$results[["tretspef+los_group"]] |>
+      dplyr::select(-"tretspef")
   }
-
+  
+  
   if (!has_tretspef_los) {
     los_data<- r$results[["los_group"]]
   }
-
+  
+  
   summary_los <- los_data |>
     dplyr::filter(.data$measure == .env$measure) |>
     trust_site_aggregation(sites) |>
@@ -30,9 +35,11 @@ mod_principal_summary_los_data <- function(r, sites, measure) {
     ) |>
     dplyr::select("pod_name", "los_group", "baseline", "principal", "change", "change_pcnt") |>
     dplyr::arrange("pod_name", "los_group")
-
+  
+  
   summary_los[order(summary_los$pod_name, summary_los$los_group), ]
 }
+
 
 mod_principal_summary_los_table <- function(data) {
   data |>

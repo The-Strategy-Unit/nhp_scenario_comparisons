@@ -127,7 +127,7 @@ parameter_matrix <- bind_rows(
 
 # We now insert into our function for iterating the `combine_activity_data` 
 # function across all combinations
-detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
+# detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
 
 
 # 80% CI -----------------------------------------------------------
@@ -170,7 +170,7 @@ scenario_1_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # ndg 2
@@ -183,7 +183,7 @@ scenario_2_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # join them together
