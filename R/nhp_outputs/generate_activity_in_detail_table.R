@@ -25,8 +25,12 @@ generate_activity_in_detail_table <- function(
   aggregated_data <- data |>
     get_aggregation(pod, measure, agg_col, sites)
   
+  
   # if a site is selected then there are no rows for A&E
-  if (nrow(aggregated_data) == 0) stop("No data")
+  if (nrow(aggregated_data) == 0) {
+    stop("No data")
+  }
+  
   
   aggregated_data <- aggregated_data |>
     dplyr::transmute(
@@ -36,13 +40,8 @@ generate_activity_in_detail_table <- function(
       final = .data$principal,
       change = .data$final - .data$baseline,
       change_pcnt = .data$change / .data$baseline
-    ) |>
-    dplyr::mutate(
-      dplyr::across("sex", \(.x) ifelse(.x == 1, "Male", "Female")),
-      dplyr::across("final", scales::comma_format(1)),
-      dplyr::across("change", scales::comma_format(1)),
-      dplyr::across("change_pcnt", scales::percent_format(1))
-    ) |> dplyr::mutate(final = as.numeric(gsub(",", "", final)))
+    )
+  
   
   if (agg_col == "tretspef") {
     aggregated_data <- aggregated_data |>
@@ -60,13 +59,21 @@ generate_activity_in_detail_table <- function(
       dplyr::rename("agg" = "Description")
   }
   
+  
   end_year <- data[["params"]][["end_year"]]
   end_fyear <- paste0(
-    end_year, "/",
+    end_year,
+    "/",
     as.numeric(stringr::str_extract(end_year, "\\d{2}$")) + 1
   )
   
-  return(aggregated_data)
+  
+  aggregated_data |>
+    mod_principal_detailed_table(
+      aggregation = agg_col,
+      final_year = end_fyear
+    ) |>
+    gt::tab_options(table.align = "left")
 }
 
 
