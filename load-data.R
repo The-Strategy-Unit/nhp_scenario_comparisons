@@ -175,7 +175,7 @@ scenario_1_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # ndg 2
@@ -188,7 +188,7 @@ scenario_2_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # join them together
