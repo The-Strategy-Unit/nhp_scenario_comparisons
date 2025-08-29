@@ -132,7 +132,7 @@ parameter_matrix <- bind_rows(
 
 # We now insert into our function for iterating the `combine_activity_data` 
 # function across all combinations
-detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
+# detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
 
 
 # 80% CI -----------------------------------------------------------
