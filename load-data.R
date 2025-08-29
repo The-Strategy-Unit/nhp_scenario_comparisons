@@ -145,11 +145,11 @@ data_distribution_summary <- bind_rows(
 
 #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
 data_distribution_summary <- data_distribution_summary |> 
-  select(scenario,pod,measure,principal,lwr_pi,upr_pi) |> 
+  select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
   group_by(scenario,pod,measure) |> 
   summarise(principal = sum(principal),
-            lwr_ci = sum(lwr_pi),
-            upr_ci = sum(upr_pi)) |> 
+            lwr_ci = sum(lwr_ci),
+            upr_ci = sum(upr_ci)) |> 
   ungroup()
 
 data_distribution_summary <- data_distribution_summary |> 
