@@ -41,17 +41,17 @@ data <- data |>
 
 ## admissions dataset
 data_1_adm <- result_1 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
+  mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
 
 data_2_adm <- result_2 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
+  mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
 
 ## Bed days dataset
 data_1_bed <- result_1 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
+  mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
 
 data_2_bed <- result_2 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
+  mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
 
 # data processing
 data_admissions <- bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
