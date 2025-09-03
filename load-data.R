@@ -41,17 +41,17 @@ data <- data |>
 
 ## admissions dataset
 data_1_adm <- result_1 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
+  mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
 
 data_2_adm <- result_2 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "admissions") 
+  mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
 
 ## Bed days dataset
 data_1_bed <- result_1 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
+  mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
 
 data_2_bed <- result_2 |> 
-  mod_principal_summary_los_data (sites = NULL, measure = "beddays") 
+  mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
 
 # data processing
 data_admissions <- bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
@@ -132,7 +132,7 @@ parameter_matrix <- bind_rows(
 
 # We now insert into our function for iterating the `combine_activity_data` 
 # function across all combinations
-detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
+# detailed_activity_data <- run_combinations_list(parameter_matrix, result_1, result_2)
 
 
 # 80% CI -----------------------------------------------------------
@@ -145,11 +145,11 @@ data_distribution_summary <- bind_rows(
 
 #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
 data_distribution_summary <- data_distribution_summary |> 
-  select(scenario,pod,measure,principal,lwr_pi,upr_pi) |> 
+  select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
   group_by(scenario,pod,measure) |> 
   summarise(principal = sum(principal),
-            lwr_ci = sum(lwr_pi),
-            upr_ci = sum(upr_pi)) |> 
+            lwr_ci = sum(lwr_ci),
+            upr_ci = sum(upr_ci)) |> 
   ungroup()
 
 data_distribution_summary <- data_distribution_summary |> 
@@ -175,7 +175,7 @@ scenario_1_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # ndg 2
@@ -188,7 +188,7 @@ scenario_2_ip_admission_dist <- get_model_run_distribution(
           "ip_maternity_admission"
   ),
   measure = "admissions",
-  sites = NULL
+  site_codes = NULL
 )
 
 # join them together

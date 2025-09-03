@@ -132,7 +132,8 @@ get_losgroup <- function(r_trust) {
   los_group_is_null <- is.null(r_trust[["results"]][["los_group"]])
 
   if (los_group_is_null) {
-    r_trust <- r_trust[["results"]][["tretspef_raw+los_group"]]
+    # tretspef+los_group renamed from tretspef_raw+los_group in v4.0
+    r_trust <- r_trust[["results"]][["tretspef+los_group"]]
   } else {
     r_trust <- r_trust[["results"]][["los_group"]]
   }

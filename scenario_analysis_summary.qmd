@@ -220,37 +220,39 @@ Cuts of this data:
 | Outpatient gender male/ female    | Same as above             |  Same as above  |
 |  A&E	Attendances male/ female    |Same as above              | Same as above  | 
 
-::: panel-tabset
-## Treatment Spesification
+**Need to sort the issue with "generate_activity_in_detail.R" script.**
 
-```{r}
-#| include: true
-#| fig-width: 20
-#| fig-height: 20
+<!-- ::: panel-tabset -->
+<!-- ## Treatment Spesification -->
 
-activity_detail_bar(
-  detailed_activity_data$ip_elective_admission_admissions_tretspef, 
-  chosen_sex = "Male", 
-  title_text = "Male Inpatient Elective Admissions Comparison", 
-  ylab = "Treatment Specification",
-  xlab = "Admissions")
-```
+<!-- ```{r} -->
+<!-- #| include: true -->
+<!-- #| fig-width: 20 -->
+<!-- #| fig-height: 20 -->
 
-## Age group
-```{r}
-#| include: true
-#| fig-width: 20
-#| fig-height: 20
+<!-- activity_detail_bar( -->
+<!--   detailed_activity_data$ip_elective_admission_admissions_tretspef,  -->
+<!--   chosen_sex = "Male",  -->
+<!--   title_text = "Male Inpatient Elective Admissions Comparison",  -->
+<!--   ylab = "Treatment Specification", -->
+<!--   xlab = "Admissions") -->
+<!-- ``` -->
 
-activity_detail_bar(
-  detailed_activity_data$ip_elective_admission_beddays_age_group, 
-  chosen_sex = "Male", 
-  title_text = "Male Inpatient Elective Admissions Comparison", 
-  ylab = "Age Group",
-  xlab = "Admissions")
-```
+<!-- ## Age group -->
+<!-- ```{r} -->
+<!-- #| include: true -->
+<!-- #| fig-width: 20 -->
+<!-- #| fig-height: 20 -->
 
-:::
+<!-- activity_detail_bar( -->
+<!--   detailed_activity_data$ip_elective_admission_beddays_age_group,  -->
+<!--   chosen_sex = "Male",  -->
+<!--   title_text = "Male Inpatient Elective Admissions Comparison",  -->
+<!--   ylab = "Age Group", -->
+<!--   xlab = "Admissions") -->
+<!-- ``` -->
+
+<!-- ::: -->
 
 # Waterfalls
 
