@@ -124,9 +124,18 @@ server <- function(input, output, session) {
         output_file = "scenario_analysis_summary.html", 
         execute_params = list(
           scenario_1 = input$scenario_1,
-          scenario_1_runtime = input$scenario_1_runtime,
+          scenario_1_runtime = 
+            as.numeric(
+              lubridate::as_datetime(
+                input$scenario_1_runtime
+              )
+            ),
           scenario_2 = input$scenario_2,
-          scenario_2_runtime = input$scenario_2_runtime
+          scenario_2_runtime = as.numeric(
+            lubridate::as_datetime(
+              input$scenario_2_runtime 
+            )
+          )
         ))
       output$quarto_summary <- renderUI({
         includeHTML("scenario_analysis_summary.html")
