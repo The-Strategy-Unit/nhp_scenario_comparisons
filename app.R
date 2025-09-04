@@ -85,14 +85,12 @@ server <- function(input, output, session) {
   output$warning_text <- renderUI({
     s1 <- nhp_model_runs |> filter(
       scenario == input$scenario_1, 
-      dataset == input$selected_scheme)
+      dataset == input$selected_scheme,
+      create_datetime == input$scenario_1_runtime)
     s2 <- nhp_model_runs |> filter(
       scenario == input$scenario_2, 
-      dataset == input$selected_scheme)
-    
-    # test that there is exactly one run for each scenario
-    one_run_s1 <- nrow(s1) == 1
-    one_run_s2 <- nrow(s2) == 1
+      dataset == input$selected_scheme,
+      create_datetime == input$scenario_2_runtime)
     
     # tests that the start and end years match
     starts_match <- identical(s1$start_year, s2$start_year) 
@@ -103,10 +101,6 @@ server <- function(input, output, session) {
     
     if (input$scenario_1 == input$scenario_2) {
       warnings <- c(warnings, "Warning: Scenario 1 and Scenario 2 must be different.")
-    }
-    
-    if (!one_run_s1 || !one_run_s2) {
-      warnings <- c(warnings, "Warning: There are more than one model runs for at least one of the selected scenarios - APP WILL FAIL.")
     }
     
     if (!starts_match || !ends_match) {
