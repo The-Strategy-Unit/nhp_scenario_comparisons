@@ -14,7 +14,9 @@ format:
     echo: false
 params:
   scenario_1: NULL
+  scenario_1_runtime: NULL
   scenario_2: NULL
+  scenario_2_runtime: NULL
   
 #server: shiny
 # output: html_document
@@ -22,7 +24,17 @@ params:
 
 ```{r}
 scenario_1 <- params$scenario_1
+scenario_1_runtime <- format(
+  lubridate::as_datetime(
+    params$scenario_1_runtime),
+  "%Y%m%d_%H%M%S")
+
 scenario_2 <- params$scenario_2
+scenario_2_runtime <- format(
+  lubridate::as_datetime(
+    params$scenario_2_runtime),
+  "%Y%m%d_%H%M%S")
+
 ```
 
 # Introduction

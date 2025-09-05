@@ -5,12 +5,14 @@ library(tidyverse)
 # load the result sets from Azure
 nhp_model_runs <- get_nhp_result_sets()
 
-scenario_1_file <- nhp_model_runs |> 
-  filter(scenario == scenario_1) |> 
+scenario_1_file <- nhp_model_runs |>
+  filter(scenario == scenario_1,
+         create_datetime == scenario_1_runtime) |>
   pull(file)
 
-scenario_2_file <- nhp_model_runs |> 
-  filter(scenario == scenario_2) |> 
+scenario_2_file <- nhp_model_runs |>
+  filter(scenario == scenario_2,
+         create_datetime == scenario_2_runtime) |>
   pull(file)
 
 result_1 <- get_nhp_results(file = scenario_1_file)
