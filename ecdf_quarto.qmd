@@ -1,0 +1,227 @@
+---
+title: "S curve for 256 runs comparison"
+format: 
+  html:
+    self-contained: true
+    fig-format: svg
+    fig-align: center
+execute: 
+  warning: false
+  echo: false
+  message: false
+---
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+library(patchwork)
+```
+
+```{r}
+#| warning: false
+#| include: false
+#| message: false
+file_names <- list.files(path = 'R', pattern = "\\.R$")
+lapply(paste0('R/',file_names), source)
+
+file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
+```
+
+```{r}
+scenarios <- tibble::tibble(
+  scenario = c("2324-Y18-NDGlow-modelv33-01-UQ-128runs-test",
+               "2324-Y18-NDGlow-modelv33-01-UQ",
+               "2324-Y18-NDGlow-modelv33-01-UQ-128runs-test",
+               "2324-Y18-NDGlow-modelv33-01-UQ-1024runs-test"),
+  runtime = c("20250815_122554",
+              "20250807_204823",
+              "20250815_123325",
+              "20250815_123413")
+  )
+
+```
+
+```{r}
+nhp_model_runs <- get_nhp_result_sets()
+
+pull_file <- function(scenario, runtime){
+  nhp_model_runs |> 
+    dplyr::filter(scenario == scenario,
+                  create_datetime == runtime) |> 
+    pull(file)
+}
+
+
+scenarios <- scenarios |> 
+  dplyr::mutate(path = 
+  purrr::map2_chr(
+    scenario,
+    runtime,
+    \(x, y) pull_file(x, y))
+  )
+
+scenarios_results <- purrr::map(
+    scenarios$path,
+    \(x) get_nhp_results(file = x)
+  )
+
+scenarios_ip_admission_dist <- purrr::map(
+  scenarios_results,
+  ~ get_model_run_distribution(
+    .x, 
+    pod = c("ip_elective_daycase", 
+            "ip_non-elective_admission",
+            "ip_regular_day_attender", 
+            "ip_elective_admission", 
+            "ip_maternity_admission"
+    ),
+    measure = "admissions",
+    site_codes = NULL) |> 
+    dplyr::mutate(scenario = as.factor(.x$params$model_runs))
+)|> 
+  purrr::list_rbind()
+```
+
+
+
+```{r, fig.width=16, fig.height=7, dpi = 300, results="asis"}
+#| layout-ncol: 1
+#| column: page
+#| fig-width: 14
+#| fig-height: 7
+ecdf_compare_run_numbers <- function(data, show_origin) {
+  
+ percentiles <- data |>
+  group_by(scenario) |>
+  summarise(
+    baseline = baseline[[1]],
+    p10 = quantile(value, 0.1),
+    principal = principal[[1]],
+    p90 = quantile(value, 0.9)
+  )
+
+min_x <- min(percentiles$baseline, min(data[["value"]]))
+min_x <- dplyr::if_else(show_origin, 0, min_x)
+
+ecdf <- ggplot(data, aes(x = value, color = scenario)) +
+  stat_ecdf(geom = "step", alpha = 0.5) +
+  geom_segment(data = percentiles,
+               aes(x = p10, xend = p10, y = 0, yend = 0.1),
+               linetype = "dashed",
+               show.legend = FALSE,
+               size = 1) +
+  geom_segment(data = percentiles,
+               aes(x = p90, xend = p90, y = 0, yend = 0.9),
+               linetype = "dashed",
+               show.legend = FALSE,
+               size = 1) +
+  geom_segment(data = percentiles,
+               aes(x = principal, xend = principal, y = 0, yend = 1),
+               linetype = "solid",
+               #color = "red",
+               show.legend = FALSE) +
+  geom_segment(data = percentiles,
+               aes(x = -Inf, xend = p10, y = 0.1, yend = 0.1),
+               linetype = "dashed",
+               color = "blue",
+               show.legend = FALSE) +
+  geom_segment(data = percentiles,
+               aes(x = -Inf, xend = p90, y = 0.9, yend = 0.9),
+               linetype = "dashed",
+               color = "blue",
+               show.legend = FALSE) +
+  ggplot2::geom_vline(xintercept = percentiles$baseline, colour = "dimgrey")  +
+  geom_text(aes(x = baseline, y = 0.925, label = "Baseline"),
+            stat = 'identity',
+            colour = "dimgrey",
+            angle = 0,
+            hjust = 0,
+            vjust = 0) +
+  geom_text(aes(x = min(principal), y = 0.925, label = "Principals"),
+            colour = "red",
+            angle = 0,
+            hjust = 0,
+            vjust = 0
+            ) +
+  labs(
+    x = "Value",
+    y = "Proportion (ECDF)",
+    #title = "Empirical Cumulative Distribution Function with 10% and 90% Markers "
+  ) +
+  ggplot2::ylab("Percentage of model runs") +
+  ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
+  ggplot2::scale_x_continuous(
+    breaks = scales::pretty_breaks(10),
+    labels = scales::comma,
+    expand = c(0.002, 0),
+    limits = c(min_x, NA)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = c(seq(0, 1, 0.1)),
+    labels = scales::percent,
+    expand = c(0, 0)
+  ) +
+  ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
+  ggplot2::theme(legend.position = "bottom")+
+  theme(text = element_text(family = "sans"))
+
+b <- ggplot_build(ecdf)
+xlims <- b$layout$panel_params[[1]]$x.range
+
+boxplot <- percentiles |> 
+  ggplot()+
+  geom_boxplot(aes(xmin = p10,
+                   xmax = p90,
+                   xlower = p10,
+                   xupper = p90,
+                   xmiddle = principal,
+                   y = scenario,
+                   fill = scenario),
+               stat = 'identity',
+               )+
+  geom_text(aes(x = p10, y = scenario, label = "p10"), 
+            stat = 'identity', 
+            angle = 0,
+            hjust = 1.5)+
+  # geom_text(aes(x = principal, y = scenario, label = "Principal"), 
+  #           stat = 'identity', 
+  #           angle = 0,
+  #           hjust = 1.5)+
+  geom_text(aes(x = p90, y = scenario, label = "p90"), 
+            stat = 'identity', 
+            angle = 0,
+            hjust = 0.5)+
+  ggplot2::scale_x_continuous(
+    breaks = scales::pretty_breaks(10),
+    labels = scales::comma,
+    expand = c(0.002, 0),
+    limits = xlims
+  )+
+  ggplot2::theme(axis.title.x = ggplot2::element_blank())+
+  ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]]))+
+  ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))
+
+  
+ecdf / boxplot + plot_layout(heights = c(4, 1))
+
+
+}
+
+ecdf_compare_run_numbers(scenarios_ip_admission_dist, show_origin = FALSE) +
+  ggtitle("ECDF plot two scenarios")
+
+
+```
+
+

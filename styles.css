@@ -1,0 +1,24 @@
+.fullwidth {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  overflow-x: auto;
+  padding: 0 2rem;         
+  box-sizing: border-box;
+}
+
+/* Allow figures inside .fullwidth to expand */
+.fullwidth .quarto-figure,
+.fullwidth img,
+.fullwidth svg,
+.fullwidth canvas {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto;
+  display: block;
+}
+
+/* Remove Quarto's default figure width constraints */
+figure.quarto-figure {
+  width: auto !important;
+  max-width: none !important;
+}
