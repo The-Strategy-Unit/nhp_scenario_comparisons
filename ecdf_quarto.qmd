@@ -189,7 +189,8 @@ ecdf <- ggplot(data, aes(x = value, color = scenario)) +
     expand = c(0, 0)
   ) +
   ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
-  ggplot2::theme(legend.position = "bottom")+
+  ggplot2::theme(legend.position = "right",
+                 legend.direction = "vertical")+
   theme(text = element_text(family = "sans"))+
   ggtitle(unique(data$pod_measure))
 
