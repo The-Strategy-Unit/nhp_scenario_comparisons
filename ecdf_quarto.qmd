@@ -76,21 +76,37 @@ scenarios_results <- purrr::map(
     \(x) get_nhp_results(file = x)
   )
 
-scenarios_ip_admission_dist <- purrr::map(
-  scenarios_results,
-  ~ get_model_run_distribution(
-    .x, 
-    pod = c("ip_elective_daycase", 
-            "ip_non-elective_admission",
-            "ip_regular_day_attender", 
-            "ip_elective_admission", 
-            "ip_maternity_admission"
-    ),
-    measure = "admissions",
-    site_codes = NULL) |> 
-    dplyr::mutate(scenario = as.factor(.x$params$model_runs))
-)|> 
-  purrr::list_rbind()
+atpmo <- get_activity_type_pod_measure_options()
+
+atpmo_simplified <- get_activity_type_pod_measure_options() |>
+  dplyr::select("activity_type", "pod", "measure" = "measures") |>
+  dplyr::mutate(
+    activity_type = dplyr::case_match(
+      activity_type, "ip" ~ "inpatients", "op" ~ "outpatients", "aae" ~ "aae"
+    )
+  )
+
+possibly_get_model_run_distribution <- purrr::possibly(
+   get_model_run_distribution,
+   otherwise = "Insufficient information to produce this chart"
+ )
+
+activity_distributions <- atpmo_simplified |>
+  purrr::pmap(
+    \(activity_type, pod, measure) {
+      
+      purrr::map(scenarios_results, 
+                 \(x) { 
+                   possibly_get_model_run_distribution(
+                     x, 
+                     pod,
+                     measure,
+                     site_codes = NULL) 
+                   })|> 
+        purrr::list_rbind() 
+    }) 
+  
+  
 ```
 
 
@@ -100,7 +116,7 @@ scenarios_ip_admission_dist <- purrr::map(
 #| column: page
 #| fig-width: 14
 #| fig-height: 7
-ecdf_compare_run_numbers <- function(data, show_origin) {
+ecdf_compare_run_numbers <- function(data, show_origin = FALSE) {
   
  percentiles <- data |>
   group_by(scenario) |>
@@ -115,7 +131,7 @@ min_x <- min(percentiles$baseline, min(data[["value"]]))
 min_x <- dplyr::if_else(show_origin, 0, min_x)
 
 ecdf <- ggplot(data, aes(x = value, color = scenario)) +
-  stat_ecdf(geom = "step", alpha = 0.5) +
+  stat_ecdf(geom = "step", alpha = 0.8) +
   geom_segment(data = percentiles,
                aes(x = p10, xend = p10, y = 0, yend = 0.1),
                linetype = "dashed",
@@ -174,7 +190,8 @@ ecdf <- ggplot(data, aes(x = value, color = scenario)) +
   ) +
   ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
   ggplot2::theme(legend.position = "bottom")+
-  theme(text = element_text(family = "sans"))
+  theme(text = element_text(family = "sans"))+
+  ggtitle(unique(data$pod_measure))
 
 b <- ggplot_build(ecdf)
 xlims <- b$layout$panel_params[[1]]$x.range
@@ -188,8 +205,13 @@ boxplot <- percentiles |>
                    xmiddle = principal,
                    y = scenario,
                    fill = scenario),
+               alpha = 0.8,
                stat = 'identity',
                )+
+  geom_point(data = data |> 
+               dplyr::group_by(scenario) |> 
+               dplyr::summarise(median = median(value)),
+             aes(median, scenario))+
   geom_text(aes(x = p10, y = scenario, label = "p10"), 
             stat = 'identity', 
             angle = 0,
@@ -201,7 +223,7 @@ boxplot <- percentiles |>
   geom_text(aes(x = p90, y = scenario, label = "p90"), 
             stat = 'identity', 
             angle = 0,
-            hjust = 0.5)+
+            hjust = -0.5)+
   ggplot2::scale_x_continuous(
     breaks = scales::pretty_breaks(10),
     labels = scales::comma,
@@ -218,8 +240,13 @@ ecdf / boxplot + plot_layout(heights = c(4, 1))
 
 }
 
-ecdf_compare_run_numbers(scenarios_ip_admission_dist, show_origin = FALSE) +
-  ggtitle("ECDF plot two scenarios")
+# ecdf_compare_run_numbers(scenarios_ip_admission_dist, show_origin = FALSE) +
+#   ggtitle("ECDF plot two scenarios")
+
+activity_distributions |> 
+  purrr::discard(~ nrow(.x) == 0) |> 
+  purrr::walk(~ print(ecdf_compare_run_numbers(.x)))
+
 
 
 ```

@@ -216,7 +216,9 @@ get_model_run_distribution <- function(r, pod, measure, site_codes) {
     ) |>
     tidyr::unnest("model_runs") |>
     dplyr::inner_join(get_variants(r), by = "model_run") |>
-    trust_site_aggregation(site_codes)
+    trust_site_aggregation(site_codes) |> 
+    dplyr::mutate(scenario = as.factor(r$params$model_runs),
+                  pod_measure = paste(.env$pod, .env$measure, sep = "_"))
 }
 
 get_aggregation <- function(r, pod, measure, agg_col, sites) {
