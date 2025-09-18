@@ -1,5 +1,5 @@
 ---
-title: "S curve for 256 runs comparison"
+title: "Comparison of different numbers of runs for the same scenario"
 format: 
   html:
     self-contained: true
@@ -127,8 +127,8 @@ ecdf_compare_run_numbers <- function(data, show_origin = FALSE) {
     p90 = quantile(value, 0.9)
   )
 
-min_x <- min(percentiles$baseline, min(data[["value"]]))
-min_x <- dplyr::if_else(show_origin, 0, min_x)
+#min_x <- min(percentiles$baseline, min(data[["value"]]))
+#min_x <- dplyr::if_else(show_origin, 0, min_x)
 
 ecdf <- ggplot(data, aes(x = value, color = scenario)) +
   stat_ecdf(geom = "step", alpha = 0.8) +
@@ -157,13 +157,13 @@ ecdf <- ggplot(data, aes(x = value, color = scenario)) +
                linetype = "dashed",
                color = "blue",
                show.legend = FALSE) +
-  ggplot2::geom_vline(xintercept = percentiles$baseline, colour = "dimgrey")  +
-  geom_text(aes(x = baseline, y = 0.925, label = "Baseline"),
-            stat = 'identity',
-            colour = "dimgrey",
-            angle = 0,
-            hjust = 0,
-            vjust = 0) +
+  #ggplot2::geom_vline(xintercept = percentiles$baseline, colour = "dimgrey")  +
+  # geom_text(aes(x = baseline, y = 0.925, label = "Baseline"),
+  #           stat = 'identity',
+  #           colour = "dimgrey",
+  #           angle = 0,
+  #           hjust = 0,
+  #           vjust = 0) +
   geom_text(aes(x = min(principal), y = 0.925, label = "Principals"),
             colour = "red",
             angle = 0,
@@ -173,15 +173,16 @@ ecdf <- ggplot(data, aes(x = value, color = scenario)) +
   labs(
     x = "Value",
     y = "Proportion (ECDF)",
+    color = "Runs"
     #title = "Empirical Cumulative Distribution Function with 10% and 90% Markers "
   ) +
   ggplot2::ylab("Percentage of model runs") +
-  ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
+  #ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
   ggplot2::scale_x_continuous(
     breaks = scales::pretty_breaks(10),
     labels = scales::comma,
     expand = c(0.002, 0),
-    limits = c(min_x, NA)
+    #limits = c(min_x, NA)
   ) +
   ggplot2::scale_y_continuous(
     breaks = c(seq(0, 1, 0.1)),
@@ -233,7 +234,9 @@ boxplot <- percentiles |>
   )+
   ggplot2::theme(axis.title.x = ggplot2::element_blank())+
   ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]]))+
-  ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))
+  ggplot2::guides(fill = ggplot2::guide_legend(reverse = TRUE))+
+  labs(y = "Runs",
+       fill = "Runs")
 
   
 ecdf / boxplot + plot_layout(heights = c(4, 1))
