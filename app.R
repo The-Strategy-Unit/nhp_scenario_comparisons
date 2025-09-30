@@ -8,7 +8,8 @@ library(quarto)
 source("R/azure.R")
 
 # Get model runs data
-nhp_model_runs <- get_nhp_result_sets()
+nhp_model_runs <- get_nhp_result_sets() |> 
+  dplyr::filter(!app_version == "dev")
 
 # Define UI
 ui <- bslib::page_sidebar(
