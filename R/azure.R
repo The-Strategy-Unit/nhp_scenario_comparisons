@@ -22,6 +22,7 @@ get_nhp_result_sets <- function(
   container |>
     AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
     dplyr::filter(!.data[["isdir"]]) |>
+    dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> 
     purrr::pluck("name") |>
     purrr::set_names() |>
     purrr::map(\(name, ...) AzureStor::get_storage_metadata(container, name)) |>
