@@ -8,7 +8,8 @@ library(quarto)
 source("R/azure.R")
 
 # Get model runs data
-nhp_model_runs <- get_nhp_result_sets()
+nhp_model_runs <- get_nhp_result_sets() |> 
+  dplyr::filter(!app_version == "dev")
 
 # Define UI
 ui <- bslib::page_sidebar(
@@ -72,12 +73,24 @@ server <- function(input, output, session) {
             "(",
             lubridate::as_datetime(input$scenario_1_runtime),
             ")"),
+          paste0("(model version: ", 
+                 nhp_model_runs |> 
+                   dplyr::filter(scenario == input$scenario_1,
+                                 create_datetime == input$scenario_1_runtime) |> 
+                   pull(app_version),
+                 ")"),
           "and",
           input$scenario_2,
           paste0(
             "(",
             lubridate::as_datetime(input$scenario_2_runtime),
             ")"),
+          paste0("(model version: ", 
+                 nhp_model_runs |> 
+                   dplyr::filter(scenario == input$scenario_2,
+                                 create_datetime == input$scenario_2_runtime) |> 
+                   pull(app_version),
+                 ")"),
           "from the scheme",
           input$selected_scheme)
   })
@@ -106,6 +119,17 @@ server <- function(input, output, session) {
     if (!starts_match || !ends_match) {
       warnings <- c(warnings, "Warning: The start and end years of the selected scenarios must match.")
     }
+    
+    if ((nhp_model_runs |> 
+        dplyr::filter(scenario == input$scenario_1,
+                      create_datetime == input$scenario_1_runtime) |> 
+        pull(app_version)) != 
+        (nhp_model_runs |> 
+         dplyr::filter(scenario == input$scenario_2,
+                       create_datetime == input$scenario_2_runtime) |> 
+         pull(app_version))){
+      warnings <- c(warnings, "Warning: Selected scenarios must have been built on the same version of the model.")
+      }
     
     # collapse into a single string, separated by new lines
     HTML(paste(warnings, collapse = "<br>"))
