@@ -213,7 +213,7 @@ boxplot <- percentiles |>
   geom_point(data = data |> 
                dplyr::group_by(scenario) |> 
                dplyr::summarise(median = median(value)),
-             aes(median, scenario))+
+             aes(median, scenario, shape = "Median"))+
   geom_text(aes(x = p10, y = scenario, label = "p10"), 
             stat = 'identity', 
             angle = 0,
