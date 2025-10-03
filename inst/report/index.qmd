@@ -9,6 +9,10 @@ execute:
   warning: false
   echo: false
   message: false
+resources:
+  - ../../R/*.R
+  - ../../R/nhp_outputs
+  - ../../styles.css
 ---
 
 ```{r}
@@ -31,11 +35,11 @@ library(patchwork)
 #| warning: false
 #| include: false
 #| message: false
-file_names <- list.files(path = 'R', pattern = "\\.R$")
-lapply(paste0('R/',file_names), source)
+file_names <- list.files(path = '../../R', pattern = "\\.R$")
+lapply(paste0('../../R/',file_names), source)
 
-file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
-lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
+file_names_nhs_output <- list.files(path = '../../R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('../../R/nhp_outputs/',file_names_nhs_output), source)
 ```
 
 ```{r}
