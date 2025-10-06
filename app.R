@@ -3,6 +3,7 @@ library(shiny)
 library(bslib)
 library(dplyr)
 library(quarto)
+library(shinybusy)
 
 # Source the Azure function
 source("R/azure.R")
@@ -13,6 +14,7 @@ nhp_model_runs <- get_nhp_result_sets() |>
 
 # Define UI
 ui <- bslib::page_sidebar(
+  shinybusy::add_busy_spinner(position = "bottom-right"),
   title = "Scenario comparison app (proto)",
   sidebar = bslib::sidebar(
     title = "Scenario selection",
