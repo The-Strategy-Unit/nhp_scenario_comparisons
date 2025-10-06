@@ -138,7 +138,8 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$render_quarto, {
-    if (input$scenario_1 != input$scenario_2) {
+    if (!(input$scenario_1 == input$scenario_2 &
+          input$scenario_1_runtime == input$scenario_2_runtime)) {
       quarto::quarto_render(
         "scenario_analysis_summary.qmd", 
         output_file = "scenario_analysis_summary.html", 
