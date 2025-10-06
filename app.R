@@ -114,7 +114,8 @@ server <- function(input, output, session) {
     # collect warnings
     warnings <- c()
     
-    if (input$scenario_1 == input$scenario_2) {
+    if (input$scenario_1 == input$scenario_2 &
+        input$scenario_1_runtime == input$scenario_2_runtime) {
       warnings <- c(warnings, "Warning: Scenario 1 and Scenario 2 must be different.")
     }
     
