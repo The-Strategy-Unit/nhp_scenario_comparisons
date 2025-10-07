@@ -3,6 +3,7 @@ library(shiny)
 library(bslib)
 library(dplyr)
 library(quarto)
+library(shinybusy)
 
 # Source the Azure function
 source("R/azure.R")
@@ -13,6 +14,7 @@ nhp_model_runs <- get_nhp_result_sets() |>
 
 # Define UI
 ui <- bslib::page_sidebar(
+  shinybusy::add_busy_spinner(position = "bottom-right"),
   title = "Scenario comparison app (proto)",
   sidebar = bslib::sidebar(
     title = "Scenario selection",
@@ -112,7 +114,8 @@ server <- function(input, output, session) {
     # collect warnings
     warnings <- c()
     
-    if (input$scenario_1 == input$scenario_2) {
+    if (input$scenario_1 == input$scenario_2 &
+        input$scenario_1_runtime == input$scenario_2_runtime) {
       warnings <- c(warnings, "Warning: Scenario 1 and Scenario 2 must be different.")
     }
     
@@ -136,7 +139,8 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$render_quarto, {
-    if (input$scenario_1 != input$scenario_2) {
+    if (!(input$scenario_1 == input$scenario_2 &
+          input$scenario_1_runtime == input$scenario_2_runtime)) {
       quarto::quarto_render(
         "scenario_analysis_summary.qmd", 
         output_file = "scenario_analysis_summary.html", 
