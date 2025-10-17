@@ -3,6 +3,11 @@
 #' @noRd
 app_server = function(input, output, session) {
     
+  nhp_model_runs <- get_nhp_result_sets() |> 
+    dplyr::filter(!app_version == "dev")
+  
+  shiny::updateSelectInput(session, "selected_scheme", unique(nhp_model_runs$dataset))
+  
   get_runtime_choices <- function(data, scheme, chosen_scenario) {
     data |>
       filter(dataset == scheme, scenario == chosen_scenario) |>
