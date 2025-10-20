@@ -1,0 +1,1 @@
+We also require that the start and end year of the two runs being compared are the same. This is to ensure that the comparisons are like-for-like. Differences in either the start or end years are non-trivial to account for in the results due to the complexity of the underlying model. For example, the impact of population projections cannot be assumed to be linear.
