@@ -3,13 +3,13 @@
 #' @noRd
 app_server = function(input, output, session) {
   
-  nhp_model_runs <- shiny::reactiveVal(get_nhp_result_sets() |> 
-                                         dplyr::filter(!app_version == "dev"))
+  nhp_model_runs <- get_nhp_result_sets() |> 
+    dplyr::filter(!app_version == "dev")
   
   shiny::observe(
     shiny::updateSelectInput(session, 
                              "selected_scheme", 
-                             choices = unique(nhp_model_runs()$dataset))
+                             choices = unique(nhp_model_runs$dataset))
   )
   
   get_runtime_choices <- function(data, scheme, chosen_scenario) {
@@ -23,6 +23,7 @@ app_server = function(input, output, session) {
   
   # Dynamically update scenarios when scheme is selected
   shiny::observeEvent(input$selected_scheme, {
+    shiny::req(nhp_model_runs)
     filtered_scenarios <- nhp_model_runs |> 
       dplyr::filter(dataset == input$selected_scheme) |> 
       dplyr::pull(scenario) |> 
@@ -34,6 +35,7 @@ app_server = function(input, output, session) {
   
   
   shiny::observeEvent(list(input$selected_scheme, input$scenario_1, input$scenario_2), {
+    shiny::req(nhp_model_runs)
     purrr::walk(c("scenario_1", "scenario_2"), function(scn) {
       runtimes <- get_runtime_choices(
         nhp_model_runs, 
@@ -74,6 +76,7 @@ app_server = function(input, output, session) {
   })
   
   output$warning_text <- shiny::renderUI({
+    shiny::req(nhp_model_runs)
     s1 <- nhp_model_runs |> dplyr::filter(
       scenario == input$scenario_1, 
       dataset == input$selected_scheme,
