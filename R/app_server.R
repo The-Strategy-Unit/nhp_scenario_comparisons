@@ -3,48 +3,48 @@
 #' @noRd
 app_server = function(input, output, session) {
   
-  nhp_model_runs <- reactiveVal(get_nhp_result_sets() |> 
-                                  dplyr::filter(!app_version == "dev"))
+  nhp_model_runs <- shiny::reactiveVal(get_nhp_result_sets() |> 
+                                         dplyr::filter(!app_version == "dev"))
   
   shiny::observe(
-  shiny::updateSelectInput(session, 
-                           "selected_scheme", 
-                           choices = unique(nhp_model_runs()$dataset))
+    shiny::updateSelectInput(session, 
+                             "selected_scheme", 
+                             choices = unique(nhp_model_runs()$dataset))
   )
   
   get_runtime_choices <- function(data, scheme, chosen_scenario) {
     data |>
-      filter(dataset == scheme, scenario == chosen_scenario) |>
-      pull(create_datetime) |>
+      dplyr::filter(dataset == scheme, scenario == chosen_scenario) |>
+      dplyr::pull(create_datetime) |>
       unique() |>
       sort() |>
       rev()
   }
   
   # Dynamically update scenarios when scheme is selected
-  observeEvent(input$selected_scheme, {
+  shiny::observeEvent(input$selected_scheme, {
     filtered_scenarios <- nhp_model_runs |> 
-      filter(dataset == input$selected_scheme) |> 
-      pull(scenario) |> 
+      dplyr::filter(dataset == input$selected_scheme) |> 
+      dplyr::pull(scenario) |> 
       unique()
     
-    updateSelectInput(session, "scenario_1", choices = filtered_scenarios)
-    updateSelectInput(session, "scenario_2", choices = filtered_scenarios)
+    shiny::updateSelectInput(session, "scenario_1", choices = filtered_scenarios)
+    shiny::updateSelectInput(session, "scenario_2", choices = filtered_scenarios)
   })
   
   
-  observeEvent(list(input$selected_scheme, input$scenario_1, input$scenario_2), {
+  shiny::observeEvent(list(input$selected_scheme, input$scenario_1, input$scenario_2), {
     purrr::walk(c("scenario_1", "scenario_2"), function(scn) {
       runtimes <- get_runtime_choices(
         nhp_model_runs, 
         input$selected_scheme, 
         input[[scn]]
       )
-      updateSelectInput(session, paste0(scn, "_runtime"), choices = runtimes)
+      shiny::updateSelectInput(session, paste0(scn, "_runtime"), choices = runtimes)
     })
   })
   
-  output$result_text <- renderText({
+  output$result_text <- shiny::renderText({
     paste("You have selected",
           input$scenario_1,
           paste0(
@@ -55,7 +55,7 @@ app_server = function(input, output, session) {
                  nhp_model_runs |> 
                    dplyr::filter(scenario == input$scenario_1,
                                  create_datetime == input$scenario_1_runtime) |> 
-                   pull(app_version),
+                   dplyr::pull(app_version),
                  ")"),
           "and",
           input$scenario_2,
@@ -67,18 +67,18 @@ app_server = function(input, output, session) {
                  nhp_model_runs |> 
                    dplyr::filter(scenario == input$scenario_2,
                                  create_datetime == input$scenario_2_runtime) |> 
-                   pull(app_version),
+                   dplyr::pull(app_version),
                  ")"),
           "from the scheme",
           input$selected_scheme)
   })
   
-  output$warning_text <- renderUI({
-    s1 <- nhp_model_runs |> filter(
+  output$warning_text <- shiny::renderUI({
+    s1 <- nhp_model_runs |> dplyr::filter(
       scenario == input$scenario_1, 
       dataset == input$selected_scheme,
       create_datetime == input$scenario_1_runtime)
-    s2 <- nhp_model_runs |> filter(
+    s2 <- nhp_model_runs |> dplyr::filter(
       scenario == input$scenario_2, 
       dataset == input$selected_scheme,
       create_datetime == input$scenario_2_runtime)
@@ -102,11 +102,11 @@ app_server = function(input, output, session) {
     if ((nhp_model_runs |> 
          dplyr::filter(scenario == input$scenario_1,
                        create_datetime == input$scenario_1_runtime) |> 
-         pull(app_version)) != 
+         dplyr::pull(app_version)) != 
         (nhp_model_runs |> 
          dplyr::filter(scenario == input$scenario_2,
                        create_datetime == input$scenario_2_runtime) |> 
-         pull(app_version))){
+         dplyr::pull(app_version))){
       warnings <- c(warnings, "Warning: Selected scenarios must have been built on the same version of the model.")
     }
     
@@ -114,7 +114,7 @@ app_server = function(input, output, session) {
     HTML(paste(warnings, collapse = "<br>"))
   })
   
-  observeEvent(input$render_quarto, {
+  shiny::observeEvent(input$render_quarto, {
     if (!(input$scenario_1 == input$scenario_2 &
           input$scenario_1_runtime == input$scenario_2_runtime)) {
       quarto::quarto_render(
@@ -136,12 +136,12 @@ app_server = function(input, output, session) {
               )
             )
         ))
-      output$quarto_summary <- renderUI({
-        includeHTML("scenario_analysis_summary.html")
+      output$quarto_summary <- shiny::renderUI({
+        htmltools::includeHTML("scenario_analysis_summary.html")
       })
     } else {
-      output$quarto_summary <- renderUI({
-        HTML("<p style='color:red;'>Scenarios must be different to render the summary.</p>")
+      output$quarto_summary <- shiny::renderUI({
+        htmltools::HTML("<p style='color:red;'>Scenarios must be different to render the summary.</p>")
       })
     }
   })
