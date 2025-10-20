@@ -1,0 +1,41 @@
+Package: nhp_scenario_analysis
+Title: Scenario result comparison app
+Version: 0.1.0
+Authors@R: 
+    person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
+    person("Ozayr", "Mohammed", , "ozayr.mohammed@nhs.net", role = c("aut"))
+Description: A shiny app for comparing model results for different scenarios
+License: MIT + file LICENSE
+Imports: 
+    AzureAuth,
+    AzureStor,
+    bslib,
+    cli,
+    dplyr,
+    forcats,
+    ggbeeswarm,
+    ggplot2,
+    glue,
+    gt,
+    jsonlite,
+    lubridate,
+    purrr,
+    quarto,
+    readr,
+    rlang,
+    scales,
+    shiny,
+    shinybusy,
+    snakecase,
+    stats,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    utils,
+    withr,
+    yaml,
+    zeallot
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

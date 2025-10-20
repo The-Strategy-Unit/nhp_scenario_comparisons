@@ -14,10 +14,12 @@
 #'
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
-    container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS")
+    container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
+    blob_url = Sys.getenv("AZ_STORAGE_EP")
 ) {
 
-  container <- get_container(container_name = container_results)
+  container <- get_container(container = container_results,
+                             endpoint = blob_url)
 
   container |>
     AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
@@ -30,6 +32,31 @@ get_nhp_result_sets <- function(
     dplyr::mutate(dplyr::across("viewable", as.logical))
 
 }
+
+get_token <- function(resource) {
+  token <- tryCatch(
+    {
+      AzureAuth::get_managed_token(resource = resource)
+    },
+    error = function(e) {
+      NULL
+    }
+  )
+  
+  if (is.null(token)) {
+    # list tokens already locally stored
+    local_tokens <- AzureAuth::list_azure_tokens()
+    if (length(local_tokens) > 0) {
+      resources <- purrr::map(local_tokens, "resource")
+      # if there are token(s) matching the `resource` argument then return one
+      token_index <- match(resource, resources)[1]
+      token <- if (!is.na(token_index)) local_tokens[[token_index]] else NULL
+    }
+  }
+  
+  token
+}
+
 
 #' Connect to an Azure Container
 #'
@@ -49,32 +76,17 @@ get_nhp_result_sets <- function(
 #'
 #' @examples
 #' \dontrun{get_container()}
-get_container <- function(
-    tenant = Sys.getenv("AZ_TENANT_ID"),
-    app_id = Sys.getenv("AZ_APP_ID"),
-    ep_uri = Sys.getenv("AZ_STORAGE_EP"),
-    container_name
-) {
-
-  # if the app_id variable is empty, we assume that this is running on an Azure VM,
-  # and then we will use Managed Identities for authentication.
-  token <- if (app_id != "") {
-    AzureAuth::get_azure_token(
-      resource = "https://storage.azure.com",
-      tenant = Sys.getenv("AZ_TENANT_ID"),
-      app = app_id,
-      auth_type = "device_code"
-    )
-  } else {
-    AzureAuth::get_managed_token("https://storage.azure.com/") |>
-      AzureAuth::extract_jwt()
+get_container <- function(endpoint, container) {
+  token <- get_token("https://storage.azure.com/")
+  if (is.null(token)) {
+    stop("No Azure token found. Please authenticate using AzureAuth::get_azure_token().")
   }
-
-  ep_uri |>
-    AzureStor::blob_endpoint(token = token) |>
-    AzureStor::storage_container(container_name)
-
+  
+  AzureStor::blob_endpoint(endpoint, token = token) |>
+    AzureStor::blob_container(container)
 }
+
+
 
 #' Unzip, Read and Parse an NHP Results File
 #'
@@ -97,10 +109,12 @@ get_container <- function(
 #' }
 get_nhp_results <- function(
     container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
+    blob_url = Sys.getenv("AZ_STORAGE_EP"),
     file
 ) {
 
-  container <- get_container(container_name = container_results)
+  container <- get_container(container = container_results,
+                             endpoint = blob_url)
 
   temp_file <- withr::local_tempfile()
   AzureStor::download_blob(container, file, temp_file)
