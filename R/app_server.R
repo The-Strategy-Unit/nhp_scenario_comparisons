@@ -2,11 +2,15 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
 app_server = function(input, output, session) {
-    
-  nhp_model_runs <- get_nhp_result_sets() |> 
-    dplyr::filter(!app_version == "dev")
   
-  shiny::updateSelectInput(session, "selected_scheme", unique(nhp_model_runs$dataset))
+  nhp_model_runs <- reactiveVal(get_nhp_result_sets() |> 
+                                  dplyr::filter(!app_version == "dev"))
+  
+  shiny::observe(
+  shiny::updateSelectInput(session, 
+                           "selected_scheme", 
+                           choices = unique(nhp_model_runs()$dataset))
+  )
   
   get_runtime_choices <- function(data, scheme, chosen_scenario) {
     data |>
