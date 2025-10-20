@@ -2,11 +2,10 @@ Package: nhp_scenario_analysis
 Title: Scenario result comparison app
 Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: This package contains a Shiny App, allowing the user to compare 
-NHP demand and capacity model results across different scenarios.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Gabriel", "Hobro", , "first.last@example.com", role = c("aut", "cre")),
+    person("Ozayr", "Mohammed", , "ozayr.mohammed@nhs.net", role = c("aut"))
+Description: A shiny app for comparing model results for different scenarios
+License: MIT + file LICENSE
 Imports: 
     AzureAuth,
     AzureStor,
