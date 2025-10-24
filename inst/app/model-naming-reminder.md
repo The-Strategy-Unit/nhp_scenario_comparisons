@@ -1,3 +1,3 @@
-It is possible that a scenario name is duplicated. We remind the user of [the guide to good model naming practice](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/naming_scenarios.html) to avoid confusion when selecting scenarios for comparison.
+It is possible that a scenario name is duplicated, which is why a scenario datetime must also be provided. We remind the user of [the guide to good model naming practice](https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/naming_scenarios.html) to avoid confusion when selecting scenarios for comparison.
 
 To ensure that the user selects a unique scenario, we have included drop downs for both the scenario name and the model run time.
