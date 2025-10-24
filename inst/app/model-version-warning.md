@@ -1,4 +1,4 @@
-The New Hospitals Programme Demand and Capacity Model (NHP D&C Model) has changed over time, preventing comparisons between different model versions.
+The New Hospital Programme (NHP) demand model has changed over time, preventing comparisons between different model versions.
 
 A key reason for this is that over time the types of potentially mitigatable activity (TPMA) included in the model have changed. 
 
