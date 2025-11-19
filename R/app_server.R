@@ -75,6 +75,9 @@ app_server = function(input, output, session) {
           input$selected_scheme)
   })
   
+  errors_reactive <- shiny::reactiveVal()
+  
+  
   output$warning_text <- shiny::renderUI({
     shiny::req(nhp_model_runs)
     s1 <- nhp_model_runs |> dplyr::filter(
@@ -90,16 +93,16 @@ app_server = function(input, output, session) {
     starts_match <- identical(s1$start_year, s2$start_year) 
     ends_match <- identical(s1$end_year, s2$end_year)  # fixed typo
     
-    # collect warnings
-    warnings <- c()
+    # collect errors
+    errors <- c()
     
     if (input$scenario_1 == input$scenario_2 &
         input$scenario_1_runtime == input$scenario_2_runtime) {
-      warnings <- c(warnings, "Warning: Scenario 1 and Scenario 2 must be different.")
+      errors <- c(errors, "Error: Scenario 1 and Scenario 2 must be different.")
     }
     
     if (!starts_match || !ends_match) {
-      warnings <- c(warnings, "Warning: The start and end years of the selected scenarios must match.")
+      errors <- c(errors, "Error: The start and end years of the selected scenarios must match.")
     }
     
     if ((nhp_model_runs |> 
@@ -110,16 +113,19 @@ app_server = function(input, output, session) {
          dplyr::filter(scenario == input$scenario_2,
                        create_datetime == input$scenario_2_runtime) |> 
          dplyr::pull(app_version))){
-      warnings <- c(warnings, "Warning: Selected scenarios must have been built on the same version of the model.")
+      errors <- c(errors, "Error: Selected scenarios must have been built on the same version of the model.")
     }
     
-    # collapse into a single string, separated by new lines
-    HTML(paste(warnings, collapse = "<br>"))
+   errors_reactive(errors)
+   # collapse into a single string, separated by new lines
+    HTML(paste(errors, collapse = "<br>"))
   })
   
   shiny::observeEvent(input$render_quarto, {
     if (!(input$scenario_1 == input$scenario_2 &
-          input$scenario_1_runtime == input$scenario_2_runtime)) {
+          input$scenario_1_runtime == input$scenario_2_runtime) & 
+        is.null(errors_reactive)
+    ){
       quarto::quarto_render(
         "scenario_analysis_summary.qmd", 
         output_file = "scenario_analysis_summary.html", 
@@ -144,7 +150,7 @@ app_server = function(input, output, session) {
       })
     } else {
       output$quarto_summary <- shiny::renderUI({
-        htmltools::HTML("<p style='color:red;'>Scenarios must be different to render the summary.</p>")
+        htmltools::HTML("<p style='color:red;'>Resolve scenario selection errors to produce plots.</p>")
       })
     }
   })
