@@ -6,6 +6,7 @@
 app_ui = function(request) {
   
   bslib::page_sidebar(
+    shinyjs::useShinyjs(),
     shinybusy::add_busy_spinner(position = "bottom-right"),
     title = "Scenario comparison app (proto)",
     sidebar = bslib::sidebar(
@@ -20,6 +21,7 @@ app_ui = function(request) {
     ),
     bslib::card(
       bslib::card_header("Result"),
+      shiny::uiOutput("errors"),
       shiny::textOutput("result_text"),
       shiny::uiOutput("quarto_summary")
     )

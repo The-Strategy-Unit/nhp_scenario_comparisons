@@ -121,10 +121,25 @@ app_server = function(input, output, session) {
     HTML(paste(errors, collapse = "<br>"))
   })
   
+  shiny::observe({
+    if(length(errors_reactive()) == 0){
+      shinyjs::enable("render_quarto")
+      output$errors <- shiny::renderUI(NULL)
+    } else {
+      shinyjs::disable("render_quarto")
+      output$errors <- shiny::renderUI(
+        htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
+        )
+    }
+    
+    
+  })
+  
+  
   shiny::observeEvent(input$render_quarto, {
     if (!(input$scenario_1 == input$scenario_2 &
           input$scenario_1_runtime == input$scenario_2_runtime) & 
-        is.null(errors_reactive) # Errors will prevent output rendering
+        is.null(errors_reactive()) # Errors will prevent output rendering
     ){
       quarto::quarto_render(
         "scenario_analysis_summary.qmd", 
