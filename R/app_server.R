@@ -124,7 +124,7 @@ app_server = function(input, output, session) {
   shiny::observeEvent(input$render_quarto, {
     if (!(input$scenario_1 == input$scenario_2 &
           input$scenario_1_runtime == input$scenario_2_runtime) & 
-        is.null(errors_reactive)
+        is.null(errors_reactive) # Errors will prevent output rendering
     ){
       quarto::quarto_render(
         "scenario_analysis_summary.qmd", 
