@@ -12,13 +12,15 @@ mod_summary_server <- function(id, df){
     ns <- session$ns
     
     output$plot <- shiny::renderPlot({
-      shiny::req(!is.null(df))
+      shiny::req(df)
       
       create_bar_plot(df, 
                       "Inpatient",
                       "Admissions",
                       "Inpatient admissions summary comparison")
-    })
+    },
+    res = 100,
+    )
     
     
   })

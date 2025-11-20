@@ -24,7 +24,6 @@ nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is
 
 app_server = function(input, output, session) {
   
-  
   processed <- mod_processing_server("processing1",
                           result_sets = nhp_model_runs,
                           scenario_selections = shiny::reactive(
@@ -35,10 +34,6 @@ app_server = function(input, output, session) {
                             ),
                           trigger = shiny::reactive(input$render_quarto)
     )
-  #})
-  
-#output$quarto_summary <- shiny::renderTable(processed()$data)
-  
   
   mod_summary_server("summary1",
                      df = processed()$data)
