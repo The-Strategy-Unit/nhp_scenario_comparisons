@@ -1,10 +1,46 @@
 #' The application server-side
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
+#' 
+
+# nhp_model_runs <- get_nhp_result_sets() |> 
+#   dplyr::filter(!app_version == "dev")
+
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+
+file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
+lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
+
+nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+  dplyr::filter(!app_version == "dev") 
+
 app_server = function(input, output, session) {
   
-  nhp_model_runs <- get_nhp_result_sets() |> 
-    dplyr::filter(!app_version == "dev")
+  
+  processed <- mod_processing_server("processing1",
+                          result_sets = nhp_model_runs,
+                          scenario_selections = shiny::reactive(
+                            list(scenario_1 = input$scenario_1,
+                                 scenario_1_runtime = input$scenario_1_runtime,
+                                 scenario_2 = input$scenario_2,
+                                 scenario_2_runtime = input$scenario_2_runtime)
+                            ),
+                          trigger = shiny::reactive(input$render_quarto)
+    )
+  #})
+  
+#output$quarto_summary <- shiny::renderTable(processed()$data)
+  
+  
+  mod_summary_server("summary1",
+                     df = processed()$data)
   
   shiny::observe(
     shiny::updateSelectInput(session, 
@@ -79,7 +115,7 @@ app_server = function(input, output, session) {
   
   
   output$warning_text <- shiny::renderUI({
-    shiny::req(nhp_model_runs)
+    shiny::req(nhp_model_runs, input$scenario_1, input$scenario_1_runtime, input$scenario_2, input$scenario_2_runtime)
     s1 <- nhp_model_runs |> dplyr::filter(
       scenario == input$scenario_1, 
       dataset == input$selected_scheme,
@@ -116,8 +152,8 @@ app_server = function(input, output, session) {
       errors <- c(errors, "Error: Selected scenarios must have been built on the same version of the model.")
     }
     
-   errors_reactive(errors)
-   # collapse into a single string, separated by new lines
+    errors_reactive(errors)
+    # collapse into a single string, separated by new lines
     HTML(paste(errors, collapse = "<br>"))
   })
   
@@ -129,45 +165,45 @@ app_server = function(input, output, session) {
       shinyjs::disable("render_quarto")
       output$errors <- shiny::renderUI(
         htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
-        )
+      )
     }
     
     
   })
   
   
-  shiny::observeEvent(input$render_quarto, {
-    if (!(input$scenario_1 == input$scenario_2 &
-          input$scenario_1_runtime == input$scenario_2_runtime) & 
-        is.null(errors_reactive()) # Errors will prevent output rendering
-    ){
-      quarto::quarto_render(
-        "scenario_analysis_summary.qmd", 
-        output_file = "scenario_analysis_summary.html", 
-        execute_params = list(
-          scenario_1 = input$scenario_1,
-          scenario_1_runtime = 
-            as.character(
-              lubridate::as_datetime(
-                input$scenario_1_runtime
-              )
-            ),
-          scenario_2 = input$scenario_2,
-          scenario_2_runtime = 
-            as.character(
-              lubridate::as_datetime(
-                input$scenario_2_runtime 
-              )
-            )
-        ))
-      output$quarto_summary <- shiny::renderUI({
-        htmltools::includeHTML("scenario_analysis_summary.html")
-      })
-    } else {
-      output$quarto_summary <- shiny::renderUI({
-        htmltools::HTML("<p style='color:red;'>Resolve scenario selection errors to produce plots.</p>")
-      })
-    }
-  })
+  # shiny::observeEvent(input$render_quarto, {
+  #   if (!(input$scenario_1 == input$scenario_2 &
+  #         input$scenario_1_runtime == input$scenario_2_runtime) & 
+  #       is.null(errors_reactive()) # Errors will prevent output rendering
+  #   ){
+  #     quarto::quarto_render(
+  #       "scenario_analysis_summary.qmd", 
+  #       output_file = "scenario_analysis_summary.html", 
+  #       execute_params = list(
+  #         scenario_1 = input$scenario_1,
+  #         scenario_1_runtime = 
+  #           as.character(
+  #             lubridate::as_datetime(
+  #               input$scenario_1_runtime
+  #             )
+  #           ),
+  #         scenario_2 = input$scenario_2,
+  #         scenario_2_runtime = 
+  #           as.character(
+  #             lubridate::as_datetime(
+  #               input$scenario_2_runtime 
+  #             )
+  #           )
+  #       ))
+  #     output$quarto_summary <- shiny::renderUI({
+  #       htmltools::includeHTML("scenario_analysis_summary.html")
+  #     })
+  #   } else {
+  #     output$quarto_summary <- shiny::renderUI({
+  #       htmltools::HTML("<p style='color:red;'>Resolve scenario selection errors to produce plots.</p>")
+  #     })
+  #   }
+  # })
   
 }
