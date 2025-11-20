@@ -23,7 +23,8 @@ app_ui = function(request) {
       bslib::card_header("Result"),
       shiny::uiOutput("errors"),
       shiny::textOutput("result_text"),
-      shiny::uiOutput("quarto_summary")
+      shiny::uiOutput("quarto_summary"),
+      mod_summary_ui("summary1")
     )
   )
 }
