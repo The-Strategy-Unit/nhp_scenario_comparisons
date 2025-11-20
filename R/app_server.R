@@ -18,6 +18,7 @@ library(shiny)
 file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
+#this should be commented out in live versions
 nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
   dplyr::filter(!app_version == "dev") 
 
