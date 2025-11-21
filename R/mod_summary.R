@@ -2,21 +2,61 @@ mod_summary_ui <- function(id) {
   ns <- shiny::NS(id)
   
   shiny::tagList(
+    shiny::verbatimTextOutput(ns("debug")),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
 }
 
-mod_summary_server <- function(id, df){
+mod_summary_server <- function(id, processed){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    output$plot <- shiny::renderPlot({
-      shiny::req(df)
+    df <- shiny::reactive(processed()$data)
+    
+    #dynamically create UI here, based on the variables found within df?
+    #shiny::observe({
+     # shiny::req(df())
+      output$filters_ui <- shiny::renderUI({
+        shiny::req(df())
+        shiny::tagList(
+          shiny::tags$div(style = "display: flex; gap: 15px;",
+                          shiny::selectInput(ns("filter1"), 
+                                             "filter 1", 
+                                             choices = unique(df()$activity_type)),
+                          shiny::selectInput(ns("filter2"), 
+                                             "filter 2", 
+                                             choices = NULL)
+          )
+        )
+      })
+    #})
+    
+    shiny::observe({#Event(input$filter1, {
+      shiny::req(df(), input$filter1)
       
-      create_bar_plot(df, 
-                      "Inpatient",
-                      "Admissions",
+      filter2_choices <- df() |> 
+        dplyr::filter(activity_type == input$filter1) |> 
+        dplyr::pull(measure) |> 
+        unique()
+      
+      shiny::updateSelectInput(inputId = "filter2",
+                               choices = filter2_choices)
+      
+    })
+    
+    #filtered_data <- shiny::reactive(df |> 
+    #                                  dplyr::filter(activity_type == input$filter1,
+    #                                               pod_name == input$filter2))
+    
+    output$debug <- shiny::renderText(input$filter1)
+    
+    output$plot <- shiny::renderPlot({
+      shiny::req(df(), input$filter1, input$filter2)
+      
+      create_bar_plot(df(), 
+                      input$filter1,
+                      input$filter2,
                       "Inpatient admissions summary comparison")
     },
     res = 100,

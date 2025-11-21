@@ -1,9 +1,16 @@
-mod_processing_server <- function(id, result_sets, scenario_selections, trigger){
+mod_processing_server <- function(id, result_sets, scenario_selections, errors, trigger
+){
   shiny::moduleServer(id, function(input, output, session){
     
     processed <- shiny::eventReactive(trigger(), {
-      shiny::req(scenario_selections)
+      shiny::req(length(errors()) == 0)
+      shiny::req(scenario_selections()$scenario_1, 
+                 scenario_selections()$scenario_1_runtime,
+                 scenario_selections()$scenario_2,
+                 scenario_selections()$scenario_2_runtime)
+      
       selected <- scenario_selections()
+      
       nhp_model_runs <- result_sets
       
       #get files
@@ -16,6 +23,9 @@ mod_processing_server <- function(id, result_sets, scenario_selections, trigger)
         dplyr::filter(scenario == selected$scenario_2,
                       create_datetime == selected$scenario_2_runtime) |>
         dplyr::pull(file)
+      
+      shiny::req(length(scenario_1_file) > 0, 
+                 length(scenario_2_file) > 0)
       
       result_1 <- get_nhp_results(file = scenario_1_file)
       result_2 <- get_nhp_results(file = scenario_2_file)
@@ -31,7 +41,7 @@ mod_processing_server <- function(id, result_sets, scenario_selections, trigger)
         dplyr::mutate(scenario = scenario_2_name)
       
       # data processing
-      data <- bind_rows(scenario_1 = df1, scenario_2 = df2, .id = "scenario")
+      data <- bind_rows(df1, df2)
       
       
       # get the measure from the pod name

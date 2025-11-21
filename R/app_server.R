@@ -23,21 +23,7 @@ nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is
   dplyr::filter(!app_version == "dev") 
 
 app_server = function(input, output, session) {
-  
-  processed <- mod_processing_server("processing1",
-                          result_sets = nhp_model_runs,
-                          scenario_selections = shiny::reactive(
-                            list(scenario_1 = input$scenario_1,
-                                 scenario_1_runtime = input$scenario_1_runtime,
-                                 scenario_2 = input$scenario_2,
-                                 scenario_2_runtime = input$scenario_2_runtime)
-                            ),
-                          trigger = shiny::reactive(input$render_quarto)
-    )
-  
-  mod_summary_server("summary1",
-                     df = processed()$data)
-  
+
   shiny::observe(
     shiny::updateSelectInput(session, 
                              "selected_scheme", 
@@ -163,9 +149,28 @@ app_server = function(input, output, session) {
         htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
       )
     }
-    
-    
+
+
   })
+  
+  
+  processed <- 
+    mod_processing_server("processing1",
+                          result_sets = nhp_model_runs,
+                          scenario_selections = shiny::reactive(
+                            list(scenario_1 = input$scenario_1,
+                                 scenario_1_runtime = input$scenario_1_runtime,
+                                 scenario_2 = input$scenario_2,
+                                 scenario_2_runtime = input$scenario_2_runtime)
+                          ),
+                          errors = errors_reactive,
+                          trigger = shiny::reactive(input$render_quarto)
+    )
+  
+  
+  mod_summary_server("summary1",
+                     processed = processed)
+  
   
   
   # shiny::observeEvent(input$render_quarto, {
