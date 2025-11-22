@@ -141,10 +141,10 @@ app_server = function(input, output, session) {
   
   shiny::observe({
     if(length(errors_reactive()) == 0){
-      shinyjs::enable("render_quarto")
+      shinyjs::enable("render_plot")
       output$errors <- shiny::renderUI(NULL)
     } else {
-      shinyjs::disable("render_quarto")
+      shinyjs::disable("render_plot")
       output$errors <- shiny::renderUI(
         htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
       )
@@ -164,16 +164,19 @@ app_server = function(input, output, session) {
                                  scenario_2_runtime = input$scenario_2_runtime)
                           ),
                           errors = errors_reactive,
-                          trigger = shiny::reactive(input$render_quarto)
+                          trigger = shiny::reactive(input$render_plot)
     )
   
   
   mod_summary_server("summary1",
                      processed = processed)
+  mod_los_server("los1",
+                    processed = processed)
+  mod_waterfall_server("waterfall1",
+                       processed = processed)
   
   
-  
-  # shiny::observeEvent(input$render_quarto, {
+  # shiny::observeEvent(input$render_plot, {
   #   if (!(input$scenario_1 == input$scenario_2 &
   #         input$scenario_1_runtime == input$scenario_2_runtime) & 
   #       is.null(errors_reactive()) # Errors will prevent output rendering

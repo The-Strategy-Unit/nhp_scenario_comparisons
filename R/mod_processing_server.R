@@ -45,6 +45,13 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       
       
       # get the measure from the pod name
+      # cols [1] "scenario"      "pod_name"     
+      #[3] "activity_type" "baseline"     
+      #[5] "principal"     "change"       
+      #[7] "change_pcnt"   "measure"  
+      # activity type drives the main plot
+      # measure drives the y axis
+      # pod_name is the y axis. This might be able to be combined
       data <- data |>
         dplyr::mutate(measure=dplyr::case_when(grepl("Admission", pod_name) ~ "Admissions",
                                                grepl("Bed Day", pod_name) ~ "Bed days",
@@ -53,41 +60,59 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # # LoS summary -------------------------------------------------------------
       # 
       # 
-      # ## admissions dataset
-      # data_1_adm <- result_1 |> 
-      #   mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
-      # 
-      # data_2_adm <- result_2 |> 
-      #   mod_principal_summary_los_data(sites = NULL, measure = "admissions") 
-      # 
-      # ## Bed days dataset
-      # data_1_bed <- result_1 |> 
-      #   mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
-      # 
-      # data_2_bed <- result_2 |> 
-      #   mod_principal_summary_los_data(sites = NULL, measure = "beddays") 
-      # 
-      # # data processing
-      # data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
-      # data_bed <- dplyr::bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario")
-      # data_combine <- dplyr::bind_rows("Bed Days" = data_bed, admissions = data_admissions, .id = "measure")
-      # 
+      # admissions dataset
+      data_1_adm <- result_1 |>
+        mod_principal_summary_los_data(sites = NULL, measure = "admissions")
+
+      data_2_adm <- result_2 |>
+        mod_principal_summary_los_data(sites = NULL, measure = "admissions")
+
+       # Bed days dataset
+      data_1_bed <- result_1 |>
+        mod_principal_summary_los_data(sites = NULL, measure = "beddays")
+
+      data_2_bed <- result_2 |>
+        mod_principal_summary_los_data(sites = NULL, measure = "beddays")
+
+       # data processing
+      data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
+      data_bed <- dplyr::bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario")
+
+      # cols, measure, scenario, pod_name, los_group, baseline, principal. change. change.pcnt
+      # apparently pods drive the chart data
+      #length of stay is the y axis and admissions on the x axis
+      
+      data_combine <- dplyr::bind_rows("Bed Days" = data_bed, admissions = data_admissions, .id = "measure")
+      #
       # # impacts -----------------------------------------------------------------
       # 
       # 
-      # 
+      # # Waterfalls use a list, containing one df for ip, op, aae
+      # # 2 lists are used to make the water falls
       # 
       # # Prep a list of summary dataframes, one per activity type
-      # pcfs_1 <- prepare_all_principal_change_factors(
-      #   r = result_1,
-      #   site_codes = list(ip = NULL, op = NULL, aae = NULL)
-      # )
+      pcfs_1 <- prepare_all_principal_change_factors(
+        r = result_1,
+        site_codes = list(ip = NULL, op = NULL, aae = NULL)
+      )
+
+      pcfs_2 <- prepare_all_principal_change_factors(
+        r = result_2,
+        site_codes = list(ip = NULL, op = NULL, aae = NULL)
+      )
       # 
-      # pcfs_2 <- prepare_all_principal_change_factors(
-      #   r = result_2,
-      #   site_codes = list(ip = NULL, op = NULL, aae = NULL)
-      # )
-      # 
+      # # impact bars
+      # # [1] "scenario"       "measure"       
+      # # [3] "activity_type"  "change_factor" 
+      # # [5] "strategy"       "mitigator_name"
+      # # [7] "value" 
+      # # change factor drives the plot at the highest level
+      # # activity type and measure controls the data shown
+      # # mitigator_name controls y axis labels
+      # # change factor activity_type and measure combination controls the strategies shown in plot
+      # # pod on y axis
+      # # this isn't pod on the y axis label is it, error here
+      # # could have module ui be like 'tab variable', 'filter1 var', 'filter2 var'
       # ndg_variants_sc_comparison <- dplyr::bind_rows(
       #   scenario_1 = as.data.frame(bind_rows(pcfs_1)),
       #   scenario_2 = as.data.frame(bind_rows(pcfs_2)),
@@ -217,7 +242,10 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # )
       
       
-      list(data = data)
+      list(data = data,
+           data_combine = data_combine,
+           waterfall_data = list(pcfs_1 = pcfs_1,
+                                 pcfs_2 = pcfs_2))
     }
     )
     
