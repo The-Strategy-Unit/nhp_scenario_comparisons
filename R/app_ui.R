@@ -26,7 +26,9 @@ app_ui = function(request) {
       shiny::tabsetPanel(
         shiny::tabPanel("Summary", mod_summary_ui("summary1")),
         shiny::tabPanel("Length of Stay", mod_los_ui("los1")),
-        shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall1"))
+        shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall1")),
+        shiny::tabPanel("Activity Avoidance Impact", mod_activity_avoidance_impact_ui("activity_avoidance1"))
+        
       )
     )
   )

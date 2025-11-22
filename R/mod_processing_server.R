@@ -113,10 +113,10 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # # pod on y axis
       # # this isn't pod on the y axis label is it, error here
       # # could have module ui be like 'tab variable', 'filter1 var', 'filter2 var'
-      # ndg_variants_sc_comparison <- dplyr::bind_rows(
-      #   scenario_1 = as.data.frame(bind_rows(pcfs_1)),
-      #   scenario_2 = as.data.frame(bind_rows(pcfs_2)),
-      #   .id = "scenario")
+      ndg_variants_sc_comparison <- dplyr::bind_rows(
+        scenario_1 = as.data.frame(bind_rows(pcfs_1)),
+        scenario_2 = as.data.frame(bind_rows(pcfs_2)),
+        .id = "scenario")
       # 
       # 
       # 
@@ -245,7 +245,8 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       list(data = data,
            data_combine = data_combine,
            waterfall_data = list(pcfs_1 = pcfs_1,
-                                 pcfs_2 = pcfs_2))
+                                 pcfs_2 = pcfs_2),
+           ndg_variants_sc_comparison = ndg_variants_sc_comparison)
     }
     )
     
