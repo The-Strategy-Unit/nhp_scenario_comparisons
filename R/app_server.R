@@ -176,6 +176,8 @@ app_server = function(input, output, session) {
                        processed = processed)
   mod_activity_avoidance_impact_server("activity_avoidance1",
                                        processed = processed)
+  mod_efficiencies_impact_server("efficiencies1",
+                                 processed = processed)
   
   
   # shiny::observeEvent(input$render_plot, {
