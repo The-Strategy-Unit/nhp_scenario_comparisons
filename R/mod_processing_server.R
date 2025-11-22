@@ -176,29 +176,29 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # # 80% CI -----------------------------------------------------------
       # 
       # # load dataset 
-      # data_distribution_summary <- dplyr::bind_rows(
-      #   scenario_1 = result_1$results$default, 
-      #   scenario_2 = result_2$results$default, 
-      #   .id = "scenario")
+      data_distribution_summary <- dplyr::bind_rows(
+        scenario_1 = result_1$results$default,
+        scenario_2 = result_2$results$default,
+        .id = "scenario")
+
+      #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
+      data_distribution_summary <- data_distribution_summary |>
+        dplyr::select(scenario,pod,measure,principal,lwr_ci,upr_ci) |>
+        dplyr::group_by(scenario,pod,measure) |>
+        dplyr::summarise(principal = sum(principal),
+                         lwr_ci = sum(lwr_ci),
+                         upr_ci = sum(upr_ci)) |>
+        dplyr::ungroup()
       # 
-      # #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
-      # data_distribution_summary <- data_distribution_summary |> 
-      #   dplyr::select(scenario,pod,measure,principal,lwr_ci,upr_ci) |> 
-      #   dplyr::group_by(scenario,pod,measure) |> 
-      #   dplyr::summarise(principal = sum(principal),
-      #                    lwr_ci = sum(lwr_ci),
-      #                    upr_ci = sum(upr_ci)) |> 
-      #   dplyr::ungroup()
-      # 
-      # data_distribution_summary <- data_distribution_summary |> 
-      #   dplyr::mutate(
-      #     activity_type = dplyr::case_when(
-      #       substr(pod, 1, 2) == "ip" ~ "Inpatient",
-      #       substr(pod, 1, 2) == "op" ~ "Outpatient",
-      #       substr(pod, 1, 2) == "aa" ~ "A&E",
-      #       TRUE ~ "Other"
-      #     )
-      #   ) |> dplyr::relocate(activity_type, .before = 1)
+      data_distribution_summary <- data_distribution_summary |>
+        dplyr::mutate(
+          activity_type = dplyr::case_when(
+            substr(pod, 1, 2) == "ip" ~ "Inpatient",
+            substr(pod, 1, 2) == "op" ~ "Outpatient",
+            substr(pod, 1, 2) == "aa" ~ "A&E",
+            TRUE ~ "Other"
+          )
+        ) |> dplyr::relocate(activity_type, .before = 1)
       # 
       # 
       # 
@@ -246,7 +246,8 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
            data_combine = data_combine,
            waterfall_data = list(pcfs_1 = pcfs_1,
                                  pcfs_2 = pcfs_2),
-           ndg_variants_sc_comparison = ndg_variants_sc_comparison)
+           ndg_variants_sc_comparison = ndg_variants_sc_comparison,
+           data_distribution_summary = data_distribution_summary)
     }
     )
     
