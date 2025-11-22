@@ -12,7 +12,7 @@ mod_summary_server <- function(id, processed){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    df <- shiny::reactive(processed()$data)
+    df <- shiny::reactive(processed()$data) #takes data from processed
     
     # could dynamically create UI here, based on the variables found within df?
     

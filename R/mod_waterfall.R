@@ -12,7 +12,7 @@ mod_waterfall_server <- function(id, processed){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    df <- shiny::reactive(processed()$waterfall_data$pcfs_1) #takes data_combine from processed
+    df <- shiny::reactive(processed()$waterfall_data$pcfs_1) #takes waterfall_data$pcfs_1 from processed
     df2 <- shiny::reactive(processed()$waterfall_data$pcfs_2)
     # could dynamically create UI here, based on the variables found within df?
     
