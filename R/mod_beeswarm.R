@@ -15,10 +15,10 @@ mod_beeswarm_server <- function(id, processed){
     #will result_1 and result_2 always have the same activity_type and measures 
     #available? or will using result_1 to make the filters leave out some 
     #combinations sometimes?
-    df <- shiny::reactive(processed()$beeswarm_data$result_1) #takes result_1 from processed
-    df2 <- shiny::reactive(processed()$beeswarm_data$result_2) 
-    scn1 <- shiny::reactive(processed()$beeswarm_data$scenario_1_name)
-    scn2 <- shiny::reactive(processed()$beeswarm_data$scenario_2_name)
+    df <- shiny::reactive(processed()$distribution_data$result_1) #takes result_1 from processed
+    df2 <- shiny::reactive(processed()$distribution_data$result_2) 
+    scn1 <- shiny::reactive(processed()$distribution_data$scenario_1_name)
+    scn2 <- shiny::reactive(processed()$distribution_data$scenario_2_name)
     
     pods <- shiny::reactive({
       get_activity_type_pod_measure_options() |> 

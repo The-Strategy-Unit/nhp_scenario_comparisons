@@ -248,7 +248,7 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
                                  pcfs_2 = pcfs_2),
            ndg_variants_sc_comparison = ndg_variants_sc_comparison,
            data_distribution_summary = data_distribution_summary,
-           beeswarm_data = list(result_1 = result_1,
+           distribution_data = list(result_1 = result_1,
                                 result_2 = result_2,
                                 scenario_1_name = scenario_1_name,
                                 scenario_2_name = scenario_2_name)
