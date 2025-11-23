@@ -182,6 +182,8 @@ app_server = function(input, output, session) {
                     processed = processed)
   mod_beeswarm_server("beeswarm1",
                       processed = processed)
+  mod_ecdf_server("ecdf1",
+                  processed = processed)
   
   
   # shiny::observeEvent(input$render_plot, {
