@@ -180,6 +180,8 @@ app_server = function(input, output, session) {
                                  processed = processed)
   mod_ci_bar_server("ci_bar1",
                     processed = processed)
+  mod_beeswarm_server("beeswarm1",
+                      processed = processed)
   
   
   # shiny::observeEvent(input$render_plot, {

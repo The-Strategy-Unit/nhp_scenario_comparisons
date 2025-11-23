@@ -63,21 +63,21 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # admissions dataset
       data_1_adm <- result_1 |>
         mod_principal_summary_los_data(sites = NULL, measure = "admissions")
-
+      
       data_2_adm <- result_2 |>
         mod_principal_summary_los_data(sites = NULL, measure = "admissions")
-
-       # Bed days dataset
+      
+      # Bed days dataset
       data_1_bed <- result_1 |>
         mod_principal_summary_los_data(sites = NULL, measure = "beddays")
-
+      
       data_2_bed <- result_2 |>
         mod_principal_summary_los_data(sites = NULL, measure = "beddays")
-
-       # data processing
+      
+      # data processing
       data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
       data_bed <- dplyr::bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario")
-
+      
       # cols, measure, scenario, pod_name, los_group, baseline, principal. change. change.pcnt
       # apparently pods drive the chart data
       #length of stay is the y axis and admissions on the x axis
@@ -95,7 +95,7 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
         r = result_1,
         site_codes = list(ip = NULL, op = NULL, aae = NULL)
       )
-
+      
       pcfs_2 <- prepare_all_principal_change_factors(
         r = result_2,
         site_codes = list(ip = NULL, op = NULL, aae = NULL)
@@ -180,7 +180,7 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
         scenario_1 = result_1$results$default,
         scenario_2 = result_2$results$default,
         .id = "scenario")
-
+      
       #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
       data_distribution_summary <- data_distribution_summary |>
         dplyr::select(scenario,pod,measure,principal,lwr_ci,upr_ci) |>
@@ -247,7 +247,12 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
            waterfall_data = list(pcfs_1 = pcfs_1,
                                  pcfs_2 = pcfs_2),
            ndg_variants_sc_comparison = ndg_variants_sc_comparison,
-           data_distribution_summary = data_distribution_summary)
+           data_distribution_summary = data_distribution_summary,
+           beeswarm_data = list(result_1 = result_1,
+                                result_2 = result_2,
+                                scenario_1_name = scenario_1_name,
+                                scenario_2_name = scenario_2_name)
+      )
     }
     )
     
