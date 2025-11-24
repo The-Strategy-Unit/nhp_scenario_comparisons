@@ -1,9 +1,10 @@
-Package: nhp_scenario_analysis
+Package: nhpscenarioanalysis
 Title: Scenario result comparison app
 Version: 0.1.0
-Authors@R: 
+Authors@R: c(
     person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
     person("Ozayr", "Mohammed", , "ozayr.mohammed@nhs.net", role = c("aut"))
+    )
 Description: A shiny app for comparing model results for different scenarios
 License: MIT + file LICENSE
 Imports: 
@@ -14,9 +15,11 @@ Imports:
     dplyr,
     forcats,
     ggbeeswarm,
+    ggeasy,
     ggplot2,
     glue,
     gt,
+    here,
     jsonlite,
     lubridate,
     purrr,
@@ -32,6 +35,7 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
+    tidyverse,
     utils,
     withr,
     yaml,
