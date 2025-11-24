@@ -116,7 +116,7 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     geom_col(position = "dodge") +
     scale_x_continuous(labels = scales::comma) +
     ggtitle(title_text) +
-    ylab("Point of delivery") +
+    ylab("TPMA") +
     xlab(chosen_measure) +
     scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
                       ) +
