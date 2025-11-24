@@ -29,7 +29,7 @@ app_ui = function(request) {
         shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall1")),
         shiny::tabPanel("Activity Avoidance Impact", mod_activity_avoidance_impact_ui("activity_avoidance1")),
         shiny::tabPanel("Efficiencies Impact", mod_efficiencies_impact_ui("efficiencies1")),
-        shiny::tabPanel("CI Bar", mod_ci_bar_ui("ci_bar1")),
+        shiny::tabPanel("P10-P90 Bar", mod_p10_p90_bar_ui("p10p90_bar1")),
         shiny::tabPanel("Beeswarm", mod_beeswarm_ui("beeswarm1")),
         shiny::tabPanel("ECDF", mod_ecdf_ui("ecdf1"))
         

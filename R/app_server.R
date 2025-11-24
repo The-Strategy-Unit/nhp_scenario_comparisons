@@ -16,12 +16,21 @@ file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
 #this should be commented out in live versions
+<<<<<<< Updated upstream
 #nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
 #dplyr::filter(!app_version == "dev")
 
 app_server = function(input, output, session) {
    nhp_model_runs <- get_nhp_result_sets() |>
      dplyr::filter(!app_version == "dev")
+=======
+nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+  dplyr::filter(!app_version == "dev") 
+
+app_server = function(input, output, session) {
+ # nhp_model_runs <- get_nhp_result_sets() |>
+   # dplyr::filter(!app_version == "dev")
+>>>>>>> Stashed changes
   
   
   shiny::observe(
@@ -178,7 +187,7 @@ app_server = function(input, output, session) {
                                        processed = processed)
   mod_efficiencies_impact_server("efficiencies1",
                                  processed = processed)
-  mod_ci_bar_server("ci_bar1",
+  mod_p10_p90_bar_server("p10p90_bar1",
                     processed = processed)
   mod_beeswarm_server("beeswarm1",
                       processed = processed)
