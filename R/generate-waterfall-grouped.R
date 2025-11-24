@@ -75,7 +75,9 @@ mod_principal_change_factor_effects_summarised_grouped <- function(data, measure
 
 generate_waterfall_plot <- function(
     pcfs_1, 
-    pcfs_2, 
+    pcfs_2,
+    scn1_name = NULL,
+    scn2_name = NULL,
     activity_type,
     measure = "measure",
     title = "Title", 
@@ -94,7 +96,10 @@ generate_waterfall_plot <- function(
     data = pcfs,
     measure = measure,
     include_baseline = TRUE
-  )
+  ) |> 
+    dplyr::mutate(scenario = dplyr::case_when(scenario == "scenario_1" ~ scn1_name,
+                                              scenario == "scenario_2" ~ scn2_name,
+                                              T ~ "Missing Scenario Name"))
   
   # Generate the plot and customize it for better aesthetics
   plot <- mod_principal_change_factor_effects_cf_plot(activity) +
@@ -113,7 +118,8 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     ggtitle(title_text) +
     ylab("Point of delivery") +
     xlab(chosen_measure) +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
+    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
+                      ) +
     easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
     theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +

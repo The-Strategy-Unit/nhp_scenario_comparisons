@@ -56,7 +56,12 @@ mod_ecdf_server <- function(id, processed){
     })
     
     output$plot <- shiny::renderPlot({
-      shiny::req(df(), input$filter1, input$filter2)
+      shiny::req(df(),
+                 df2(),
+                 scn1(),
+                 scn2(),
+                 input$filter1,
+                 input$filter2)
       
       selected_pods <- pods() |> 
         dplyr::filter(activity_type_name == input$filter1) |> 
@@ -65,20 +70,21 @@ mod_ecdf_server <- function(id, processed){
       combined_dist <- dplyr::bind_rows(scenario_1 = get_model_run_distribution(df(),
                                                                                 pod = selected_pods,
                                                                                 measure = input$filter2,
-                                                                                site_codes = NULL)# |> 
-                                        # dplyr::mutate(scenario = scn1())
+                                                                                site_codes = NULL) |> 
+                                          dplyr::mutate(scenario = scn1())
                                         ,
                                         scenario_2 = get_model_run_distribution(df2(),
                                                                                 pod = selected_pods,
                                                                                 measure = input$filter2,
-                                                                                site_codes = NULL) #|> 
-                                        #dplyr::mutate(scenario = scn2())
-                                        , .id = "scenario"
+                                                                                site_codes = NULL) |> 
+                                          dplyr::mutate(scenario = scn2())
+                                        #, .id = "scenario"
       )
       
       
+      
       mod_model_results_distribution_ecdf_plot_scenario(combined_dist, 
-                                                            FALSE) +
+                                                        FALSE) +
         ggplot2::ggtitle("TEST")
     },
     res = 100,

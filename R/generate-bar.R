@@ -34,7 +34,8 @@ create_bar_plot_los <- function(data, chosen_pod_name, chosen_measure, title_tex
     ggplot2::ggtitle(title_text) +
     ggplot2::ylab("Length of stay group") +
     ggplot2::xlab(chosen_measure) +
-    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario", labels = c(scenario_1_name, scenario_2_name)) +
+    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario", #labels = c(scenario_1_name, scenario_2_name)
+                               ) +
     ggeasy::easy_center_title() +
     ggplot2::theme(text = element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +

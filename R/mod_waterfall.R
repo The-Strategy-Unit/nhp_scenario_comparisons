@@ -14,6 +14,8 @@ mod_waterfall_server <- function(id, processed){
     
     df <- shiny::reactive(processed()$waterfall_data$pcfs_1) #takes waterfall_data$pcfs_1 from processed
     df2 <- shiny::reactive(processed()$waterfall_data$pcfs_2)
+    scenario_1_name <- shiny::reactive(processed()$waterfall_data$scenario_1_name)
+    scenario_2_name <- shiny::reactive(processed()$waterfall_data$scenario_2_name)
     # could dynamically create UI here, based on the variables found within df?
     
     output$filters_ui <- shiny::renderUI({
@@ -49,6 +51,8 @@ mod_waterfall_server <- function(id, processed){
       
       generate_waterfall_plot(df(),
                               df2(),
+                              scenario_1_name(),
+                              scenario_2_name(),
                               activity_type = input$filter1,
                               measure = input$filter2,
                               "Inpatient admissions summary comparison")
