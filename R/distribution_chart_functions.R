@@ -74,7 +74,7 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
     ) +
     ggplot2::theme(
       legend.position = "bottom",
-      axis.title.x = ggplot2::element_blank(),
+      #axis.title.x = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank(),
       # keep y-axis labels to help line up beeswarm/ECDF, but make 'invisible'
       axis.text.y = ggplot2::element_text(colour = "white"),
