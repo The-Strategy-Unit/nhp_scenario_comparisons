@@ -35,7 +35,8 @@ mod_efficiencies_impact_server <- function(id, processed){
       shiny::req(df(), input$filter1)
       
       filter2_choices <- df() |> 
-        dplyr::filter(activity_type == input$filter1) |> 
+        dplyr::filter(activity_type == input$filter1,
+                      measure != "admissions") |> 
         dplyr::pull(measure) |> 
         unique()
       
