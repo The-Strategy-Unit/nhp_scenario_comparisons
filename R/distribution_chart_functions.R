@@ -27,8 +27,12 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
   
   b <- data$baseline[[1]]
   # two lines instead of 1 below for the separate principal projections
-  p1 <- data$principal[data$scenario==scenario_1_name][[1]]
-  p2 <- data$principal[data$scenario==scenario_2_name][[1]]
+  # p1 <- data$principal[data$scenario==scenario_1_name][[1]]
+  # p2 <- data$principal[data$scenario==scenario_2_name][[1]]
+  
+  p <- data |>
+    dplyr::group_by(scenario) |> 
+    dplyr::summarise(principal = unique(principal))
   
   x_placeholder <- "100%" # dummy label to help line up beeswarm and ECDF plots
   
@@ -54,8 +58,13 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
     ) +
     ggplot2::geom_hline(yintercept = b, colour = "dimgrey") +
     # two lines instead of 1 below for the separate principal projections
-    ggplot2::geom_hline(yintercept = p1, linetype = "dashed", colour = "red") +
-    ggplot2::geom_hline(yintercept = p2, linetype = "dashed", colour = "blue") +
+    #ggplot2::geom_hline(yintercept = p1, linetype = "dashed", colour = "red") +
+    #ggplot2::geom_hline(yintercept = p2, linetype = "dashed", colour = "blue") +
+    ggplot2::geom_hline(data = p,
+                        ggplot2::aes(yintercept = principal, 
+                                     colour = scenario),
+                        linetype = "dashed",
+                        linewidth = 1)+
     ggplot2::expand_limits(y = ifelse(show_origin, 0, b)) +
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(
