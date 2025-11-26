@@ -3,6 +3,8 @@
 #' @param request Internal parameter for `{shiny}`.
 #' @noRd
 #' 
+#' @import shinyjs
+#' @import htmltools
 app_ui = function(request) {
   
   bslib::page_sidebar(
