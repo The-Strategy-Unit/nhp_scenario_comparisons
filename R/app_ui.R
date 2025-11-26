@@ -25,6 +25,7 @@ app_ui = function(request) {
       bslib::card_header("Result"),
       shiny::uiOutput("errors"),
       shiny::textOutput("result_text"),
+      shiny::tableOutput("metadata"),
       shiny::tabsetPanel(
         shiny::tabPanel("Summary", mod_summary_ui("summary1")),
         shiny::tabPanel("Length of Stay", mod_los_ui("los1")),
