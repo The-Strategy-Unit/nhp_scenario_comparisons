@@ -9,6 +9,7 @@ Description: A shiny app for comparing model results for different
     scenarios
 License: MIT + file LICENSE
 Imports: 
+    azkit,
     AzureAuth,
     AzureStor,
     bslib,
