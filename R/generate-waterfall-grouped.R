@@ -116,8 +116,9 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
                          activity_type==chosen_activity_type, 
                          chosen_measure==measure,
                          value != 0.00) |> 
-           dplyr::mutate(mitigator_name = dplyr::case_when(mitigator_name == "-" ~ strategy,
-                                                           T ~ mitigator_name)),
+           dplyr::mutate(mitigator_name = dplyr::case_when(strategy == "convert_to_tele" ~ strategy,
+                                                           T ~ mitigator_name)) |> 
+           dplyr::filter(strategy != "activity_avoidance_interaction_term"),
          aes(x=value, y=stats::reorder(mitigator_name,desc(value)), fill = scenario)) +
     geom_col(position = "dodge") +
     scale_x_continuous(labels = scales::comma) +
