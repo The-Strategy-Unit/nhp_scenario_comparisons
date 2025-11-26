@@ -75,8 +75,14 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
         mod_principal_summary_los_data(sites = NULL, measure = "beddays")
       
       # data processing
-      data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario")
-      data_bed <- dplyr::bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario")
+      data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario") |> 
+        dplyr::mutate(scenario = dplyr::case_when(scenario == "scenario_1" ~ scenario_1_name,
+                                                  scenario == "scenario_2" ~ scenario_2_name,
+                                                  T ~ scenario))
+      data_bed <- dplyr::bind_rows(scenario_1 = data_1_bed, scenario_2 = data_2_bed, .id = "scenario") |> 
+        dplyr::mutate(scenario = dplyr::case_when(scenario == "scenario_1" ~ scenario_1_name,
+                                                  scenario == "scenario_2" ~ scenario_2_name,
+                                                  T ~ scenario))
       
       # cols, measure, scenario, pod_name, los_group, baseline, principal. change. change.pcnt
       # apparently pods drive the chart data

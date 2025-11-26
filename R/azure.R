@@ -77,7 +77,7 @@ get_token <- function(resource) {
 #' @examples
 #' \dontrun{get_container()}
 get_container <- function(endpoint, container) {
-  token <- get_token("https://storage.azure.com/")
+  token <- azkit::get_auth_token()
   if (is.null(token)) {
     stop("No Azure token found. Please authenticate using AzureAuth::get_azure_token().")
   }
