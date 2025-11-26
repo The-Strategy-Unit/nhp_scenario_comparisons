@@ -33,10 +33,10 @@ mod_beeswarm_server <- function(id, processed){
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "filter 1", 
+                                           "Activity Type", 
                                            choices = unique(pods()$activity_type_name)),
                         shiny::selectInput(ns("filter2"), 
-                                           "filter 2", 
+                                           "Measure", 
                                            choices = NULL)
         )
       )
@@ -63,15 +63,15 @@ mod_beeswarm_server <- function(id, processed){
         dplyr::pull(pod)
       
       combined_dist <- dplyr::bind_rows(scenario_1 = get_model_run_distribution(df(),
-                                                                   pod = selected_pods,
-                                                                   measure = input$filter2,
-                                                                   site_codes = NULL) |> 
+                                                                                pod = selected_pods,
+                                                                                measure = input$filter2,
+                                                                                site_codes = NULL) |> 
                                           dplyr::mutate(scenario = scn1())
-                                          ,
+                                        ,
                                         scenario_2 = get_model_run_distribution(df2(),
-                                                                   pod = selected_pods,
-                                                                   measure = input$filter2,
-                                                                   site_codes = NULL) |> 
+                                                                                pod = selected_pods,
+                                                                                measure = input$filter2,
+                                                                                site_codes = NULL) |> 
                                           dplyr::mutate(scenario = scn2())
                                         #, .id = "scenario"
       )
@@ -81,7 +81,11 @@ mod_beeswarm_server <- function(id, processed){
                                                             scenario_1_name = scn1(),
                                                             scenario_2_name = scn2(),
                                                             FALSE) +
-        ggplot2::ggtitle("TEST")
+        ggplot2::labs(y = input$filter2,
+                      title = glue::glue(input$filter1, 
+                                         input$filter2,
+                                         "Distribution",
+                                         .sep = " "))
     },
     res = 100,
     )
