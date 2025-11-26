@@ -7,7 +7,8 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
     ggtitle(title_text) +
     ylab("measure") +
     xlab("Principal Projection") +
-    scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario", labels = c(scenario_1_name, scenario_2_name)) +
+    scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario"#, labels = c(scenario_1_name, scenario_2_name)
+                      ) +
     easy_center_title() + 
     theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
@@ -20,14 +21,14 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
 
 # new function for beeswarm -----------------------------------------------
 
-mod_model_results_distribution_beeswarm_plot_scenario <- function(data, show_origin) {
+mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario_1_name, scenario_2_name, show_origin) {
   
   labels <- c("scenario_1" = scenario_1_name, "scenario_2" = scenario_2_name)
   
   b <- data$baseline[[1]]
   # two lines instead of 1 below for the separate principal projections
-  p1 <- data$principal[data$scenario=="scenario_1"][[1]]
-  p2 <- data$principal[data$scenario=="scenario_2"][[1]]
+  p1 <- data$principal[data$scenario==scenario_1_name][[1]]
+  p2 <- data$principal[data$scenario==scenario_2_name][[1]]
   
   x_placeholder <- "100%" # dummy label to help line up beeswarm and ECDF plots
   
@@ -47,8 +48,10 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, show_ori
       )
     ) +
     # new line here for manually setting the colours
-    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"), 
-                                labels = c(scenario_1_name, scenario_2_name)) +
+    ggplot2::scale_color_manual(values = c("red", "blue")
+      #values = c(scenario_1_name = "red", scenario_2_name = "blue"), 
+                                #labels = c(scenario_1_name, scenario_2_name)
+                                ) +
     ggplot2::geom_hline(yintercept = b, colour = "dimgrey") +
     # two lines instead of 1 below for the separate principal projections
     ggplot2::geom_hline(yintercept = p1, linetype = "dashed", colour = "red") +
@@ -198,8 +201,9 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(data, show_origin)
       expand = c(0, 0)
     ) +
     ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
-    ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"),
-                                labels = c(scenario_1_name, scenario_2_name)) +
+    ggplot2::scale_colour_manual(values = c("red", "blue"))+
+    #ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"),
+                                #labels = c(scenario_1_name, scenario_2_name)) +
     ggplot2::theme(legend.position = "bottom")
     
 }
