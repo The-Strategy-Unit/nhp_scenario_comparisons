@@ -64,6 +64,13 @@ app_server = function(input, output, session) {
     })
   })
   
+  output$metadata <- shiny::renderTable({
+    dplyr::bind_rows(
+      scenario_1 = get_metadata(nhp_model_runs, input$scenario_1, input$scenario_1_runtime),
+      scenario_2 = get_metadata(nhp_model_runs, input$scenario_2, input$scenario_2_runtime),
+      .id = "scenario_id")
+  })
+  
   output$result_text <- shiny::renderText({
     paste("You have selected",
           input$scenario_1,
