@@ -22,6 +22,18 @@ app_ui = function(request) {
       shiny::uiOutput("warning_text")
     ),
     bslib::card(
+      id = "card_guidance",
+      bslib::card_header("Guidance on scenario selections"),
+      shiny::HTML(markdown::mark_html("inst/app/model-version-warning.md",
+                                      output = FALSE, template = FALSE)),
+      shiny::HTML("<br>"),
+      shiny::HTML(markdown::mark_html("inst/app/scenario-timespan-warning.md",
+                                      output = FALSE, template = FALSE)),
+      shiny::HTML("<br>"),
+      shiny::HTML(markdown::mark_html("inst/app/model-naming-reminder.md",
+                                      output = FALSE, template = FALSE))
+    ),
+    bslib::card(
       bslib::card_header("Result"),
       shiny::uiOutput("errors"),
       shiny::textOutput("result_text"),
