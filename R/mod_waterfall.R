@@ -58,8 +58,8 @@ mod_waterfall_server <- function(id, processed){
                               scenario_2_name(),
                               activity_type = input$filter1,
                               measure = input$filter2,
-                              x_label = input$filter1,
-                              y_label = input$filter2,
+                              x_label = input$filter2,
+                              y_label = "Change Factor",
                               glue::glue(input$filter1, input$filter2, "- Waterfall of Change Factors", .sep = " "))
     },
     res = 100,
