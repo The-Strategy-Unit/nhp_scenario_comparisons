@@ -3,6 +3,9 @@ mod_waterfall_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
+    shiny::tags$p(
+      "Regard these results as rough, high-level estimates of the number of rows added/removed due to each parameter.",
+      style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
@@ -55,7 +58,9 @@ mod_waterfall_server <- function(id, processed){
                               scenario_2_name(),
                               activity_type = input$filter1,
                               measure = input$filter2,
-                              "Inpatient admissions summary comparison")
+                              x_label = input$filter1,
+                              y_label = input$filter2,
+                              glue::glue(input$filter1, input$filter2, "- Waterfall of Change Factors", .sep = " "))
     },
     res = 100,
     )

@@ -3,6 +3,11 @@ mod_beeswarm_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
+    shiny::tags$p(
+      "Each dot represents an individual model run from the scenario.
+    The thickness of the swarm indicates the density of runs in certain ranges.
+    The dashed vertical line indicates the principal projection for each scenario; the solid vertical line indicates the baseline value",
+      style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
@@ -84,7 +89,7 @@ mod_beeswarm_server <- function(id, processed){
         ggplot2::labs(y = input$filter2,
                       title = glue::glue(input$filter1, 
                                          input$filter2,
-                                         "Distribution",
+                                         "- Distribution of Model Runs",
                                          .sep = " "))
     },
     res = 100,
