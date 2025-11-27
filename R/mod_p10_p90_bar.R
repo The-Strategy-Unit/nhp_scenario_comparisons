@@ -1,4 +1,4 @@
-mod_ci_bar_ui <- function(id) {
+mod_p10_p90_bar_ui <- function(id) {
   ns <- shiny::NS(id)
   
   shiny::tagList(
@@ -8,7 +8,7 @@ mod_ci_bar_ui <- function(id) {
   )
 }
 
-mod_ci_bar_server <- function(id, processed){
+mod_p10_p90_bar_server <- function(id, processed){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
     
@@ -22,7 +22,7 @@ mod_ci_bar_server <- function(id, processed){
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "filter 1", 
+                                           "Point of Delivery", 
                                            choices = unique(df()$pod))
         )
       )

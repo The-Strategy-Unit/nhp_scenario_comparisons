@@ -111,15 +111,22 @@ generate_waterfall_plot <- function(
 }
 
 impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, chosen_measure, title_text = "Example") {
-  ggplot(filter(data, change_factor==chosen_change_factor,activity_type==chosen_activity_type, chosen_measure==measure,value != 0.00),
-         aes(x=value, y=reorder(mitigator_name,desc(value)), fill = scenario)) +
+  ggplot(data |>
+           dplyr::filter(change_factor==chosen_change_factor,
+                         activity_type==chosen_activity_type, 
+                         chosen_measure==measure,
+                         value != 0.00) |> 
+           dplyr::mutate(mitigator_name = dplyr::case_when(strategy == "convert_to_tele" ~ strategy,
+                                                           T ~ mitigator_name)) |> 
+           dplyr::filter(strategy != "activity_avoidance_interaction_term"),
+         aes(x=value, y=stats::reorder(mitigator_name,desc(value)), fill = scenario)) +
     geom_col(position = "dodge") +
     scale_x_continuous(labels = scales::comma) +
     ggtitle(title_text) +
-    ylab("Point of delivery") +
+    ylab("TPMA") +
     xlab(chosen_measure) +
     scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
-                      ) +
+    ) +
     easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
     theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
     theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +

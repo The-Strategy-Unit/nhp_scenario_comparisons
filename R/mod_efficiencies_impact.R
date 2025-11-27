@@ -22,10 +22,10 @@ mod_efficiencies_impact_server <- function(id, processed){
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "filter 1", 
+                                           "Activity Type", 
                                            choices = unique(df()$activity_type)),
                         shiny::selectInput(ns("filter2"), 
-                                           "filter 2", 
+                                           "Measure", 
                                            choices = NULL)
         )
       )
@@ -35,7 +35,8 @@ mod_efficiencies_impact_server <- function(id, processed){
       shiny::req(df(), input$filter1)
       
       filter2_choices <- df() |> 
-        dplyr::filter(activity_type == input$filter1) |> 
+        dplyr::filter(activity_type == input$filter1,
+                      measure != "admissions") |> 
         dplyr::pull(measure) |> 
         unique()
       

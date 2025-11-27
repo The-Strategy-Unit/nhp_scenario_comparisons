@@ -22,10 +22,10 @@ mod_summary_server <- function(id, processed){
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "filter 1", 
+                                           "Activity Type", 
                                            choices = unique(df()$activity_type)),
                         shiny::selectInput(ns("filter2"), 
-                                           "filter 2", 
+                                           "Measure", 
                                            choices = NULL)
         )
       )
