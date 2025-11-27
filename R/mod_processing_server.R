@@ -184,9 +184,9 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       # 
       # # load dataset 
       data_distribution_summary <- dplyr::bind_rows(
-        scenario_1 = result_1$results$default,
-        scenario_2 = result_2$results$default,
-        .id = "scenario")
+        result_1$results$default |> dplyr::mutate(scenario = scenario_1_name),
+        result_2$results$default |> dplyr::mutate(scenario = scenario_2_name)
+      )
       
       #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
       data_distribution_summary <- data_distribution_summary |>
@@ -258,9 +258,9 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
            ndg_variants_sc_comparison = ndg_variants_sc_comparison,
            data_distribution_summary = data_distribution_summary,
            distribution_data = list(result_1 = result_1,
-                                result_2 = result_2,
-                                scenario_1_name = scenario_1_name,
-                                scenario_2_name = scenario_2_name)
+                                    result_2 = result_2,
+                                    scenario_1_name = scenario_1_name,
+                                    scenario_2_name = scenario_2_name)
       )
     }
     )
