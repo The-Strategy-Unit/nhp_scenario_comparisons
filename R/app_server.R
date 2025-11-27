@@ -21,8 +21,8 @@ lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 #  dplyr::filter(!app_version == "dev") 
 
 app_server = function(input, output, session) {
- nhp_model_runs <- get_nhp_result_sets() |>
- dplyr::filter(!app_version == "dev")
+  nhp_model_runs <- get_nhp_result_sets() |>
+    dplyr::filter(!app_version == "dev")
   
   
   shiny::observe(
@@ -64,6 +64,30 @@ app_server = function(input, output, session) {
       shiny::updateSelectInput(session, paste0(scn, "_runtime"), choices = runtimes)
     })
   })
+  
+  output$metadata <- DT::renderDT({
+    
+    possibly_get_metadata <- purrr::possibly(get_metadata,
+                                             "No data")
+    DT::datatable(
+      dplyr::bind_rows(
+        scenario_1 = possibly_get_metadata(nhp_model_runs, input$scenario_1, input$scenario_1_runtime),
+        scenario_2 = possibly_get_metadata(nhp_model_runs, input$scenario_2, input$scenario_2_runtime),
+        .id = "scenario_id"),
+      rownames = FALSE,
+      escape = FALSE,      
+      options = list(
+        paging = FALSE,
+        searching = FALSE,
+        ordering = FALSE
+      )
+    )
+  })
+  
+  
+  
+  
+  
   
   output$result_text <- shiny::renderText({
     paste("You have selected",
@@ -150,8 +174,8 @@ app_server = function(input, output, session) {
         htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
       )
     }
-
-
+    
+    
   })
   
   
@@ -172,7 +196,7 @@ app_server = function(input, output, session) {
   mod_summary_server("summary1",
                      processed = processed)
   mod_los_server("los1",
-                    processed = processed)
+                 processed = processed)
   mod_waterfall_server("waterfall1",
                        processed = processed)
   mod_activity_avoidance_impact_server("activity_avoidance1",
