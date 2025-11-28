@@ -27,7 +27,8 @@ mod_beeswarm_server <- function(id, processed){
     
     pods <- shiny::reactive({
       get_activity_type_pod_measure_options() |> 
-        dplyr::filter(pod %in% unique(df()$result$default$pod))
+        dplyr::filter(pod %in% unique(df()$result$default$pod),
+                      pod %in% unique(df2()$result$default$pod))
     })
     
     # could dynamically create UI here, based on the variables found within df?
