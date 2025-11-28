@@ -3,6 +3,12 @@ mod_ecdf_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
+    shiny::tags$p(
+      "The curve shows the empirical (observed) cumulative distribution of all the model runs.
+      The coloured dashed lines show the p10 and p90 of each scenario.
+      The coloured solid lines indicate the principal projection values for each scenario.
+      The baseline value is shown by the black vertical line.",
+      style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
@@ -85,7 +91,7 @@ mod_ecdf_server <- function(id, processed){
       
       mod_model_results_distribution_ecdf_plot_scenario(combined_dist, 
                                                         FALSE) +
-        ggplot2::ggtitle("TEST")
+        ggplot2::ggtitle(glue::glue(input$filter1, input$filter2, "- ECDF curve (with p10 and p90 guidelines)", .sep = " "))
     },
     res = 100,
     )

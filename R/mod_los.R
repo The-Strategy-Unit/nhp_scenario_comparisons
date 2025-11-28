@@ -48,9 +48,9 @@ mod_los_server <- function(id, processed){
       shiny::req(df(), input$filter1, input$filter2)
       
       create_bar_plot_los(df(), 
-                      input$filter1,
-                      input$filter2,
-                      "Inpatient admissions summary comparison")
+                          input$filter1,
+                          input$filter2,
+                          glue::glue(input$filter1, input$filter2, "- Length of Stay Comparison", .sep = " "))
     },
     res = 100,
     )

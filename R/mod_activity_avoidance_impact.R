@@ -3,6 +3,9 @@ mod_activity_avoidance_impact_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
+    shiny::tags$p(
+      "Regard these results as rough, high-level estimates of the number of rows added/removed due to each parameter.",
+      style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
@@ -57,7 +60,7 @@ mod_activity_avoidance_impact_server <- function(id, processed){
                       chosen_change_factor = "activity_avoidance",
                       input$filter1,
                       input$filter2,
-                      "")
+                      glue::glue(input$filter1, input$filter2, "- Impact of Individual Activity Avoidance TPMA Assumptions", .sep = " "))
       
       
     },

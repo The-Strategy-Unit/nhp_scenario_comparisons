@@ -50,7 +50,7 @@ mod_summary_server <- function(id, processed){
       create_bar_plot(df(), 
                       input$filter1,
                       input$filter2,
-                      "Inpatient admissions summary comparison")
+                      glue::glue(input$filter1, input$filter2, "- Summary Comparison", .sep = " "))
     },
     res = 100,
     )
