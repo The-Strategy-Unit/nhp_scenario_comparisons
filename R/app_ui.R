@@ -22,6 +22,16 @@ app_ui = function(request) {
       shiny::uiOutput("warning_text")
     ),
     shiny::tabsetPanel(
+      shiny::tabPanel("Introduction",
+                      bslib::card(
+                        id = "intro",
+                        bslib::card_body(
+                          shiny::HTML(markdown::markdownToHTML("inst/app/intro_text.md",
+                                                               fragment.only = TRUE)
+                          )
+                        )
+                      )
+      ),
       shiny::tabPanel(
         "Guidance on scenario selections",
         bslib::card(
