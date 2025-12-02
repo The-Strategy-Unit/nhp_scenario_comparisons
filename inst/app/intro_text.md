@@ -1,6 +1,6 @@
 ## Introduction and purpose
 
-Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool allows NHP schemes to compare their demand modelling scenarios to one another. This is based on the existing visualisation in the the [main outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), providing side-by-side versions of the visualisations and figures therein. The documentation for the demand model is available [here](https://connect.strategyunitwm.nhs.uk/nhp/project_information/). 
+Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool allows NHP schemes to compare their demand modelling scenarios to one another. This is based on the existing visualisation in the [main outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), providing side-by-side versions of the visualisations and figures therein. The documentation for the demand model is available [here](https://connect.strategyunitwm.nhs.uk/nhp/project_information/). 
 
 ## Instructions
 
