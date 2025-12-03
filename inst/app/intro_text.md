@@ -58,4 +58,4 @@ Bed days are defined as the difference in days between discharge and admission, 
 
 ## Feedback
 
-[Holding line for a feedback button which links to a MS Form or something]
+We welcome any feedback on this tool as part of its continuous development. If you spot any issues or things you would like included, please let us know by providing feedback using the "Give feedback" button at the top of the app.

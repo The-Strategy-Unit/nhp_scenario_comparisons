@@ -10,7 +10,18 @@ app_ui = function(request) {
   bslib::page_sidebar(
     shinyjs::useShinyjs(),
     shinybusy::add_busy_spinner(position = "bottom-right"),
-    title = "Scenario comparison app (proto)",
+    
+    title = shiny::div(
+      style = "display:flex; justify-content:space-between; align-items:center; width:100%;",
+      shiny::h1("Scenario comparison app (proto)"),
+      shiny::actionButton(
+        inputId = "feedback",
+        label = "Give feedback",
+        onClick = glue::glue(
+          "window.open('{Sys.getenv(\"FEEDBACK_FORM_URL\")}', '_blank')"
+        )
+      )
+    ),
     sidebar = bslib::sidebar(
       title = "Scenario selection",
       shiny::selectInput("selected_scheme", "Select scheme", choices = NULL),
