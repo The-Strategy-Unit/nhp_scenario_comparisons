@@ -24,11 +24,14 @@ app_server = function(input, output, session) {
   nhp_model_runs <- get_nhp_result_sets() |>
     dplyr::filter(!app_version == "dev")
   
+  # static data files ----
+  datasets_list <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE)
+  datasets_list <- purrr::set_names(names(datasets_list), unname(datasets_list))
   
   shiny::observe(
     shiny::updateSelectInput(session, 
                              "selected_scheme", 
-                             choices = unique(nhp_model_runs$dataset))
+                             choices = datasets_list[datasets_list %in% nhp_model_runs$dataset])
   )
   
   get_runtime_choices <- function(data, scheme, chosen_scenario) {
