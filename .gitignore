@@ -7,3 +7,5 @@
 rsconnect/*
 *.html
 inst/app/tmp_runs_file.rds
+
+.cache/

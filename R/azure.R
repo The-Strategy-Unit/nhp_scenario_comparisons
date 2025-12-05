@@ -21,16 +21,30 @@ get_nhp_result_sets <- function(
   container <- get_container(container = container_results,
                              endpoint = blob_url)
 
-  container |>
+  metadata_cache <- cachem::cache_disk(".cache")
+  get_metadata <- purrr::partial(AzureStor::get_storage_metadata, object = container)
+  metadata <- memoise::memoise(get_metadata, cache = metadata_cache)
+  
+  cat  ("loading result sets filenames\n")
+  files <- container |>
     AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
     dplyr::filter(!.data[["isdir"]]) |>
     dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> 
     purrr::pluck("name") |>
-    purrr::set_names() |>
-    purrr::map(\(name, ...) AzureStor::get_storage_metadata(container, name)) |>
+    purrr::set_names()
+  
+  cat("getting metadata\n")
+  files <- files |>
+    purrr::map(metadata, .progress=TRUE) |>
     dplyr::bind_rows(.id = "file") |>
-    dplyr::mutate(dplyr::across("viewable", as.logical))
+    # filter to available datasets for this user
+    # dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
+    dplyr::mutate(
+      dplyr::across("viewable", as.logical)
+    )
+  cat("returning result sets\n")
 
+  files
 }
 
 get_token <- function(resource) {
