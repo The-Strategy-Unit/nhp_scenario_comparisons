@@ -2,16 +2,6 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
 
-library(jsonlite)
-library(tidyverse)
-library(dplyr)
-library(gt)
-library(here)
-library(ggplot2)
-library(ggeasy)
-library(shiny)
-
-
 file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
