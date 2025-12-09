@@ -78,21 +78,21 @@ generate_activity_in_detail_table <- function(
 
 
 activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab = "ylab", xlab = "xlab"){
-  ggplot(filter(data, sex== chosen_sex),
-         aes(x=final, y=fct_rev(agg), fill = scenario)) +
-    geom_col(position = "dodge") +
-    scale_x_continuous(labels = scales::comma) +
-    ggtitle(title_text) +
-    ylab(ylab) +
-    xlab(xlab) +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
-    easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
-    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+  ggplot2::ggplot(dplyr::filter(data, sex== chosen_sex),
+                  ggplot2::aes(x=final, y=fct_rev(agg), fill = scenario)) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::scale_x_continuous(labels = scales::comma) +
+    ggplot2::ggtitle(title_text) +
+    ggplot2::ylab(ylab) +
+    ggplot2::xlab(xlab) +
+    ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
+    ggeasy::easy_center_title() + ggplot2::theme(text = element_text(family = "Segoe UI")) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.text.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(legend.title = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(legend.text = ggplot2::element_text(family = "Segoe UI", size = 12, color="black"))
 }
 
 
@@ -141,7 +141,7 @@ run_combinations_list <- function(parameters, data1, data2) {
   )
   
   # Set names based on the combinations
-  names(results) <- pmap_chr(select(parameters, pod, measure, agg_col), generate_name)
+  names(results) <- pmap_chr(dplyr::select(parameters, pod, measure, agg_col), generate_name)
   
   return(results)
 }

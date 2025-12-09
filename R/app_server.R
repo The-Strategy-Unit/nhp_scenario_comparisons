@@ -154,7 +154,7 @@ app_server = function(input, output, session) {
     
     errors_reactive(errors)
     # collapse into a single string, separated by new lines
-    HTML(paste(errors, collapse = "<br>"))
+    shiny::HTML(paste(errors, collapse = "<br>"))
   })
   
   shiny::observe({
