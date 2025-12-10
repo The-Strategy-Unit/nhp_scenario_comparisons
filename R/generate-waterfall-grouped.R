@@ -85,7 +85,7 @@ generate_waterfall_plot <- function(
     y_label = "Y-axis") {
   
   # Combine the specified IP columns from both data frames
-  pcfs <- bind_rows(
+  pcfs <- dplyr::bind_rows(
     scenario_1 = pcfs_1[[activity_type]],
     scenario_2 = pcfs_2[[activity_type]],
     .id = "scenario"
@@ -103,15 +103,15 @@ generate_waterfall_plot <- function(
   
   # Generate the plot and customize it for better aesthetics
   plot <- mod_principal_change_factor_effects_cf_plot(activity) +
-    ggtitle(title) +
-    xlab(x_label) +
-    ylab(y_label)
+    ggplot2::ggtitle(title) +
+    ggplot2::xlab(x_label) +
+    ggplot2::ylab(y_label)
   
   return(plot)
 }
 
 impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, chosen_measure, title_text = "Example") {
-  ggplot(data |>
+  ggplot2::ggplot(data |>
            dplyr::filter(change_factor==chosen_change_factor,
                          activity_type==chosen_activity_type, 
                          chosen_measure==measure,
@@ -119,21 +119,21 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
            dplyr::mutate(mitigator_name = dplyr::case_when(strategy == "convert_to_tele" ~ strategy,
                                                            T ~ mitigator_name)) |> 
            dplyr::filter(strategy != "activity_avoidance_interaction_term"),
-         aes(x=value, y=stats::reorder(mitigator_name,desc(value)), fill = scenario)) +
-    geom_col(position = "dodge") +
-    scale_x_continuous(labels = scales::comma) +
-    ggtitle(title_text) +
-    ylab("TPMA") +
-    xlab(chosen_measure) +
-    scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
+         ggplot2::aes(x=value, y=stats::reorder(mitigator_name,dplyr::desc(value)), fill = scenario)) +
+    ggplot2::geom_col(position = "dodge") +
+    ggplot2::scale_x_continuous(labels = scales::comma) +
+    ggplot2::ggtitle(title_text) +
+    ggplot2::ylab("TPMA") +
+    ggplot2::xlab(chosen_measure) +
+    ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
     ) +
-    easy_center_title() + theme(text = element_text(family = "Segoe UI")) +
-    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(legend.title = element_text(family = "Segoe UI", size = 12, color="black")) +
-    theme(legend.text = element_text(family = "Segoe UI", size = 12, color="black"))
+    ggeasy::easy_center_title() + ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.text.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(legend.title = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(legend.text = ggplot2::element_text(family = "Segoe UI", size = 12, color="black"))
 }
 
 #

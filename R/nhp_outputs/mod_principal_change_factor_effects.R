@@ -40,7 +40,7 @@ mod_principal_change_factor_effects_cf_plot <- function(data) {
     ggplot2::scale_y_discrete(labels = snakecase::to_title_case) +
     ggplot2::labs(x = "", y = "") + 
     ggplot2::facet_grid(
-      rows = vars(scenario)#,
+      rows = dplyr::vars(scenario)#,
       #labeller = labeller(scenario = labels)
       )
 }
