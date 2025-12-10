@@ -1,6 +1,15 @@
 #' The application server-side
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+
 
 file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
@@ -15,6 +24,7 @@ lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 #   )
 
 app_server = function(input, output, session) {
+  load_local_data <- FALSE
   nhp_model_runs <- get_nhp_result_sets() |>
     dplyr::filter(!app_version == "dev")
   
@@ -219,7 +229,7 @@ app_server = function(input, output, session) {
     
     errors_reactive(errors)
     # collapse into a single string, separated by new lines
-    HTML(paste(errors, collapse = "<br>"))
+    shiny::HTML(paste(errors, collapse = "<br>"))
   })
   
   shiny::observe({
@@ -247,7 +257,8 @@ app_server = function(input, output, session) {
                                  scenario_2_runtime = input$scenario_2_runtime)
                           ),
                           errors = errors_reactive,
-                          trigger = shiny::reactive(input$render_plot)
+                          trigger = shiny::reactive(input$render_plot),
+                          local_data_flag = load_local_data
     )
   
   

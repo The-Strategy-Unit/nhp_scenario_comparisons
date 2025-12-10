@@ -1,22 +1,22 @@
 create_bar_plot_distribution <- function(data, pod_filter, title_text) {
-  ggplot(filter(data, pod == pod_filter),
-         aes(x = principal, y = measure, fill = scenario)) +
-    geom_bar(stat = 'identity', position = 'dodge', width = 0.7) +
-    geom_errorbar(aes(xmin = lwr_ci, xmax = upr_ci), width = 0.6, position = position_dodge(0.7)) +
-    scale_x_continuous(labels = scales::comma) +
-    ggtitle(title_text) +
-    ylab("measure") +
-    xlab("Principal Projection") +
-    scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario"#, labels = c(scenario_1_name, scenario_2_name)
+  ggplot2::ggplot(dplyr::filter(data, pod == pod_filter),
+                  ggplot2::aes(x = principal, y = measure, fill = scenario)) +
+    ggplot2::geom_bar(stat = 'identity', position = 'dodge', width = 0.7) +
+    ggplot2::geom_errorbar(ggplot2::aes(xmin = lwr_ci, xmax = upr_ci), width = 0.6, position = ggplot2::position_dodge(0.7)) +
+    ggplot2::scale_x_continuous(labels = scales::comma) +
+    ggplot2::ggtitle(title_text) +
+    ggplot2::ylab("measure") +
+    ggplot2::xlab("Principal Projection") +
+    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario"#, labels = c(scenario_1_name, scenario_2_name)
     ) +
-    easy_center_title() + 
-    theme(text = element_text(family = "Segoe UI")) +
-    theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(legend.title = element_text(family = "Segoe UI", size = 12, color = "black")) +
-    theme(legend.text = element_text(family = "Segoe UI", size = 12, color = "black"))
+    ggeasy::easy_center_title() + 
+    ggplot2::theme(text = element_text(family = "Segoe UI")) +
+    ggplot2::theme(axis.text.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
+    ggplot2::theme(axis.text.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
+    ggplot2::theme(axis.title.x = element_text(family = "Segoe UI", size = 12, color = "black")) +
+    ggplot2::theme(axis.title.y = element_text(family = "Segoe UI", size = 12, color = "black")) +
+    ggplot2::theme(legend.title = element_text(family = "Segoe UI", size = 12, color = "black")) +
+    ggplot2::theme(legend.text = element_text(family = "Segoe UI", size = 12, color = "black"))
 }
 
 # new function for beeswarm -----------------------------------------------
@@ -81,8 +81,8 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
       axis.title.y = ggplot2::element_text(colour = "white")
     ) +
     ggplot2::facet_grid(
-      rows = vars(scenario),
-      labeller = labeller(scenario = labels))
+      rows = dplyr::vars(scenario),
+      labeller = ggplot2::labeller(scenario = labels))
 }
 
 
