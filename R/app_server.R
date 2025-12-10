@@ -8,7 +8,7 @@ lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 #this should be commented out in live versions
 
 #nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#  dplyr::filter(!app_version == "dev") 
+# dplyr::filter(!app_version == "dev")
 
 app_server = function(input, output, session) {
   nhp_model_runs <- get_nhp_result_sets() |>
@@ -18,54 +18,120 @@ app_server = function(input, output, session) {
   datasets_list <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE)
   datasets_list <- purrr::set_names(names(datasets_list), unname(datasets_list))
   
+  # logic for improved selectInput logic, this should become a module ----
+  # once remaining code in this script is refactored to take reactive values
+  # instead of input$ values
+  selections <- shiny::reactiveValues()
+  
+  
   shiny::observe(
     shiny::updateSelectInput(session, 
                              "selected_scheme", 
                              choices = datasets_list[datasets_list %in% nhp_model_runs$dataset])
   )
   
-  get_runtime_choices <- function(data, scheme, chosen_scenario) {
-    data |>
-      dplyr::filter(dataset == scheme, scenario == chosen_scenario) |>
-      dplyr::pull(create_datetime) |>
-      unique() |>
-      sort() |>
-      rev()
-  }
+  shiny::observe(
+    selections$scheme <- input$selected_scheme
+  )
   
-  # Dynamically update scenarios when scheme is selected
-  shiny::observeEvent(input$selected_scheme, {
-    shiny::req(nhp_model_runs)
-    filtered_scenarios <- nhp_model_runs |> 
-      dplyr::filter(dataset == input$selected_scheme) |> 
+  shiny::observe(
+    selections$scheme_scenarios <- nhp_model_runs |>
+      dplyr::filter(dataset == selections$scheme)
+  )
+  
+  shiny::observe(
+    shiny::updateSelectInput(session, "scenario_1", choices = selections$scheme_scenarios |> 
+                               dplyr::pull(scenario) |> 
+                               unique()
+    )
+  )
+  
+  shiny::observeEvent(input$scenario_1, {
+    runtime_choices <- selections$scheme_scenarios |> 
+      dplyr::filter(scenario == input$scenario_1) |> 
+      dplyr::pull(create_datetime)
+    
+    
+    shiny::updateSelectInput(session, "scenario_1_runtime", choices =  runtime_choices)
+  })
+  
+  shiny::observe(
+    selections$main_scenario <- selections$scheme_scenarios |> 
+      dplyr::filter(scenario == input$scenario_1,
+                    create_datetime == input$scenario_1_runtime)
+  )
+  
+  shiny::observe({
+    
+    criteria <- selections$main_scenario |>
+      dplyr::select(start_year, end_year, app_version) 
+    
+    comparable_scenarios <- selections$scheme_scenarios |>
+      dplyr::inner_join(criteria) |>
+      dplyr::anti_join(selections$main_scenario) |>
       dplyr::pull(scenario) |> 
       unique()
     
-    shiny::updateSelectInput(session, "scenario_1", choices = filtered_scenarios)
-    shiny::updateSelectInput(session, "scenario_2", choices = filtered_scenarios)
-  })
-  
-  
-  shiny::observeEvent(list(input$selected_scheme, input$scenario_1, input$scenario_2), {
-    shiny::req(nhp_model_runs)
-    purrr::walk(c("scenario_1", "scenario_2"), function(scn) {
-      runtimes <- get_runtime_choices(
-        nhp_model_runs, 
-        input$selected_scheme, 
-        input[[scn]]
+    default <- if(input$scenario_2 %in% comparable_scenarios){
+      input$scenario_2
+    } else {
+      character(0)
+    }
+    
+    shiny::updateSelectInput(session, "scenario_2", 
+                             choices = comparable_scenarios,
+                             selected = default
+    )
+    
+    selections$comparator_scenario <- selections$scheme_scenarios |> 
+      dplyr::filter(
+        scenario %in% default,
+        create_datetime %in% input$scenario_2_runtime
       )
-      shiny::updateSelectInput(session, paste0(scn, "_runtime"), choices = runtimes)
-    })
+    
   })
+  
+  shiny::observe({
+    criteria <- selections$main_scenario |>
+      dplyr::select(start_year, end_year, app_version) 
+    
+    comparable_runtimes <- selections$scheme_scenarios |>
+      dplyr::filter(scenario == input$scenario_2) |> 
+      dplyr::inner_join(criteria) |>
+      dplyr::anti_join(selections$main_scenario) |>
+      dplyr::pull(create_datetime)
+    
+    default <- if(input$scenario_2_runtime %in% comparable_runtimes){
+      input$scenario_2_runtime
+    } else {
+      character(0)
+    }
+    
+    shiny::updateSelectInput(session, 
+                             "scenario_2_runtime", 
+                             choices = comparable_runtimes,
+                             selected = default)
+    
+    selections$comparator_scenario <- selections$scheme_scenarios |> 
+      dplyr::filter(
+        scenario %in% input$scenario_2,
+        create_datetime %in% default
+      )
+    
+  })
+  
+  # End of selectInput reactive logic ----
+  
   
   output$metadata <- DT::renderDT({
     
     possibly_get_metadata <- purrr::possibly(get_metadata,
                                              "No data")
+    
     DT::datatable(
       dplyr::bind_rows(
-        scenario_1 = possibly_get_metadata(nhp_model_runs, input$scenario_1, input$scenario_1_runtime),
-        scenario_2 = possibly_get_metadata(nhp_model_runs, input$scenario_2, input$scenario_2_runtime),
+        scenario_1 = possibly_get_metadata(nhp_model_runs, selections$main_scenario),
+        scenario_2 = possibly_get_metadata(nhp_model_runs, selections$comparator_scenario),
         .id = "scenario_id"),
       rownames = FALSE,
       escape = FALSE,      
@@ -76,11 +142,6 @@ app_server = function(input, output, session) {
       )
     )
   })
-  
-  
-  
-  
-  
   
   output$result_text <- shiny::renderText({
     paste("You have selected",
@@ -197,7 +258,7 @@ app_server = function(input, output, session) {
   mod_efficiencies_impact_server("efficiencies1",
                                  processed = processed)
   mod_p10_p90_bar_server("p10p90_bar1",
-                    processed = processed)
+                         processed = processed)
   mod_beeswarm_server("beeswarm1",
                       processed = processed)
   mod_ecdf_server("ecdf1",
