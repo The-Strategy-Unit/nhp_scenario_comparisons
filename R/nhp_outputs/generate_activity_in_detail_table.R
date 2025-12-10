@@ -79,7 +79,7 @@ generate_activity_in_detail_table <- function(
 
 activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab = "ylab", xlab = "xlab"){
   ggplot2::ggplot(dplyr::filter(data, sex== chosen_sex),
-                  ggplot2::aes(x=final, y=fct_rev(agg), fill = scenario)) +
+                  ggplot2::aes(x=final, y=forcats::fct_rev(agg), fill = scenario)) +
     ggplot2::geom_col(position = "dodge") +
     ggplot2::scale_x_continuous(labels = scales::comma) +
     ggplot2::ggtitle(title_text) +
