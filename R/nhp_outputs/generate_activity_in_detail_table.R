@@ -141,7 +141,7 @@ run_combinations_list <- function(parameters, data1, data2) {
   )
   
   # Set names based on the combinations
-  names(results) <- pmap_chr(dplyr::select(parameters, pod, measure, agg_col), generate_name)
+  names(results) <- purrr::pmap_chr(dplyr::select(parameters, pod, measure, agg_col), generate_name)
   
   return(results)
 }
