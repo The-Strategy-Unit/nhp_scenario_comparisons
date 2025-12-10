@@ -1,16 +1,30 @@
 #' The application server-side
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+library(gt)
+library(here)
+library(ggplot2)
+library(ggeasy)
+library(shiny)
+
 
 file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
 lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
 #this should be commented out in live versions
 
-#nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#  dplyr::filter(!app_version == "dev") 
+# load_local_data <- TRUE
+# nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+#   dplyr::filter(!app_version == "dev") |> 
+#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
+#                   list.files("jsons/")
+#   )
 
 app_server = function(input, output, session) {
+  load_local_data <- FALSE
   nhp_model_runs <- get_nhp_result_sets() |>
     dplyr::filter(!app_version == "dev")
   
@@ -182,7 +196,8 @@ app_server = function(input, output, session) {
                                  scenario_2_runtime = input$scenario_2_runtime)
                           ),
                           errors = errors_reactive,
-                          trigger = shiny::reactive(input$render_plot)
+                          trigger = shiny::reactive(input$render_plot),
+                          local_data_flag = load_local_data
     )
   
   
@@ -197,7 +212,7 @@ app_server = function(input, output, session) {
   mod_efficiencies_impact_server("efficiencies1",
                                  processed = processed)
   mod_p10_p90_bar_server("p10p90_bar1",
-                    processed = processed)
+                         processed = processed)
   mod_beeswarm_server("beeswarm1",
                       processed = processed)
   mod_ecdf_server("ecdf1",

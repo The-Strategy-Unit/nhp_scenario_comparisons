@@ -1,4 +1,9 @@
-mod_processing_server <- function(id, result_sets, scenario_selections, errors, trigger
+mod_processing_server <- function(id, 
+                                  result_sets,
+                                  scenario_selections,
+                                  errors,
+                                  trigger,
+                                  local_data_flag
 ){
   shiny::moduleServer(id, function(input, output, session){
     
@@ -12,7 +17,7 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       selected <- scenario_selections()
       
       nhp_model_runs <- result_sets
-      
+        
       #get files
       scenario_1_file <- nhp_model_runs |>
         dplyr::filter(scenario == selected$scenario_1,
@@ -27,9 +32,36 @@ mod_processing_server <- function(id, result_sets, scenario_selections, errors, 
       shiny::req(length(scenario_1_file) > 0, 
                  length(scenario_2_file) > 0)
       
+      if(local_data_flag == TRUE){
+        
+        jsons <- tibble::tibble(paths =list.files("jsons/",
+                                 full.names = TRUE)
+        ) |> 
+          dplyr::filter(stringr::str_ends(paths, "\\.json\\.gz")) |> 
+          dplyr::mutate(file_name = stringr::str_remove(paths, "jsons/"))
+        
+        json_1_file <- jsons$paths[jsons$file_name == stringr::str_extract(
+          scenario_1_file, "[^/]+$")]
+        
+        json_2_file <- jsons$paths[jsons$file_name == stringr::str_extract(
+          scenario_2_file, "[^/]+$")]
+        
+        get_json_results <- function(path){
+        readBin(path, raw(), n = file.size(path)) |>
+          jsonlite::parse_gzjson_raw(simplifyVector = FALSE) |>
+          parse_results()
+        }
+        
+        result_1 <- get_json_results(json_1_file)
+        
+        result_2 <- get_json_results(json_2_file)
+        
+      } else{
+      
       result_1 <- get_nhp_results(file = scenario_1_file)
       result_2 <- get_nhp_results(file = scenario_2_file)
       
+      }
       
       # grab the scenario_names
       scenario_1_name <- result_1$params$scenario
