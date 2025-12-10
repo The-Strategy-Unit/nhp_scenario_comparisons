@@ -86,7 +86,7 @@ activity_detail_bar <- function(data, chosen_sex, title_text = "Example", ylab =
     ggplot2::ylab(ylab) +
     ggplot2::xlab(xlab) +
     ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario", labels = c(scenario_1_name, scenario_2_name)) +
-    ggeasy::easy_center_title() + ggplot2::theme(text = element_text(family = "Segoe UI")) +
+    ggeasy::easy_center_title() + ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(axis.text.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
