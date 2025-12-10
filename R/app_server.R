@@ -7,8 +7,12 @@ lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
 
 #this should be commented out in live versions
 
-#nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-# dplyr::filter(!app_version == "dev")
+# load_local_data <- TRUE
+# nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+#   dplyr::filter(!app_version == "dev") |> 
+#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
+#                   list.files("jsons/")
+#   )
 
 app_server = function(input, output, session) {
   nhp_model_runs <- get_nhp_result_sets() |>
