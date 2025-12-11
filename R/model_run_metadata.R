@@ -1,9 +1,7 @@
-get_metadata <- function(result_sets, scenario_name, runtime) {
+get_metadata <- function(result_sets, scenario) {
   
   
-  metadata <- result_sets |>
-    dplyr::filter(scenario == scenario_name,
-                  create_datetime == runtime)
+  metadata <- scenario
   
   metadata$scheme_name <- metadata$dataset |> 
     purrr::map(make_scheme_name) |> 
