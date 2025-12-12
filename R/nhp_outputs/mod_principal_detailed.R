@@ -1,3 +1,4 @@
+#This code originated from nhp_outputs
 mod_principal_detailed_table <- function(data, aggregation, final_year) {
   data |>
     dplyr::mutate(
