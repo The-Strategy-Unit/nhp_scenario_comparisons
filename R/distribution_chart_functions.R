@@ -193,10 +193,9 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(data, show_origin)
                        vjust = -0.1) +  
     ggplot2::labs(
       x = "Value",
-      y = "Proportion (ECDF)",
-      title = "Empirical Cumulative Distribution Function with 10% and 90% Markers"
+      y = "Percentage of model runs",
+      title = "S-curve (empirical cumulative distribution function)"
     ) +
-    ggplot2::ylab("Percentage of model runs") +
     ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(10),
