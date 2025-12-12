@@ -1,6 +1,6 @@
 ## Introduction and purpose
 
-Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool allows NHP schemes to compare their demand modelling scenarios to one another. This is based on the existing visualisation in the [main outputs app](https://connect.strategyunitwm.nhs.uk/nhp/outputs/), providing side-by-side versions of the visualisations and figures therein. The documentation for the demand model is available [here](https://connect.strategyunitwm.nhs.uk/nhp/project_information/). 
+Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool allows NHP schemes to compare their demand modelling scenarios to one another. This is based on the existing visualisation in the <a href="https://connect.strategyunitwm.nhs.uk/nhp/outputs/" target="_blank">main outputs app</a>, providing side-by-side versions of the visualisations and figures therein. The documentation for the demand model is available <a href=https://connect.strategyunitwm.nhs.uk/nhp/project_information/ target="_blank">here</a>. 
 
 ## Instructions
 
@@ -56,7 +56,7 @@ The curve shows the empirical (observed) cumulative distribution of all the mode
 
 ## Note about bed days
 
-Bed days are defined as the difference in days between discharge and admission, plus one day. One bed day is added to account for zero length of stay spells/partial days at the beginning and end of a spell. See the [model project information site](https://connect.strategyunitwm.nhs.uk/nhp/project_information) for definitions of terms.
+Bed days are defined as the difference in days between discharge and admission, plus one day. One bed day is added to account for zero length of stay spells/partial days at the beginning and end of a spell. See the <a href=https://connect.strategyunitwm.nhs.uk/nhp/project_information/ target="_blank">model project information site</a> for definitions of terms.
 
 ## Feedback
 
