@@ -50,7 +50,7 @@ This shows the principal projection as well as the 10th and 90th percentiles (p1
 
 This presents the distribution of model runs. Each dot represents an individual model run from the scenario. The thickness of the swarm indicates the density of runs in certain ranges. The activity type and measure to be set via drop down.
 
-### ECDF
+### S-curve
 
 The curve shows the empirical (observed) cumulative distribution of all the model runs. The coloured dashed lines show the p10 and p90 of each scenario. The activity type and measure to be set via drop down.
 

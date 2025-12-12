@@ -73,7 +73,7 @@ app_ui = function(request) {
             shiny::tabPanel("Efficiencies Impact", mod_efficiencies_impact_ui("efficiencies1")),
             shiny::tabPanel("P10-P90 Intervals", mod_p10_p90_bar_ui("p10p90_bar1")),
             shiny::tabPanel("Beeswarm", mod_beeswarm_ui("beeswarm1")),
-            shiny::tabPanel("ECDF", mod_ecdf_ui("ecdf1"))
+            shiny::tabPanel("S-curve", mod_ecdf_ui("ecdf1"))
           )
         )
       )
