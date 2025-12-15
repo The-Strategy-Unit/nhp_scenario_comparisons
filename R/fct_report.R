@@ -1,4 +1,4 @@
-#' Create a Table of Model Run Metadata
+#' Create a Table of Model Run Metadata. #This code originated from nhp_outputs
 #' @param p A list. Parameter selections for a given model scenario.
 #' @noRd
 tabulate_model_run_info <- function(p) {

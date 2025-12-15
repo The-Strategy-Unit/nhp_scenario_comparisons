@@ -1,4 +1,4 @@
-
+#This code originated from nhp_outputs
 mod_principal_summary_data <- function(r, sites) {
   pods <- mod_principal_los_pods() # uses same POD lookup as LoS summary
   

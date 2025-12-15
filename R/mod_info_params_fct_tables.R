@@ -1,3 +1,4 @@
+#This code originated from nhp_outputs
 info_params_table_expat_repat_adjustment <- function(
     p,
     type = c("expat", "repat_local", "repat_nonlocal")

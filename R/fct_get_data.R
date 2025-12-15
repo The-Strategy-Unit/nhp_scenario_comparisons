@@ -1,3 +1,4 @@
+#This code originated from final_reports
 parse_results <- function(r) {
   
   r$population_variants <- as.character(r$population_variants)

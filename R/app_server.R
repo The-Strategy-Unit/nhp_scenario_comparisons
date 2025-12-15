@@ -2,10 +2,6 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
 
-
-file_names_nhs_output <- list.files(path = 'R/nhp_outputs', pattern = "\\.R$")
-lapply(paste0('R/nhp_outputs/',file_names_nhs_output), source)
-
 #this should be commented out in live versions
 
 # load_local_data <- TRUE
