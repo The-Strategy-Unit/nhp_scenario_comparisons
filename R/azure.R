@@ -17,10 +17,10 @@ get_nhp_result_sets <- function(
     container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
     blob_url = Sys.getenv("AZ_STORAGE_EP")
 ) {
-
+  
   container <- get_container(container = container_results,
                              endpoint = blob_url)
-
+  
   metadata_cache <- cachem::cache_disk(".cache")
   get_metadata <- purrr::partial(AzureStor::get_storage_metadata, object = container)
   metadata <- memoise::memoise(get_metadata, cache = metadata_cache)
@@ -29,7 +29,14 @@ get_nhp_result_sets <- function(
   files <- container |>
     AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
     dplyr::filter(!.data[["isdir"]]) |>
-    dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> 
+    dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> #remove dev runs
+    dplyr::mutate(version_number = 
+                    as.numeric(
+                      stringr::str_replace_all(name,
+                                               ".*prod/v([0-9]+\\.[0-9]+)/.*", "\\1")
+                    )
+    )|> 
+    dplyr::filter(version_number >= 3.1) |>  #keep models on v3.1 or later only
     purrr::pluck("name") |>
     purrr::set_names()
   
@@ -43,7 +50,7 @@ get_nhp_result_sets <- function(
       dplyr::across("viewable", as.logical)
     )
   cat("returning result sets\n")
-
+  
   files
 }
 
@@ -126,21 +133,21 @@ get_nhp_results <- function(
     blob_url = Sys.getenv("AZ_STORAGE_EP"),
     file
 ) {
-
+  
   container <- get_container(container = container_results,
                              endpoint = blob_url)
-
+  
   temp_file <- withr::local_tempfile()
   AzureStor::download_blob(container, file, temp_file)
-
+  
   readBin(temp_file, raw(), n = file.size(temp_file)) |>
     jsonlite::parse_gzjson_raw(simplifyVector = FALSE) |>
     parse_results()  # applies patch logic dependent on app_version in params
-
+  
 }
 
 get_baseline_and_projections <- function(r_trust) {
-
+  
   r_trust[["results"]][["default"]] |>
     dplyr::group_by(measure, pod, sitetret) |>
     dplyr::summarise(
@@ -149,7 +156,7 @@ get_baseline_and_projections <- function(r_trust) {
       lwr_ci = sum(lwr_ci),
       upr_ci = sum(upr_ci)
     )
-
+  
 }
 
 get_stepcounts <- function(r_trust) {
@@ -157,16 +164,16 @@ get_stepcounts <- function(r_trust) {
 }
 
 get_losgroup <- function(r_trust) {
-
+  
   los_group_is_null <- is.null(r_trust[["results"]][["los_group"]])
-
+  
   if (los_group_is_null) {
     # tretspef+los_group renamed from tretspef_raw+los_group in v4.0
     r_trust <- r_trust[["results"]][["tretspef+los_group"]]
   } else {
     r_trust <- r_trust[["results"]][["los_group"]]
   }
-
+  
   r_trust
-
+  
 }
