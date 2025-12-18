@@ -13,7 +13,7 @@ app_ui = function(request) {
     
     title = shiny::div(
       style = "display:flex; justify-content:space-between; align-items:center; width:100%;",
-      shiny::h1("Scenario comparison app (proto)"),
+      shiny::h1("Scenario Comparison App"),
       shiny::actionButton(
         inputId = "feedback",
         label = "Give feedback",
