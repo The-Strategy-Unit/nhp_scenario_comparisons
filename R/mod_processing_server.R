@@ -237,7 +237,9 @@ mod_processing_server <- function(id,
             substr(pod, 1, 2) == "aa" ~ "A&E",
             TRUE ~ "Other"
           )
-        ) |> dplyr::relocate(activity_type, .before = 1)
+        ) |> dplyr::relocate(activity_type, .before = 1) |> 
+        dplyr::filter(!(pod == "op_procedure" &
+                        measure == "tele_attendances"))
       # 
       # 
       # 
