@@ -29,7 +29,7 @@ You can ask a member of the Data Science team to help populate this file.
 Remember to restart your session or run `readRenviron(".Renviron")` after you've updated your `.Renviron` file.
 If you're having authorisation issues (e.g. a 403 is being returned), try clearing your tokens with `AzureAuth::clean_token_directory()` and try again.
 
-#### Run the 
+#### Run the app
 
 Source the `app.R` script to run the app, assuming you've installed the packages and set up the environment variables.
 
