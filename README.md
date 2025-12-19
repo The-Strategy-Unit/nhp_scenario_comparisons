@@ -6,7 +6,7 @@ Compare New Hospital Programme (NHP) schemes' demand modelling scenarios. This i
 
 The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/scenario_comparison/) (login/permissions required).
 
-# For developers
+## For developers
 
 ### Tools
 
