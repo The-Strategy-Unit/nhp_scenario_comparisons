@@ -54,6 +54,31 @@ get_nhp_result_sets <- function(
   files
 }
 
+get_user_allowed_datasets <- function(groups) {
+  p <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE) |>
+    names()
+  
+  if (!(is.null(groups) || any(c("nhp_devs", "nhp_power_users") %in% groups))) {
+    a <- groups |>
+      stringr::str_subset("^nhp_(national|icb|provider)_") |>
+      stringr::str_remove("^nhp_(national|icb|provider)_")
+    intersect(p, a)
+  } else {
+    p
+  }
+}
+
+filter_result_sets <- function(result_sets, ds, sc, cd) {
+  result_sets |>
+    shiny::req() |>
+    dplyr::filter(
+      .data[["dataset"]] == ds,
+      .data[["scenario"]] == sc,
+      .data[["create_datetime"]] == cd
+    ) |>
+    require_rows()
+}
+
 get_token <- function(resource) {
   token <- tryCatch(
     {
