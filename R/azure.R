@@ -15,8 +15,11 @@
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
     container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-    blob_url = Sys.getenv("AZ_STORAGE_EP")
+    blob_url = Sys.getenv("AZ_STORAGE_EP"),
+    allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
+  
+  ds <- tibble::tibble(dataset = allowed_datasets)
   
   container <- get_container(container = container_results,
                              endpoint = blob_url)
@@ -45,7 +48,7 @@ get_nhp_result_sets <- function(
     purrr::map(metadata, .progress=TRUE) |>
     dplyr::bind_rows(.id = "file") |>
     # filter to available datasets for this user
-    # dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
+    dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
     dplyr::mutate(
       dplyr::across("viewable", as.logical)
     )
