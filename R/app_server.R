@@ -176,9 +176,11 @@ app_server = function(input, output, session) {
     
     DT::datatable(
       dplyr::bind_rows(
-        scenario_1 = possibly_get_metadata(nhp_model_runs, selections$main_scenario),
-        scenario_2 = possibly_get_metadata(nhp_model_runs, selections$comparator_scenario),
-        .id = "scenario_id"),
+        possibly_get_metadata(nhp_model_runs, selections$main_scenario),
+        possibly_get_metadata(nhp_model_runs, selections$comparator_scenario)) |> 
+      dplyr::mutate(scenario_alias = c(selections$scenario_1_display, 
+                                       selections$scenario_2_display)) |>
+      dplyr::select(scenario_alias, dplyr::everything()),
       rownames = FALSE,
       escape = FALSE,      
       options = list(
