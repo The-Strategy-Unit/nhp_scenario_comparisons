@@ -288,7 +288,9 @@ app_server = function(input, output, session) {
                             list(scenario_1 = input$scenario_1,
                                  scenario_1_runtime = input$scenario_1_runtime,
                                  scenario_2 = input$scenario_2,
-                                 scenario_2_runtime = input$scenario_2_runtime)
+                                 scenario_2_runtime = input$scenario_2_runtime,
+                                 scenario_1_alias = input$scenario_1_alias,
+                                 scenario_2_alias = input$scenario_2_alias)
                           ),
                           errors = errors_reactive,
                           trigger = shiny::reactive(input$render_plot),
