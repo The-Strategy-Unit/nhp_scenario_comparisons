@@ -122,6 +122,50 @@ app_server = function(input, output, session) {
     
   })
   
+  # Alias management ----
+  shiny::observe({
+    selections$scenario_1_display <- if(input$create_new_names && nzchar(input$scenario_1_alias)) {
+      input$scenario_1_alias
+    } else {
+      input$scenario_1
+    }
+    
+    selections$scenario_2_display <- if(input$create_new_names && nzchar(input$scenario_2_alias)) {
+      input$scenario_2_alias
+    } else {
+      input$scenario_2
+    }
+  })
+  
+  # Update alias text inputs with default values from selected scenarios
+  shiny::observeEvent(c(input$scenario_1, input$scenario_2), {
+    # Only update if checkbox is NOT ticked (to preserve user edits when ticked)
+    if (!isTRUE(input$create_new_names)) {
+      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+    }
+  }, ignoreNULL = FALSE, ignoreInit = TRUE)
+  
+  # Enable/disable text inputs based on checkbox
+  shiny::observeEvent(input$create_new_names, {
+    if (isTRUE(input$create_new_names)) {
+      shinyjs::enable("scenario_1_alias")
+      shinyjs::enable("scenario_2_alias")
+    } else {
+      shinyjs::disable("scenario_1_alias")
+      shinyjs::disable("scenario_2_alias")
+      # Reset to default values when unchecked
+      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+    }
+  }, ignoreInit = TRUE)
+  
+  # Disable text inputs on startup
+  shinyjs::disable("scenario_1_alias")
+  shinyjs::disable("scenario_2_alias")
+  
+  # End of alias management ----
+  
   # End of selectInput reactive logic ----
   
   
