@@ -11,9 +11,7 @@ mod_waterfall_ui <- function(id) {
   )
 }
 
-get_label <- function(value, aliases) {  
-  names(aliases)[match(value, aliases)]
-}
+
 
 mod_waterfall_server <- function(id, processed){ 
   shiny::moduleServer(id, function(input, output, session){
@@ -25,20 +23,6 @@ mod_waterfall_server <- function(id, processed){
     scenario_2_name <- shiny::reactive(processed()$waterfall_data$scenario_2_name)
     # could dynamically create UI here, based on the variables found within df?
     
-    activity_type_pretty_names <- c(
-      "Inpatient" = "ip",
-      "Outpatient" = "op",
-      "A&E" = "aae"
-    )
-    
-    measure_pretty_names <- c(
-      "Admissions" = "admissions",
-      "Bed Days" = "beddays",
-      "Attendances" = "attendances",
-      "Tele-attendances" = "tele_attendances",
-      "Arrivals" = "arrivals"
-        
-    )
     
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
