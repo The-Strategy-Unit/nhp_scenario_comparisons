@@ -21,6 +21,21 @@ mod_waterfall_server <- function(id, processed){
     scenario_2_name <- shiny::reactive(processed()$waterfall_data$scenario_2_name)
     # could dynamically create UI here, based on the variables found within df?
     
+    activity_type_pretty_names <- c(
+      "Inpatient" = "ip",
+      "Outpatient" = "op",
+      "A&E" = "aae"
+    )
+    
+    measure_pretty_names <- c(
+      "Admissions" = "admissions",
+      "Bed Days" = "beddays",
+      "Attendances" = "attendances",
+      "Tele-attendances" = "tele_attendances",
+      "Arrivals" = "arrivals"
+        
+    )
+    
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
       
@@ -28,7 +43,7 @@ mod_waterfall_server <- function(id, processed){
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
                                            "Activity type", 
-                                           choices = names(df())),
+                                           choices = activity_type_pretty_names),
                         shiny::selectInput(ns("filter2"), 
                                            "Measure", 
                                            choices = NULL)
@@ -39,10 +54,11 @@ mod_waterfall_server <- function(id, processed){
     shiny::observe({
       shiny::req(df(), input$filter1)
       
-      filter2_choices <- df()[[input$filter1]] |> 
-        #dplyr::filter(pod_name == input$filter1) |> 
-        dplyr::pull(measure) |> 
+      filter2_values <- df()[[input$filter1]] |>
+        dplyr::pull(measure) |>
         unique()
+      
+      filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
       
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)
