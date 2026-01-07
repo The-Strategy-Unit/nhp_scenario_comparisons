@@ -80,7 +80,12 @@ mod_waterfall_server <- function(id, processed){
                               measure = input$filter2,
                               x_label = input$filter2,
                               y_label = "Change Factor",
-                              glue::glue(input$filter1, input$filter2, "- Waterfall of Change Factors", .sep = " "))
+                              title = glue::glue(
+                                "{get_label(input$filter1, activity_type_pretty_names)}",
+                                "{get_label(input$filter2, measure_pretty_names)}", 
+                                "- Waterfall of Change Factors", 
+                                .sep = " ")
+                              )
     },
     res = 100,
     )
