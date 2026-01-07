@@ -26,7 +26,7 @@ mod_activity_avoidance_impact_server <- function(id, processed){
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
                                            "Activity Type", 
-                                           choices = unique(df()$activity_type)),
+                                           choices = activity_type_pretty_names),
                         shiny::selectInput(ns("filter2"), 
                                            "Measure", 
                                            choices = NULL)
@@ -36,15 +36,17 @@ mod_activity_avoidance_impact_server <- function(id, processed){
     
     shiny::observe({
       shiny::req(df(), input$filter1)
-      
-      filter2_choices <- df() |> 
-        dplyr::filter(activity_type == input$filter1) |> 
-        dplyr::pull(measure) |> 
+
+      filter2_values <- df() |> 
+        dplyr::filter(activity_type == input$filter1) |>
+        dplyr::pull(measure) |>
         unique()
-      
+
+      filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
+
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)
-      
+
     })
     
     output$plot <- shiny::renderPlot({
@@ -60,7 +62,12 @@ mod_activity_avoidance_impact_server <- function(id, processed){
                       chosen_change_factor = "activity_avoidance",
                       input$filter1,
                       input$filter2,
-                      glue::glue(input$filter1, input$filter2, "- Impact of Individual Activity Avoidance TPMA Assumptions", .sep = " "))
+                      title = glue::glue(
+                        "{get_label(input$filter1, activity_type_pretty_names)}",
+                        "{get_label(input$filter2, measure_pretty_names)}", 
+                        "- Impact of Individual Activity Avoidance TPMA Assumptions", 
+                        .sep = " ")
+                      )
       
       
     },
