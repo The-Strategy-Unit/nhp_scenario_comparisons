@@ -11,6 +11,10 @@ mod_waterfall_ui <- function(id) {
   )
 }
 
+get_label <- function(value, aliases) {  
+  names(aliases)[match(value, aliases)]
+}
+
 mod_waterfall_server <- function(id, processed){ 
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
