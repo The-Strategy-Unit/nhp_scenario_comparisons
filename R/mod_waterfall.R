@@ -27,7 +27,7 @@ mod_waterfall_server <- function(id, processed){
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "Point of Delivery", 
+                                           "Activity type", 
                                            choices = names(df())),
                         shiny::selectInput(ns("filter2"), 
                                            "Measure", 
