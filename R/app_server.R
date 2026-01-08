@@ -13,8 +13,27 @@
 
 app_server = function(input, output, session) {
   load_local_data <- FALSE
-  nhp_model_runs <- get_nhp_result_sets() |>
-    dplyr::filter(!app_version == "dev")
+  
+  allowed_datasets <- shiny::reactive({
+    get_user_allowed_datasets(session$groups)
+  })
+  
+  nhp_model_runs <- shiny::reactive({
+    rs <- get_nhp_result_sets(
+      allowed_datasets()
+      ) 
+    
+    # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
+    if (any(c("nhp_devs") %in% session$groups)) {
+      return(rs)
+    }
+    
+    dplyr::filter(
+      rs,
+      .data[["viewable"]],
+      .data[["app_version"]] != "dev"
+    )
+  })
   
   # static data files ----
   datasets_list <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE)
