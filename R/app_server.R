@@ -122,6 +122,50 @@ app_server = function(input, output, session) {
     
   })
   
+  # Alias management ----
+  shiny::observe({
+    selections$scenario_1_display <- if(input$create_new_names && nzchar(input$scenario_1_alias)) {
+      input$scenario_1_alias
+    } else {
+      input$scenario_1
+    }
+    
+    selections$scenario_2_display <- if(input$create_new_names && nzchar(input$scenario_2_alias)) {
+      input$scenario_2_alias
+    } else {
+      input$scenario_2
+    }
+  })
+  
+  # Update alias text inputs with default values from selected scenarios
+  shiny::observeEvent(c(input$scenario_1, input$scenario_2), {
+    # Only update if checkbox is NOT ticked (to preserve user edits when ticked)
+    if (!isTRUE(input$create_new_names)) {
+      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+    }
+  }, ignoreNULL = FALSE, ignoreInit = TRUE)
+  
+  # Enable/disable text inputs based on checkbox
+  shiny::observeEvent(input$create_new_names, {
+    if (isTRUE(input$create_new_names)) {
+      shinyjs::enable("scenario_1_alias")
+      shinyjs::enable("scenario_2_alias")
+    } else {
+      shinyjs::disable("scenario_1_alias")
+      shinyjs::disable("scenario_2_alias")
+      # Reset to default values when unchecked
+      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+    }
+  }, ignoreInit = TRUE)
+  
+  # Disable text inputs on startup
+  shinyjs::disable("scenario_1_alias")
+  shinyjs::disable("scenario_2_alias")
+  
+  # End of alias management ----
+  
   # End of selectInput reactive logic ----
   
   
@@ -132,9 +176,11 @@ app_server = function(input, output, session) {
     
     DT::datatable(
       dplyr::bind_rows(
-        scenario_1 = possibly_get_metadata(nhp_model_runs, selections$main_scenario),
-        scenario_2 = possibly_get_metadata(nhp_model_runs, selections$comparator_scenario),
-        .id = "scenario_id"),
+        possibly_get_metadata(nhp_model_runs, selections$main_scenario),
+        possibly_get_metadata(nhp_model_runs, selections$comparator_scenario)) |> 
+      dplyr::mutate(scenario_alias = c(selections$scenario_1_display, 
+                                       selections$scenario_2_display)) |>
+      dplyr::select(scenario_alias, dplyr::everything()),
       rownames = FALSE,
       escape = FALSE,      
       options = list(
@@ -242,7 +288,9 @@ app_server = function(input, output, session) {
                             list(scenario_1 = input$scenario_1,
                                  scenario_1_runtime = input$scenario_1_runtime,
                                  scenario_2 = input$scenario_2,
-                                 scenario_2_runtime = input$scenario_2_runtime)
+                                 scenario_2_runtime = input$scenario_2_runtime,
+                                 scenario_1_alias = input$scenario_1_alias,
+                                 scenario_2_alias = input$scenario_2_alias)
                           ),
                           errors = errors_reactive,
                           trigger = shiny::reactive(input$render_plot),
