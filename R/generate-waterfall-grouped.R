@@ -124,7 +124,7 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     ggplot2::scale_x_continuous(labels = scales::comma) +
     ggplot2::ggtitle(title_text) +
     ggplot2::ylab("TPMA") +
-    ggplot2::xlab(chosen_measure) +
+    ggplot2::xlab(get_label(chosen_measure, measure_pretty_names)) +
     ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
     ) +
     ggeasy::easy_center_title() + ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +

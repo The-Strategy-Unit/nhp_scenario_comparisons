@@ -51,10 +51,12 @@ mod_beeswarm_server <- function(id, processed){
     shiny::observe({
       shiny::req(df(), input$filter1)
       
-      filter2_choices <- pods() |> 
+      filter2_values <- pods() |> 
         dplyr::filter(activity_type_name == input$filter1) |> 
         dplyr::pull(measures) |> 
         unique()
+      
+      filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
       
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)
@@ -87,7 +89,7 @@ mod_beeswarm_server <- function(id, processed){
                                                             scenario_1_name = scn1(),
                                                             scenario_2_name = scn2(),
                                                             FALSE) +
-        ggplot2::labs(y = input$filter2,
+        ggplot2::labs(y = get_label(input$filter2, measure_pretty_names),
                       title = glue::glue(input$filter1, 
                                          input$filter2,
                                          "- Distribution of Model Runs",

@@ -26,7 +26,7 @@ mod_p10_p90_bar_server <- function(id, processed){
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
                                            "Point of Delivery", 
-                                           choices = unique(df()$pod))
+                                           choices = pod_pretty_names[pod_pretty_names %in% unique(df()$pod)])
         )
       )
     })
@@ -36,7 +36,11 @@ mod_p10_p90_bar_server <- function(id, processed){
       
       create_bar_plot_distribution(df(), 
                                    input$filter1,
-                                   glue::glue(input$filter1, "- Principal projection (with p10 and p90 indicator)", .sep = " "))
+                                   glue::glue(
+                                     "{get_label(input$filter1, pod_pretty_names)}", 
+                                     "- Principal projection (with p10 and p90 indicator)", 
+                                     .sep = " ")
+                                   )
     },
     res = 100,
     )

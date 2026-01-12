@@ -11,6 +11,8 @@ mod_waterfall_ui <- function(id) {
   )
 }
 
+
+
 mod_waterfall_server <- function(id, processed){ 
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
@@ -21,14 +23,15 @@ mod_waterfall_server <- function(id, processed){
     scenario_2_name <- shiny::reactive(processed()$waterfall_data$scenario_2_name)
     # could dynamically create UI here, based on the variables found within df?
     
+    
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
       
       shiny::tagList(
         shiny::tags$div(style = "display: flex; gap: 15px;",
                         shiny::selectInput(ns("filter1"), 
-                                           "Point of Delivery", 
-                                           choices = names(df())),
+                                           "Activity type", 
+                                           choices = activity_type_pretty_names),
                         shiny::selectInput(ns("filter2"), 
                                            "Measure", 
                                            choices = NULL)
@@ -39,10 +42,11 @@ mod_waterfall_server <- function(id, processed){
     shiny::observe({
       shiny::req(df(), input$filter1)
       
-      filter2_choices <- df()[[input$filter1]] |> 
-        #dplyr::filter(pod_name == input$filter1) |> 
-        dplyr::pull(measure) |> 
+      filter2_values <- df()[[input$filter1]] |>
+        dplyr::pull(measure) |>
         unique()
+      
+      filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
       
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)
@@ -58,9 +62,14 @@ mod_waterfall_server <- function(id, processed){
                               scenario_2_name(),
                               activity_type = input$filter1,
                               measure = input$filter2,
-                              x_label = input$filter2,
+                              x_label = get_label(input$filter2, measure_pretty_names),
                               y_label = "Change Factor",
-                              glue::glue(input$filter1, input$filter2, "- Waterfall of Change Factors", .sep = " "))
+                              title = glue::glue(
+                                "{get_label(input$filter1, activity_type_pretty_names)}",
+                                "{get_label(input$filter2, measure_pretty_names)}", 
+                                "- Waterfall of Change Factors", 
+                                .sep = " ")
+                              )
     },
     res = 100,
     )
