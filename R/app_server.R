@@ -2,27 +2,34 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #' @noRd
 
-#this should be commented out in live versions
-
-# load_local_data <- TRUE
-# nhp_model_runs() <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#   dplyr::filter(!app_version == "dev") |> 
-#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
-#                   list.files("jsons/")
-#   )
-
 app_server = function(input, output, session) {
-  load_local_data <- FALSE
+  
   
   allowed_datasets <- shiny::reactive({
     get_user_allowed_datasets(session$groups)
   })
   
+  #start of data loading for offline usage
+  #this should be commented out in live versions
+  # load_local_data <- TRUE
+  # nhp_model_runs <- shiny::reactive(
+  #   readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+  #   dplyr::filter(!app_version == "dev") |>
+  #   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in%
+  #                   list.files("jsons/")
+  #   )
+  # )
+  # end data loading for offline usage
+  
+  # start of data loading for live app
+  # this must be used for live version of app
+  load_local_data <- FALSE
+  
   nhp_model_runs <- shiny::reactive({
     rs <- get_nhp_result_sets(
       allowed_datasets = allowed_datasets()
-      ) 
-    
+    )
+
     # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
     if (any(c("nhp_devs") %in% session$groups)) {
       return(rs)
@@ -34,6 +41,7 @@ app_server = function(input, output, session) {
       .data[["app_version"]] != "dev"
     )
   })
+  #end of data loading for live app
   
   # static data files ----
   datasets_list <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE)
