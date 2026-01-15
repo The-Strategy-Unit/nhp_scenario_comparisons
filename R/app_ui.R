@@ -47,7 +47,7 @@ app_ui = function(request) {
                       )
       ),
       shiny::tabPanel(
-        "Guidance on scenario selections",
+        "Guidance",
         bslib::card(
           id = "card_guidance",
           #bslib::card_header("Guidance on scenario selections"),
