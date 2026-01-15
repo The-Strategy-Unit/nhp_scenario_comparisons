@@ -47,10 +47,9 @@ app_ui = function(request) {
                       )
       ),
       shiny::tabPanel(
-        "Guidance on scenario selections",
+        "Guidance",
         bslib::card(
           id = "card_guidance",
-          #bslib::card_header("Guidance on scenario selections"),
           shiny::HTML(markdown::mark_html("inst/app/model-version-warning.md",
                                           output = FALSE, template = FALSE)),
           shiny::HTML("<br>"),
@@ -58,6 +57,9 @@ app_ui = function(request) {
                                           output = FALSE, template = FALSE)),
           shiny::HTML("<br>"),
           shiny::HTML(markdown::mark_html("inst/app/model-naming-reminder.md",
+                                          output = FALSE, template = FALSE))
+          shiny::HTML("<br"),
+          shiny::HTML(markdown::mark_html("inst/app/bed-days-note.md",
                                           output = FALSE, template = FALSE)),
           DT::dataTableOutput("metadata")
         )
