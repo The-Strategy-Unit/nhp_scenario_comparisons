@@ -37,7 +37,8 @@ mod_los_server <- function(id, processed){
       filter2_choices <- df() |> 
         dplyr::filter(pod_name == input$filter1) |> 
         dplyr::pull(measure) |> 
-        unique()
+        unique() |> 
+        stringr::str_to_title()
       
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)

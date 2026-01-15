@@ -64,9 +64,9 @@ mod_processing_server <- function(id,
       }
       
       # grab the scenario_names
-      scenario_1_name <- result_1$params$scenario
-      scenario_2_name <- result_2$params$scenario
       
+      scenario_1_name <- ifelse(!is.null(selected$scenario_1_alias), selected$scenario_1_alias, result_1$params$scenario)
+      scenario_2_name <- ifelse(!is.null(selected$scenario_2_alias), selected$scenario_2_alias, result_2$params$scenario)
       df1 <- mod_principal_summary_data(result_1, sites = NULL) |> 
         dplyr::mutate(scenario = scenario_1_name)
       df2 <- mod_principal_summary_data(result_2, sites = NULL) |> 

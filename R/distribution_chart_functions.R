@@ -1,14 +1,17 @@
 create_bar_plot_distribution <- function(data, pod_filter, title_text) {
+  # Create a new column for the measure names using the lookup
+  data <- data  |> 
+    dplyr::mutate(measure_name = get_label(measure, measure_pretty_names))
+  
   ggplot2::ggplot(dplyr::filter(data, pod == pod_filter),
-                  ggplot2::aes(x = principal, y = measure, fill = scenario)) +
+                  ggplot2::aes(x = principal, y = measure_name, fill = scenario)) +
     ggplot2::geom_bar(stat = 'identity', position = 'dodge', width = 0.7) +
     ggplot2::geom_errorbar(ggplot2::aes(xmin = lwr_ci, xmax = upr_ci), width = 0.6, position = ggplot2::position_dodge(0.7)) +
     ggplot2::scale_x_continuous(labels = scales::comma) +
     ggplot2::ggtitle(title_text) +
-    ggplot2::ylab("measure") +
+    ggplot2::ylab("Measure") +
     ggplot2::xlab("Principal Projection") +
-    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario"#, labels = c(scenario_1_name, scenario_2_name)
-    ) +
+    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario") +
     ggeasy::easy_center_title() + 
     ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black")) +

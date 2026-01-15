@@ -51,10 +51,12 @@ mod_ecdf_server <- function(id, processed){
     shiny::observe({
       shiny::req(df(), input$filter1)
       
-      filter2_choices <- pods() |> 
+      filter2_values <- pods() |> 
         dplyr::filter(activity_type_name == input$filter1) |> 
         dplyr::pull(measures) |> 
         unique()
+      
+      filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
       
       shiny::updateSelectInput(inputId = "filter2",
                                choices = filter2_choices)
