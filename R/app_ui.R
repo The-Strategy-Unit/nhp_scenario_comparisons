@@ -58,7 +58,10 @@ app_ui = function(request) {
                                           output = FALSE, template = FALSE)),
           shiny::HTML(markdown::mark_html("inst/app/bed-days-note.md",
                                           output = FALSE, template = FALSE)),
-          DT::dataTableOutput("metadata")
+          tagList(
+            h3("Scenarios metadata"),
+            DT::dataTableOutput("metadata")
+          )
         )
       ),
       shiny::tabPanel(
