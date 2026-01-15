@@ -50,13 +50,10 @@ app_ui = function(request) {
         "Guidance",
         bslib::card(
           id = "card_guidance",
-          #bslib::card_header("Guidance on scenario selections"),
           shiny::HTML(markdown::mark_html("inst/app/model-version-warning.md",
                                           output = FALSE, template = FALSE)),
-          shiny::HTML("<br>"),
           shiny::HTML(markdown::mark_html("inst/app/scenario-timespan-warning.md",
                                           output = FALSE, template = FALSE)),
-          shiny::HTML("<br>"),
           shiny::HTML(markdown::mark_html("inst/app/model-naming-reminder.md",
                                           output = FALSE, template = FALSE)),
           shiny::HTML(markdown::mark_html("inst/app/bed-days-note.md",
