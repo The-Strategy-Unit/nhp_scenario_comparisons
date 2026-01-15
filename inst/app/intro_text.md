@@ -54,10 +54,6 @@ This presents the distribution of model runs. Each dot represents an individual 
 
 The curve shows the empirical (observed) cumulative distribution of all the model runs. The coloured dashed lines show the p10 and p90 of each scenario. The activity type and measure to be set via drop down.
 
-## Note about bed days
-
-Bed days are defined as the difference in days between discharge and admission, plus one day. One bed day is added to account for zero length of stay spells/partial days at the beginning and end of a spell. See the <a href=https://connect.strategyunitwm.nhs.uk/nhp/project_information/ target="_blank">model project information site</a> for definitions of terms.
-
 ## Feedback
 
 We welcome any feedback on this tool as part of its continuous development. If you spot any issues or things you would like included, please let us know by providing feedback using the "Give feedback" button at the top of the app.
