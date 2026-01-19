@@ -57,7 +57,7 @@ app_ui = function(request) {
                                           output = FALSE, template = FALSE)),
           shiny::HTML("<br>"),
           shiny::HTML(markdown::mark_html("inst/app/model-naming-reminder.md",
-                                          output = FALSE, template = FALSE))
+                                          output = FALSE, template = FALSE)),
           shiny::HTML("<br"),
           shiny::HTML(markdown::mark_html("inst/app/bed-days-note.md",
                                           output = FALSE, template = FALSE)),
