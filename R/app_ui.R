@@ -65,7 +65,7 @@ app_ui = function(request) {
         )
       ),
       shiny::tabPanel(
-        "Result",
+        "View comparison",
         bslib::card(
           #bslib::card_header("Result"),
           shiny::uiOutput("errors"),
