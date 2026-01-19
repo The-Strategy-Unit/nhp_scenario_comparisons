@@ -4,13 +4,11 @@ Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool 
 
 ## Instructions
 
-To use the app, select which scheme's results you wish to compare. (We do not allow comparisons between different schemes as we wish to ensure like-for-like comparisons). 
+To use the app, please first select which scheme’s results you wish to view.
 
-The "Select Scenario 1" drop down will auto-populate with the scenarios that have been ran for the chosen scheme.
+Select one model scenario ('scenario 1') from the drop-down list, then select the model scenario you wish to compare it to ('scenario 2').
 
-Once you have chosen the first scenario, the "Select Scenario 2" drop down will populate itself with scenarios which are comparable (see guidance on scenario selections tab).
-
-There are some instances of scenario names being duplicated so you can use the scenario runtime drop downs to ensure that you have the exact scenarios that you wish to compare.
+If needed, use the 'scenario runtime' drop-down to specify which of multiple scenarios with the same name you wish to use.
 
 ## Content
 
