@@ -15,8 +15,11 @@
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
     container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-    blob_url = Sys.getenv("AZ_STORAGE_EP")
+    blob_url = Sys.getenv("AZ_STORAGE_EP"),
+    allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
+  
+  ds <- tibble::tibble(dataset = allowed_datasets)
   
   container <- get_container(container = container_results,
                              endpoint = blob_url)
@@ -45,13 +48,38 @@ get_nhp_result_sets <- function(
     purrr::map(metadata, .progress=TRUE) |>
     dplyr::bind_rows(.id = "file") |>
     # filter to available datasets for this user
-    # dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
+    dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
     dplyr::mutate(
       dplyr::across("viewable", as.logical)
     )
   cat("returning result sets\n")
   
   files
+}
+
+get_user_allowed_datasets <- function(groups) {
+  p <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE) |>
+    names()
+  
+  if (!(is.null(groups) || any(c("nhp_devs", "nhp_power_users") %in% groups))) {
+    a <- groups |>
+      stringr::str_subset("^nhp_(national|icb|provider)_") |>
+      stringr::str_remove("^nhp_(national|icb|provider)_")
+    intersect(p, a)
+  } else {
+    p
+  }
+}
+
+filter_result_sets <- function(result_sets, ds, sc, cd) {
+  result_sets |>
+    shiny::req() |>
+    dplyr::filter(
+      .data[["dataset"]] == ds,
+      .data[["scenario"]] == sc,
+      .data[["create_datetime"]] == cd
+    ) |>
+    require_rows()
 }
 
 get_token <- function(resource) {
