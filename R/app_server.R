@@ -6,8 +6,8 @@
 
 # load_local_data <- TRUE
 # nhp_model_runs() <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#   dplyr::filter(!app_version == "dev") |> 
-#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
+#   dplyr::filter(!app_version == "dev") |>
+#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in%
 #                   list.files("jsons/")
 #   )
 
@@ -236,34 +236,40 @@ app_server = function(input, output, session) {
     )
   })
   
-  output$result_text <- shiny::renderText({
-    paste("You have selected",
-          input$scenario_1,
-          paste0(
-            "(",
-            lubridate::as_datetime(input$scenario_1_runtime),
-            ")"),
-          paste0("(model version: ", 
-                 nhp_model_runs() |> 
-                   dplyr::filter(scenario == input$scenario_1,
-                                 create_datetime == input$scenario_1_runtime) |> 
-                   dplyr::pull(app_version),
-                 ")"),
-          "and",
-          input$scenario_2,
-          paste0(
-            "(",
-            lubridate::as_datetime(input$scenario_2_runtime),
-            ")"),
-          paste0("(model version: ", 
-                 nhp_model_runs() |> 
-                   dplyr::filter(scenario == input$scenario_2,
-                                 create_datetime == input$scenario_2_runtime) |> 
-                   dplyr::pull(app_version),
-                 ")"),
-          "from the scheme",
-          input$selected_scheme)
+  output$result_text <- shiny::renderUI({
+    shiny::tags$span(
+      "You have selected ",
+      shiny::tags$b(input$scenario_1), " ",
+      paste0("(", lubridate::as_datetime(input$scenario_1_runtime), ") "),
+      paste0(
+        "(model version: ",
+        nhp_model_runs() |>
+          dplyr::filter(
+            scenario == input$scenario_1,
+            create_datetime == input$scenario_1_runtime
+          ) |>
+          dplyr::pull(app_version),
+        ") "
+      ),
+      "and ",
+      shiny::tags$b(input$scenario_2), " ",
+      paste0("(", lubridate::as_datetime(input$scenario_2_runtime), ") "),
+      paste0(
+        "(model version: ",
+        nhp_model_runs() |>
+          dplyr::filter(
+            scenario == input$scenario_2,
+            create_datetime == input$scenario_2_runtime
+          ) |>
+          dplyr::pull(app_version),
+        ") "
+      ),
+      "from the scheme ",
+      input$selected_scheme
+    )
   })
+  
+  
   
   errors_reactive <- shiny::reactiveVal()
   
