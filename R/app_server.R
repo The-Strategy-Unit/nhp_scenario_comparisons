@@ -171,18 +171,44 @@ app_server = function(input, output, session) {
   
   output$metadata <- DT::renderDT({
     
-    possibly_get_metadata <- purrr::possibly(get_metadata,
-                                             "No data")
+    possibly_get_metadata <- purrr::possibly(
+      get_metadata,
+      otherwise = tibble::tibble()
+    )
+    
+    df <- dplyr::bind_rows(
+      possibly_get_metadata(nhp_model_runs, selections$main_scenario),
+      possibly_get_metadata(nhp_model_runs, selections$comparator_scenario)
+    )
+    
+    if (nrow(df) < 2) {
+      return(
+        DT::datatable(
+          tibble::tibble(
+            Message = "Fewer than 2 scenarios have been selected. Please ensure you have selected both scenario names and run times."
+          ),
+          rownames = FALSE,
+          options = list(
+            paging = FALSE,
+            searching = FALSE,
+            ordering = FALSE,
+            dom = "t"
+          )
+        )
+      )
+    }
     
     DT::datatable(
-      dplyr::bind_rows(
-        possibly_get_metadata(nhp_model_runs, selections$main_scenario),
-        possibly_get_metadata(nhp_model_runs, selections$comparator_scenario)) |> 
-      dplyr::mutate(scenario_alias = c(selections$scenario_1_display, 
-                                       selections$scenario_2_display)) |>
-      dplyr::select(scenario_alias, dplyr::everything()),
+      df |>
+        dplyr::mutate(
+          scenario_alias = c(
+            selections$scenario_1_display,
+            selections$scenario_2_display
+          )
+        ) |>
+        dplyr::select(scenario_alias, dplyr::everything()),
       rownames = FALSE,
-      escape = FALSE,      
+      escape = FALSE,
       options = list(
         paging = FALSE,
         searching = FALSE,
