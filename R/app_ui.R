@@ -32,7 +32,7 @@ app_ui = function(request) {
       checkboxInput("create_new_names", "Create new names?", value = FALSE),
       shiny::textInput("scenario_1_alias", "Scenario 1 alias", value = ""),
       shiny::textInput("scenario_2_alias", "Scenario 2 alias", value = ""),
-      shiny::actionButton("render_plot", "Render Plots"),
+      shiny::actionButton("render_plot", "Compare"),
       shiny::uiOutput("warning_text")
     ),
     shiny::tabsetPanel(
