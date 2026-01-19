@@ -5,7 +5,7 @@
 #this should be commented out in live versions
 
 # load_local_data <- TRUE
-# nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+# nhp_model_runs() <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
 #   dplyr::filter(!app_version == "dev") |> 
 #   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
 #                   list.files("jsons/")
@@ -20,14 +20,14 @@ app_server = function(input, output, session) {
   
   nhp_model_runs <- shiny::reactive({
     rs <- get_nhp_result_sets(
-      allowed_datasets()
+      allowed_datasets = allowed_datasets()
       ) 
     
     # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
     if (any(c("nhp_devs") %in% session$groups)) {
       return(rs)
     }
-    
+
     dplyr::filter(
       rs,
       .data[["viewable"]],
@@ -48,7 +48,7 @@ app_server = function(input, output, session) {
   shiny::observe(
     shiny::updateSelectInput(session, 
                              "selected_scheme", 
-                             choices = datasets_list[datasets_list %in% nhp_model_runs$dataset])
+                             choices = datasets_list[datasets_list %in% nhp_model_runs()$dataset])
   )
   
   shiny::observe(
@@ -56,7 +56,7 @@ app_server = function(input, output, session) {
   )
   
   shiny::observe(
-    selections$scheme_scenarios <- nhp_model_runs |>
+    selections$scheme_scenarios <- nhp_model_runs() |>
       dplyr::filter(dataset == selections$scheme)
   )
   
@@ -196,8 +196,8 @@ app_server = function(input, output, session) {
     )
     
     df <- dplyr::bind_rows(
-      possibly_get_metadata(nhp_model_runs, selections$main_scenario),
-      possibly_get_metadata(nhp_model_runs, selections$comparator_scenario)
+      possibly_get_metadata(nhp_model_runs(), selections$main_scenario),
+      possibly_get_metadata(nhp_model_runs(), selections$comparator_scenario)
     )
     
     if (nrow(df) < 2) {
@@ -244,7 +244,7 @@ app_server = function(input, output, session) {
             lubridate::as_datetime(input$scenario_1_runtime),
             ")"),
           paste0("(model version: ", 
-                 nhp_model_runs |> 
+                 nhp_model_runs() |> 
                    dplyr::filter(scenario == input$scenario_1,
                                  create_datetime == input$scenario_1_runtime) |> 
                    dplyr::pull(app_version),
@@ -256,7 +256,7 @@ app_server = function(input, output, session) {
             lubridate::as_datetime(input$scenario_2_runtime),
             ")"),
           paste0("(model version: ", 
-                 nhp_model_runs |> 
+                 nhp_model_runs() |> 
                    dplyr::filter(scenario == input$scenario_2,
                                  create_datetime == input$scenario_2_runtime) |> 
                    dplyr::pull(app_version),
@@ -269,12 +269,12 @@ app_server = function(input, output, session) {
   
   
   output$warning_text <- shiny::renderUI({
-    shiny::req(nhp_model_runs, input$scenario_1, input$scenario_1_runtime, input$scenario_2, input$scenario_2_runtime)
-    s1 <- nhp_model_runs |> dplyr::filter(
+    shiny::req(nhp_model_runs(), input$scenario_1, input$scenario_1_runtime, input$scenario_2, input$scenario_2_runtime)
+    s1 <- nhp_model_runs() |> dplyr::filter(
       scenario == input$scenario_1, 
       dataset == input$selected_scheme,
       create_datetime == input$scenario_1_runtime)
-    s2 <- nhp_model_runs |> dplyr::filter(
+    s2 <- nhp_model_runs() |> dplyr::filter(
       scenario == input$scenario_2, 
       dataset == input$selected_scheme,
       create_datetime == input$scenario_2_runtime)
@@ -295,11 +295,11 @@ app_server = function(input, output, session) {
       errors <- c(errors, "Error: The start and end years of the selected scenarios must match.")
     }
     
-    if ((nhp_model_runs |> 
+    if ((nhp_model_runs() |> 
          dplyr::filter(scenario == input$scenario_1,
                        create_datetime == input$scenario_1_runtime) |> 
          dplyr::pull(app_version)) != 
-        (nhp_model_runs |> 
+        (nhp_model_runs() |> 
          dplyr::filter(scenario == input$scenario_2,
                        create_datetime == input$scenario_2_runtime) |> 
          dplyr::pull(app_version))){
@@ -328,7 +328,7 @@ app_server = function(input, output, session) {
   
   processed <- 
     mod_processing_server("processing1",
-                          result_sets = nhp_model_runs,
+                          result_sets = nhp_model_runs(),
                           scenario_selections = shiny::reactive(
                             list(scenario_1 = input$scenario_1,
                                  scenario_1_runtime = input$scenario_1_runtime,
