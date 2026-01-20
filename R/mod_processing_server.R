@@ -151,7 +151,7 @@ mod_processing_server <- function(id,
       # # pod on y axis
       # # this isn't pod on the y axis label is it, error here
       # # could have module ui be like 'tab variable', 'filter1 var', 'filter2 var'
-      ndg_variants_sc_comparison <- dplyr::bind_rows(
+      pcfs_comparison <- dplyr::bind_rows(
         scenario_1 = as.data.frame(dplyr::bind_rows(pcfs_1))|> 
           dplyr::mutate(scenario = scenario_1_name),
         scenario_2 = as.data.frame(dplyr::bind_rows(pcfs_2))|> 
@@ -289,7 +289,7 @@ mod_processing_server <- function(id,
                                  pcfs_2 = pcfs_2,
                                  scenario_1_name = scenario_1_name,
                                  scenario_2_name = scenario_2_name),
-           ndg_variants_sc_comparison = ndg_variants_sc_comparison,
+           pcfs_comparison = pcfs_comparison,
            data_distribution_summary = data_distribution_summary,
            distribution_data = list(result_1 = result_1,
                                     result_2 = result_2,
