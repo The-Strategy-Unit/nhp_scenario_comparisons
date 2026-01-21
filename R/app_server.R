@@ -21,13 +21,13 @@ app_server = function(input, output, session) {
   nhp_model_runs <- shiny::reactive({
     rs <- get_nhp_result_sets(
       allowed_datasets = allowed_datasets()
-      ) 
+    ) 
     
     # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
     if (any(c("nhp_devs") %in% session$groups)) {
       return(rs)
     }
-
+    
     dplyr::filter(
       rs,
       .data[["viewable"]],
@@ -142,18 +142,21 @@ app_server = function(input, output, session) {
   })
   
   # Alias management ----
-  shiny::observe({
-    selections$scenario_1_display <- if(input$create_new_names && nzchar(input$scenario_1_alias)) {
+  scenario_1_display <- shiny::reactive({
+    if(input$create_new_names && nzchar(input$scenario_1_alias)) {
       input$scenario_1_alias
     } else {
       input$scenario_1
     }
-    
-    selections$scenario_2_display <- if(input$create_new_names && nzchar(input$scenario_2_alias)) {
+  })
+  
+  scenario_2_display <- shiny::reactive({
+    if(input$create_new_names && nzchar(input$scenario_2_alias)) {
       input$scenario_2_alias
     } else {
       input$scenario_2
     }
+    
   })
   
   # Update alias text inputs with default values from selected scenarios
@@ -221,8 +224,8 @@ app_server = function(input, output, session) {
       df |>
         dplyr::mutate(
           scenario_alias = c(
-            selections$scenario_1_display,
-            selections$scenario_2_display
+            scenario_1_display(),
+            scenario_2_display()
           )
         ) |>
         dplyr::select(scenario_alias, dplyr::everything()),
