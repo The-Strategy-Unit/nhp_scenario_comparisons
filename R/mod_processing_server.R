@@ -67,10 +67,17 @@ mod_processing_server <- function(id,
       
       scenario_1_name <- ifelse(!is.null(selected$scenario_1_alias), selected$scenario_1_alias, result_1$params$scenario)
       scenario_2_name <- ifelse(!is.null(selected$scenario_2_alias), selected$scenario_2_alias, result_2$params$scenario)
+      
+      scenario_1_id <- paste0(scenario_1_name, "_", scenario_selections()$scenario_1_runtime)
+      scenario_2_id <- paste0(scenario_2_name, "_", scenario_selections()$scenario_2_runtime)
+      
+      
       df1 <- mod_principal_summary_data(result_1, sites = NULL) |> 
-        dplyr::mutate(scenario = scenario_1_name)
+        dplyr::mutate(scenario = scenario_1_name,
+                      id = scenario_1_id)
       df2 <- mod_principal_summary_data(result_2, sites = NULL) |> 
-        dplyr::mutate(scenario = scenario_2_name)
+        dplyr::mutate(scenario = scenario_2_name,
+                      id = scenario_2_id)
       
       # data processing
       data <- dplyr::bind_rows(df1, df2)
@@ -94,17 +101,21 @@ mod_processing_server <- function(id,
       # 
       # admissions dataset
       data_1_adm <- result_1 |>
-        mod_principal_summary_los_data(sites = NULL, measure = "admissions")
+        mod_principal_summary_los_data(sites = NULL, measure = "admissions") |> 
+        dplyr::mutate(id = scenario_1_id)
       
       data_2_adm <- result_2 |>
-        mod_principal_summary_los_data(sites = NULL, measure = "admissions")
+        mod_principal_summary_los_data(sites = NULL, measure = "admissions") |> 
+        dplyr::mutate(id = scenario_2_id)
       
       # Bed days dataset
       data_1_bed <- result_1 |>
-        mod_principal_summary_los_data(sites = NULL, measure = "beddays")
+        mod_principal_summary_los_data(sites = NULL, measure = "beddays") |> 
+        dplyr::mutate(id = scenario_1_id)
       
       data_2_bed <- result_2 |>
-        mod_principal_summary_los_data(sites = NULL, measure = "beddays")
+        mod_principal_summary_los_data(sites = NULL, measure = "beddays") |> 
+        dplyr::mutate(id = scenario_2_id)
       
       # data processing
       data_admissions <- dplyr::bind_rows(scenario_1 = data_1_adm, scenario_2 = data_2_adm, .id = "scenario") |> 
@@ -153,9 +164,11 @@ mod_processing_server <- function(id,
       # # could have module ui be like 'tab variable', 'filter1 var', 'filter2 var'
       ndg_variants_sc_comparison <- dplyr::bind_rows(
         scenario_1 = as.data.frame(dplyr::bind_rows(pcfs_1))|> 
-          dplyr::mutate(scenario = scenario_1_name),
+          dplyr::mutate(scenario = scenario_1_name,
+                        id = scenario_1_id),
         scenario_2 = as.data.frame(dplyr::bind_rows(pcfs_2))|> 
-          dplyr::mutate(scenario = scenario_2_name))
+          dplyr::mutate(scenario = scenario_2_name,
+                        id = scenario_2_id))
       # 
       # 
       # 
@@ -216,14 +229,18 @@ mod_processing_server <- function(id,
       # 
       # # load dataset 
       data_distribution_summary <- dplyr::bind_rows(
-        result_1$results$default |> dplyr::mutate(scenario = scenario_1_name),
-        result_2$results$default |> dplyr::mutate(scenario = scenario_2_name)
+        result_1$results$default |> 
+          dplyr::mutate(scenario = scenario_1_name,
+                        id = scenario_1_id),
+        result_2$results$default |> 
+          dplyr::mutate(scenario = scenario_2_name,
+                        id = scenario_2_id)
       )
       
       #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
       data_distribution_summary <- data_distribution_summary |>
-        dplyr::select(scenario,pod,measure,principal,lwr_ci,upr_ci) |>
-        dplyr::group_by(scenario,pod,measure) |>
+        dplyr::select(id, scenario,pod,measure,principal,lwr_ci,upr_ci) |>
+        dplyr::group_by(id, scenario,pod,measure) |>
         dplyr::summarise(principal = sum(principal),
                          lwr_ci = sum(lwr_ci),
                          upr_ci = sum(upr_ci)) |>
