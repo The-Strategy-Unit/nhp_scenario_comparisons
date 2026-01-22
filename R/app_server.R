@@ -250,7 +250,7 @@ app_server = function(input, output, session) {
       nhp_model_runs() |>
         dplyr::filter(
           scenario == input$scenario_1,
-          create_datetime == input$scenario_2_runtime
+          create_datetime == input$scenario_1_runtime
         ) |>
         dplyr::pull(app_version)
     )
