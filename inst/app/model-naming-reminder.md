@@ -1,5 +1,3 @@
 ## Scenario names
 
 It is possible scenario names can be duplicated. To avoid confusion when selecting scenarios for comparison, we provide the ability to select a 'run time'. However, to avoid confusion, we would recommend following our <a href="https://connect.strategyunitwm.nhs.uk/nhp/project_information/user_guide/naming_scenarios.html/" target="_blank"> guide to good scenario naming practice</a>.
-
-To ensure that the user selects a unique scenario, we have included drop downs for both the scenario name and the model run time.
