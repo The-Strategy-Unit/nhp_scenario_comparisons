@@ -4,7 +4,7 @@ mod_p10_p90_bar_ui <- function(id) {
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
     shiny::tags$p(
-      "Note: Wings at the end of the bar correspond to the p10 to p90 range of all the individual model runs from this scenario",
+      "This shows the principal projection as well as the 10th and 90th percentiles (p10 and p90) of each scenario for each point of delivery (chosen via drop down).",
       style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
