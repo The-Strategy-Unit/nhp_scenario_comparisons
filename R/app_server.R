@@ -241,31 +241,18 @@ app_server = function(input, output, session) {
       "You have selected ",
       shiny::tags$b(input$scenario_1), " ",
       paste0("(", lubridate::as_datetime(input$scenario_1_runtime), ") "),
-      paste0(
-        "(model version: ",
-        nhp_model_runs() |>
-          dplyr::filter(
-            scenario == input$scenario_1,
-            create_datetime == input$scenario_1_runtime
-          ) |>
-          dplyr::pull(app_version),
-        ") "
-      ),
       "and ",
       shiny::tags$b(input$scenario_2), " ",
       paste0("(", lubridate::as_datetime(input$scenario_2_runtime), ") "),
-      paste0(
-        "(model version: ",
-        nhp_model_runs() |>
-          dplyr::filter(
-            scenario == input$scenario_2,
-            create_datetime == input$scenario_2_runtime
-          ) |>
-          dplyr::pull(app_version),
-        ") "
-      ),
       "from the scheme ",
-      input$selected_scheme
+      input$selected_scheme,
+      " and model version ",
+      nhp_model_runs() |>
+        dplyr::filter(
+          scenario == input$scenario_1,
+          create_datetime == input$scenario_2_runtime
+        ) |>
+        dplyr::pull(app_version)
     )
   })
   
