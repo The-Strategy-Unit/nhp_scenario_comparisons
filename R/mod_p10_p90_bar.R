@@ -3,9 +3,7 @@ mod_p10_p90_bar_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::tags$p(
-      "This shows the principal projection as well as the 10th and 90th percentiles (p10 and p90) of each scenario for each point of delivery (chosen via drop down).",
-      style = "margin-top: 15px; margin-bottom: 15px;"),
+    shiny::includeMarkdown("inst/app/p10-p90-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )

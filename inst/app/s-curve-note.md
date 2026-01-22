@@ -1,0 +1,1 @@
+The s-curve shows the range of results (or values) obtained from all the 256 simulations on the x-axis and probability that at least this level of activity will occur on the y-axis. For more information on how to read the s-curve, please see the <a href=https://connect.strategyunitwm.nhs.uk/nhp/project_information/ target="_blank">model project information site</a>.

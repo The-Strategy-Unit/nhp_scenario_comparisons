@@ -3,12 +3,8 @@ mod_ecdf_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::tags$p(
-      "The S-curve shows the empirical (observed) cumulative distribution of all the model runs.
-      The coloured dashed lines show the p10 and p90 of each scenario.
-      The coloured solid lines indicate the principal projection values for each scenario.
-      The baseline value is shown by the black vertical line.",
-      style = "margin-top: 15px; margin-bottom: 15px;"),
+    shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
+    shiny::includeMarkdown("inst/app/s-curve-note.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
