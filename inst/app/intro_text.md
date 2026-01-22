@@ -38,7 +38,7 @@ This summarises the reductions in types of potentially mitigatable activity (TPM
 
 ### Efficiencies Impact
 
-This is the same as the activity avoidance plot, but for efficiency TPMA assumptions. NB there are no inpatient admissions efficiency reductions by definition.
+This is the same as the activity avoidance plot, but for efficiency TPMA assumptions. Please note there are no inpatient admissions efficiency reductions by definition.
 
 ### P10-P90 Intervals
 
