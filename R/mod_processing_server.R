@@ -68,8 +68,8 @@ mod_processing_server <- function(id,
       scenario_1_name <- ifelse(!is.null(selected$scenario_1_alias), selected$scenario_1_alias, result_1$params$scenario)
       scenario_2_name <- ifelse(!is.null(selected$scenario_2_alias), selected$scenario_2_alias, result_2$params$scenario)
       
-      scenario_1_id <- paste0(scenario_1_name, "_", scenario_selections()$scenario_1_runtime)
-      scenario_2_id <- paste0(scenario_2_name, "_", scenario_selections()$scenario_2_runtime)
+      scenario_1_id <- paste0(scenario_1_name, "+", scenario_selections()$scenario_1_runtime)
+      scenario_2_id <- paste0(scenario_2_name, "+", scenario_selections()$scenario_2_runtime)
       
       
       df1 <- mod_principal_summary_data(result_1, sites = NULL) |> 
@@ -304,14 +304,14 @@ mod_processing_server <- function(id,
            data_combine = data_combine,
            waterfall_data = list(pcfs_1 = pcfs_1,
                                  pcfs_2 = pcfs_2,
-                                 scenario_1_name = scenario_1_name,
-                                 scenario_2_name = scenario_2_name),
+                                 scenario_1_name = scenario_1_id,
+                                 scenario_2_name = scenario_2_id),
            ndg_variants_sc_comparison = ndg_variants_sc_comparison,
            data_distribution_summary = data_distribution_summary,
            distribution_data = list(result_1 = result_1,
                                     result_2 = result_2,
-                                    scenario_1_name = scenario_1_name,
-                                    scenario_2_name = scenario_2_name)
+                                    scenario_1_name = scenario_1_id,
+                                    scenario_2_name = scenario_2_id)
       )
     }
     )
