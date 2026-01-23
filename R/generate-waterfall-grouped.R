@@ -119,13 +119,15 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
            dplyr::mutate(mitigator_name = dplyr::case_when(strategy == "convert_to_tele" ~ strategy,
                                                            T ~ mitigator_name)) |> 
            dplyr::filter(strategy != "activity_avoidance_interaction_term"),
-         ggplot2::aes(x=value, y=stats::reorder(mitigator_name,dplyr::desc(value)), fill = scenario)) +
+         ggplot2::aes(x=value, y=stats::reorder(mitigator_name,dplyr::desc(value)), fill = id)) +
     ggplot2::geom_col(position = "dodge") +
     ggplot2::scale_x_continuous(labels = scales::comma) +
     ggplot2::ggtitle(title_text) +
     ggplot2::ylab("TPMA") +
     ggplot2::xlab(get_label(chosen_measure, measure_pretty_names)) +
-    ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), name="Scenario"#, labels = c(scenario_1_name, scenario_2_name)
+    ggplot2::scale_fill_manual(values = c("#f9bf07","#686f73"), 
+                               name="Scenario",
+                               labels = get_label_map(data)
     ) +
     ggeasy::easy_center_title() + ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
@@ -133,7 +135,12 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(axis.title.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(legend.title = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
-    ggplot2::theme(legend.text = ggplot2::element_text(family = "Segoe UI", size = 12, color="black"))
+    ggplot2::theme(legend.text = ggtext::element_markdown(family = "Segoe UI",
+                                                          size = 12,
+                                                          color = "black",
+                                                          hjust = 0.5,
+                                                          lineheight = 1.5),
+                   legend.position = "bottom")
 }
 
 #

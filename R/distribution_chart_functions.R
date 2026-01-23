@@ -4,14 +4,16 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
     dplyr::mutate(measure_name = get_label(measure, measure_pretty_names))
   
   ggplot2::ggplot(dplyr::filter(data, pod == pod_filter),
-                  ggplot2::aes(x = principal, y = measure_name, fill = scenario)) +
+                  ggplot2::aes(x = principal, y = measure_name, fill = id)) +
     ggplot2::geom_bar(stat = 'identity', position = 'dodge', width = 0.7) +
     ggplot2::geom_errorbar(ggplot2::aes(xmin = lwr_ci, xmax = upr_ci), width = 0.6, position = ggplot2::position_dodge(0.7)) +
     ggplot2::scale_x_continuous(labels = scales::comma) +
     ggplot2::ggtitle(title_text) +
     ggplot2::ylab("Measure") +
     ggplot2::xlab("Principal Projection") +
-    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), name = "Scenario") +
+    ggplot2::scale_fill_manual(values = c("#f9bf07", "#686f73"), 
+                               name = "Scenario",
+                               labels = get_label_map(data)) +
     ggeasy::easy_center_title() + 
     ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black")) +
@@ -19,7 +21,12 @@ create_bar_plot_distribution <- function(data, pod_filter, title_text) {
     ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black")) +
     ggplot2::theme(axis.title.y = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black")) +
     ggplot2::theme(legend.title = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black")) +
-    ggplot2::theme(legend.text = ggplot2::element_text(family = "Segoe UI", size = 12, color = "black"))
+    ggplot2::theme(legend.text = ggtext::element_markdown(family = "Segoe UI",
+                                                          size = 12,
+                                                          color = "black",
+                                                          hjust = 0.5,
+                                                          lineheight = 1.5),
+                   legend.position = "bottom")
 }
 
 # new function for beeswarm -----------------------------------------------
@@ -55,7 +62,8 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
       )
     ) +
     # new line here for manually setting the colours
-    ggplot2::scale_color_manual(values = c("red", "blue")
+    ggplot2::scale_color_manual(values = c("red", "blue"),
+                                labels = get_label_map(data, id_col = scenario)
                                 #values = c(scenario_1_name = "red", scenario_2_name = "blue"), 
                                 #labels = c(scenario_1_name, scenario_2_name)
     ) +
@@ -81,11 +89,18 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(data, scenario
       axis.ticks.y = ggplot2::element_blank(),
       # keep y-axis labels to help line up beeswarm/ECDF, but make 'invisible'
       axis.text.y = ggplot2::element_text(colour = "white"),
-      axis.title.y = ggplot2::element_text(colour = "white")
-    ) +
+      axis.title.y = ggplot2::element_text(colour = "white"),
+      legend.text = ggtext::element_markdown(family = "Segoe UI",
+                                             size = 12,
+                                             color = "black",
+                                             hjust = 0.5,
+                                             lineheight = 1.5),
+      strip.text = ggplot2::element_blank(),
+      strip.background = ggplot2::element_blank()) +
     ggplot2::facet_grid(
-      rows = dplyr::vars(scenario),
-      labeller = ggplot2::labeller(scenario = labels))
+      rows = dplyr::vars(scenario)#,
+      #labeller = ggplot2::labeller(scenario = labels)
+      )
 }
 
 
@@ -212,10 +227,14 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(data, show_origin)
       expand = c(0, 0)
     ) +
     ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
-    #ggplot2::scale_colour_manual(values = c("red", "blue"))+
-    #ggplot2::scale_color_manual(values = c(scenario_1 = "red", scenario_2 = "blue"),
-    #labels = c(scenario_1_name, scenario_2_name)) +
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::scale_colour_manual(values = c("red", "blue"),
+                                 labels = get_label_map(data, id_col = scenario)) +
+    ggplot2::theme(legend.text = ggtext::element_markdown(family = "Segoe UI",
+                                                          size = 12,
+                                                          color = "black",
+                                                          hjust = 0.5,
+                                                          lineheight = 1.5),
+                   legend.position = "bottom")
   
 }
 
