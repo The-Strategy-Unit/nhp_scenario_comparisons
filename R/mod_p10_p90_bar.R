@@ -3,9 +3,7 @@ mod_p10_p90_bar_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::tags$p(
-      "Note: Wings at the end of the bar correspond to the p10 to p90 range of all the individual model runs from this scenario",
-      style = "margin-top: 15px; margin-bottom: 15px;"),
+    shiny::includeMarkdown("inst/app/p10-p90-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )

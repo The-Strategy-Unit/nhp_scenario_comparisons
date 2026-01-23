@@ -32,7 +32,7 @@ app_ui = function(request) {
       checkboxInput("create_new_names", "Create new names?", value = FALSE),
       shiny::textInput("scenario_1_alias", "Scenario 1 alias", value = ""),
       shiny::textInput("scenario_2_alias", "Scenario 2 alias", value = ""),
-      shiny::actionButton("render_plot", "Render Plots"),
+      shiny::actionButton("render_plot", "Compare"),
       shiny::uiOutput("warning_text")
     ),
     shiny::tabsetPanel(
@@ -65,11 +65,11 @@ app_ui = function(request) {
         )
       ),
       shiny::tabPanel(
-        "Result",
+        "View comparison",
         bslib::card(
           #bslib::card_header("Result"),
           shiny::uiOutput("errors"),
-          shiny::textOutput("result_text"),
+          shiny::uiOutput("result_text"),
           shiny::tabsetPanel(
             shiny::tabPanel("Summary", mod_summary_ui("summary1")),
             shiny::tabPanel("Length of Stay", mod_los_ui("los1")),
