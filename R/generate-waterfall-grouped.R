@@ -140,7 +140,12 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
                                                           color = "black",
                                                           hjust = 0.5,
                                                           lineheight = 1.5),
-                   legend.position = "bottom")
+                   legend.position = "bottom",
+                   legend.box = "vertical",
+                   legend.box.just = "center",
+                   plot.title.position = "plot" 
+                   )#+
+    #ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE))
 }
 
 #
