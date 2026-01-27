@@ -117,7 +117,8 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
                          chosen_measure==measure,
                          value != 0.00) |> 
            dplyr::mutate(mitigator_name = dplyr::case_when(strategy == "convert_to_tele" ~ strategy,
-                                                           T ~ mitigator_name)) |> 
+                                                           T ~ mitigator_name),
+                         mitigator_name = stringr::str_wrap(mitigator_name, width = 60)) |> 
            dplyr::filter(strategy != "activity_avoidance_interaction_term"),
          ggplot2::aes(x=value, y=stats::reorder(mitigator_name,dplyr::desc(value)), fill = id)) +
     ggplot2::geom_col(position = "dodge") +
@@ -131,21 +132,19 @@ impact_bar_plot <- function(data, chosen_change_factor,chosen_activity_type, cho
     ) +
     ggeasy::easy_center_title() + ggplot2::theme(text = ggplot2::element_text(family = "Segoe UI")) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
-    ggplot2::theme(axis.text.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
+    ggplot2::theme(axis.text.y = ggplot2::element_text(family = "Segoe UI", 
+                                                       #size = 12,
+                                                       color="black")) +
     ggplot2::theme(axis.title.x = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(axis.title.y = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(legend.title = ggplot2::element_text(family = "Segoe UI", size = 12, color="black")) +
     ggplot2::theme(legend.text = ggtext::element_markdown(family = "Segoe UI",
-                                                          size = 12,
+                                                          #size = 12,
                                                           color = "black",
                                                           hjust = 0.5,
                                                           lineheight = 1.5),
                    legend.position = "bottom",
-                   legend.box = "vertical",
-                   legend.box.just = "center",
-                   plot.title.position = "plot" 
-                   )#+
-    #ggplot2::guides(fill = ggplot2::guide_legend(nrow = 2, byrow = TRUE))
-}
-
-#
+                   plot.title.position = "plot")+
+    ggplot2::scale_y_discrete(expand = ggplot2::expansion(add = c(0.5, 0.5)))
+  }
+  
