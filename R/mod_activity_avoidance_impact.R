@@ -7,7 +7,7 @@ mod_activity_avoidance_impact_ui <- function(id) {
       "Regard these results as rough, high-level estimates of the number of rows added/removed due to each parameter.",
       style = "margin-top: 15px; margin-bottom: 15px;"),
     shiny::uiOutput(ns("filters_ui")),
-    shiny::plotOutput(ns("plot"))
+    shiny::plotOutput(ns("plot"), height = "800px")
   )
 }
 
@@ -44,7 +44,8 @@ mod_activity_avoidance_impact_server <- function(id, processed){
 
       filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
 
-      shiny::updateSelectInput(inputId = "filter2",
+      shiny::updateSelectInput(session,
+                               inputId = "filter2",
                                choices = filter2_choices)
 
     })
@@ -67,8 +68,7 @@ mod_activity_avoidance_impact_server <- function(id, processed){
                         "{get_label(input$filter2, measure_pretty_names)}", 
                         "- Impact of Individual Activity Avoidance TPMA Assumptions", 
                         .sep = " ")
-                      )
-      
+                      ) 
       
     },
     res = 100,
