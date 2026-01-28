@@ -131,7 +131,7 @@ mod_processing_server <- function(id,
       # apparently pods drive the chart data
       #length of stay is the y axis and admissions on the x axis
       
-      data_combine <- dplyr::bind_rows("Bed Days" = data_bed, admissions = data_admissions, .id = "measure")
+      data_combine <- dplyr::bind_rows("Bed Days" = data_bed, "Admissions" = data_admissions, .id = "measure")
       #
       # # impacts -----------------------------------------------------------------
       # 
