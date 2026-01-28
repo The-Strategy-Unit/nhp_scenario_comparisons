@@ -65,8 +65,8 @@ mod_processing_server <- function(id,
       
       # grab the scenario_names
       
-      scenario_1_name <- ifelse(!is.null(selected$scenario_1_alias), selected$scenario_1_alias, result_1$params$scenario)
-      scenario_2_name <- ifelse(!is.null(selected$scenario_2_alias), selected$scenario_2_alias, result_2$params$scenario)
+      scenario_1_name <- result_1$params$scenario
+      scenario_2_name <- result_2$params$scenario
       
       scenario_1_id <- paste0(scenario_1_name, "+", scenario_selections()$scenario_1_runtime)
       scenario_2_id <- paste0(scenario_2_name, "+", scenario_selections()$scenario_2_runtime)
