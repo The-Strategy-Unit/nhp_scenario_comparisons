@@ -5,9 +5,9 @@
 #this should be commented out in live versions
 
 # load_local_data <- TRUE
-# nhp_model_runs() <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#   dplyr::filter(!app_version == "dev") |>
-#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in%
+# nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
+#   dplyr::filter(!app_version == "dev") |> 
+#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in% 
 #                   list.files("jsons/")
 #   )
 
@@ -21,13 +21,13 @@ app_server = function(input, output, session) {
   nhp_model_runs <- shiny::reactive({
     rs <- get_nhp_result_sets(
       allowed_datasets = allowed_datasets()
-      ) 
+    ) 
     
     # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
     if (any(c("nhp_devs") %in% session$groups)) {
       return(rs)
     }
-
+    
     dplyr::filter(
       rs,
       .data[["viewable"]],
@@ -142,46 +142,49 @@ app_server = function(input, output, session) {
   })
   
   # Alias management ----
-  shiny::observe({
-    selections$scenario_1_display <- if(input$create_new_names && nzchar(input$scenario_1_alias)) {
-      input$scenario_1_alias
-    } else {
-      input$scenario_1
-    }
-    
-    selections$scenario_2_display <- if(input$create_new_names && nzchar(input$scenario_2_alias)) {
-      input$scenario_2_alias
-    } else {
-      input$scenario_2
-    }
-  })
+  # scenario_1_display <- shiny::reactive({
+  #   if(input$create_new_names && nzchar(input$scenario_1_alias)) {
+  #     input$scenario_1_alias
+  #   } else {
+  #     input$scenario_1
+  #   }
+  # })
+  # 
+  # scenario_2_display <- shiny::reactive({
+  #   if(input$create_new_names && nzchar(input$scenario_2_alias)) {
+  #     input$scenario_2_alias
+  #   } else {
+  #     input$scenario_2
+  #   }
+  #   
+  # })
   
   # Update alias text inputs with default values from selected scenarios
-  shiny::observeEvent(c(input$scenario_1, input$scenario_2), {
-    # Only update if checkbox is NOT ticked (to preserve user edits when ticked)
-    if (!isTRUE(input$create_new_names)) {
-      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
-      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
-    }
-  }, ignoreNULL = FALSE, ignoreInit = TRUE)
+  # shiny::observeEvent(c(input$scenario_1, input$scenario_2), {
+  #   # Only update if checkbox is NOT ticked (to preserve user edits when ticked)
+  #   if (!isTRUE(input$create_new_names)) {
+  #     shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+  #     shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+  #   }
+  # }, ignoreNULL = FALSE, ignoreInit = TRUE)
   
   # Enable/disable text inputs based on checkbox
-  shiny::observeEvent(input$create_new_names, {
-    if (isTRUE(input$create_new_names)) {
-      shinyjs::enable("scenario_1_alias")
-      shinyjs::enable("scenario_2_alias")
-    } else {
-      shinyjs::disable("scenario_1_alias")
-      shinyjs::disable("scenario_2_alias")
-      # Reset to default values when unchecked
-      shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
-      shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
-    }
-  }, ignoreInit = TRUE)
+  # shiny::observeEvent(input$create_new_names, {
+  #   if (isTRUE(input$create_new_names)) {
+  #     shinyjs::enable("scenario_1_alias")
+  #     shinyjs::enable("scenario_2_alias")
+  #   } else {
+  #     shinyjs::disable("scenario_1_alias")
+  #     shinyjs::disable("scenario_2_alias")
+  #     # Reset to default values when unchecked
+  #     shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
+  #     shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
+  #   }
+  # }, ignoreInit = TRUE)
   
   # Disable text inputs on startup
-  shinyjs::disable("scenario_1_alias")
-  shinyjs::disable("scenario_2_alias")
+  # shinyjs::disable("scenario_1_alias")
+  # shinyjs::disable("scenario_2_alias")
   
   # End of alias management ----
   
@@ -218,14 +221,15 @@ app_server = function(input, output, session) {
     }
     
     DT::datatable(
-      df |>
-        dplyr::mutate(
-          scenario_alias = c(
-            selections$scenario_1_display,
-            selections$scenario_2_display
-          )
-        ) |>
-        dplyr::select(scenario_alias, dplyr::everything()),
+      df #|>
+        # dplyr::mutate(
+        #   scenario_alias = c(
+        #     scenario_1_display(),
+        #     scenario_2_display()
+        #   )
+        # ) |>
+        # dplyr::select(scenario_alias, dplyr::everything())
+        ,
       rownames = FALSE,
       escape = FALSE,
       options = list(
@@ -326,9 +330,7 @@ app_server = function(input, output, session) {
                             list(scenario_1 = input$scenario_1,
                                  scenario_1_runtime = input$scenario_1_runtime,
                                  scenario_2 = input$scenario_2,
-                                 scenario_2_runtime = input$scenario_2_runtime,
-                                 scenario_1_alias = input$scenario_1_alias,
-                                 scenario_2_alias = input$scenario_2_alias)
+                                 scenario_2_runtime = input$scenario_2_runtime)
                           ),
                           errors = errors_reactive,
                           trigger = shiny::reactive(input$render_plot),

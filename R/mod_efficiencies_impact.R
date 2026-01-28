@@ -5,7 +5,7 @@ mod_efficiencies_impact_ui <- function(id) {
     shiny::verbatimTextOutput(ns("debug")),
     shiny::includeMarkdown("inst/app/efficiencies-impact-text.md"),
     shiny::uiOutput(ns("filters_ui")),
-    shiny::plotOutput(ns("plot"))
+    shiny::plotOutput(ns("plot"), height = "800px")
   )
 }
 

@@ -5,8 +5,9 @@ mod_activity_avoidance_impact_ui <- function(id) {
     shiny::verbatimTextOutput(ns("debug")),
     shiny::includeMarkdown("inst/app/aa-impact-text.md"),
     shiny::uiOutput(ns("filters_ui")),
-    shiny::plotOutput(ns("plot"))
-  )}
+    shiny::plotOutput(ns("plot"), height = "800px")
+  )
+}
 
 mod_activity_avoidance_impact_server <- function(id, processed){ 
   shiny::moduleServer(id, function(input, output, session){
@@ -41,7 +42,8 @@ mod_activity_avoidance_impact_server <- function(id, processed){
 
       filter2_choices <- measure_pretty_names[measure_pretty_names %in% filter2_values]
 
-      shiny::updateSelectInput(inputId = "filter2",
+      shiny::updateSelectInput(session,
+                               inputId = "filter2",
                                choices = filter2_choices)
 
     })
@@ -49,9 +51,9 @@ mod_activity_avoidance_impact_server <- function(id, processed){
     output$plot <- shiny::renderPlot({
       #shiny::req(df())
       shiny::validate(
-        shiny::need(!is.null(df()), message  ="No data available"),
+        shiny::need(!is.null(df()), message = "No data available"),
         shiny::need(nrow(df()) > 0,
-                    message  ="No data available")
+                    message = "No data available")
       )
       shiny::req(input$filter1, input$filter2)
       
@@ -64,8 +66,7 @@ mod_activity_avoidance_impact_server <- function(id, processed){
                         "{get_label(input$filter2, measure_pretty_names)}", 
                         "- Impact of Individual Activity Avoidance TPMA Assumptions", 
                         .sep = " ")
-                      )
-      
+                      ) 
       
     },
     res = 100,

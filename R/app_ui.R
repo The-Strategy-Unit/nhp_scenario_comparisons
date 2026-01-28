@@ -29,10 +29,7 @@ app_ui = function(request) {
       shiny::selectInput("scenario_1_runtime", "Scenario 1 runtime", choices = NULL),
       shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
       shiny::selectInput("scenario_2_runtime", "Scenario 2 runtime", choices = NULL),
-      checkboxInput("create_new_names", "Create new names?", value = FALSE),
-      shiny::textInput("scenario_1_alias", "Scenario 1 alias", value = ""),
-      shiny::textInput("scenario_2_alias", "Scenario 2 alias", value = ""),
-      shiny::actionButton("render_plot", "Compare"),
+      shiny::actionButton("render_plot", "Render Plots"),
       shiny::uiOutput("warning_text")
     ),
     shiny::tabsetPanel(
