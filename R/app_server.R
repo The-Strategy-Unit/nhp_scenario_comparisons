@@ -240,34 +240,27 @@ app_server = function(input, output, session) {
     )
   })
   
-  output$result_text <- shiny::renderText({
-    paste("You have selected",
-          input$scenario_1,
-          paste0(
-            "(",
-            lubridate::as_datetime(input$scenario_1_runtime),
-            ")"),
-          paste0("(model version: ", 
-                 nhp_model_runs() |> 
-                   dplyr::filter(scenario == input$scenario_1,
-                                 create_datetime == input$scenario_1_runtime) |> 
-                   dplyr::pull(app_version),
-                 ")"),
-          "and",
-          input$scenario_2,
-          paste0(
-            "(",
-            lubridate::as_datetime(input$scenario_2_runtime),
-            ")"),
-          paste0("(model version: ", 
-                 nhp_model_runs() |> 
-                   dplyr::filter(scenario == input$scenario_2,
-                                 create_datetime == input$scenario_2_runtime) |> 
-                   dplyr::pull(app_version),
-                 ")"),
-          "from the scheme",
-          input$selected_scheme)
+  output$result_text <- shiny::renderUI({
+    shiny::tags$span(
+      "You have selected ",
+      shiny::tags$b(input$scenario_1), " ",
+      paste0("(", lubridate::as_datetime(input$scenario_1_runtime), ") "),
+      "and ",
+      shiny::tags$b(input$scenario_2), " ",
+      paste0("(", lubridate::as_datetime(input$scenario_2_runtime), ") "),
+      "from the scheme ",
+      input$selected_scheme,
+      " and model version ",
+      nhp_model_runs() |>
+        dplyr::filter(
+          scenario == input$scenario_1,
+          create_datetime == input$scenario_1_runtime
+        ) |>
+        dplyr::pull(app_version)
+    )
   })
+  
+  
   
   errors_reactive <- shiny::reactiveVal()
   

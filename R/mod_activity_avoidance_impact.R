@@ -3,9 +3,7 @@ mod_activity_avoidance_impact_ui <- function(id) {
   
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::tags$p(
-      "Regard these results as rough, high-level estimates of the number of rows added/removed due to each parameter.",
-      style = "margin-top: 15px; margin-bottom: 15px;"),
+    shiny::includeMarkdown("inst/app/aa-impact-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"), height = "800px")
   )

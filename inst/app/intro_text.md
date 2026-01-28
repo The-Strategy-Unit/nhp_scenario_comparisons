@@ -4,55 +4,26 @@ Welcome to the New Hospital Programme (NHP) scenario comparison tool. This tool 
 
 ## Instructions
 
-To use the app, select which scheme's results you wish to compare. (We do not allow comparisons between different schemes as we wish to ensure like-for-like comparisons). 
+To use the app, please first select which scheme’s results you wish to view.
 
-The "Select Scenario 1" drop down will auto-populate with the scenarios that have been ran for the chosen scheme.
+Select one model scenario ('scenario 1') from the drop-down list, then select the model scenario you wish to compare it to ('scenario 2').
 
-Once you have chosen the first scenario, the "Select Scenario 2" drop down will populate itself with scenarios which are comparable (see guidance on scenario selections tab).
-
-There are some instances of scenario names being duplicated so you can use the scenario runtime drop downs to ensure that you have the exact scenarios that you wish to compare.
+If needed, use the 'scenario runtime' drop-down to specify which of multiple scenarios with the same name you wish to use.
 
 ## Content
 
 We provide the following comparisons:
 
-### Summary
+-   Summary
+-   Length of Stay
+-   Waterfall
+-   Activity avoidance impact
+-   Efficiencies impact
+-   P10-P90 intervals
+-   Beeswarm
+-   S-curve
 
-This shows the high-level comparison of the two scenarios by point of delivery. There is a separate plot for each activity type, which can be toggled via a drop down. The relevant measure (e.g. admissions or bed days for inpatient activity) can be set too.
-
-### Length of stay
-
-This shows the number of admissions or the number of bed days for each scenario by length of stay (LoS) group. The point of delivery (elective, non-elective, maternity, day cases) can be set via a drop down. The length of stay groups are as follows:
-
-- 0-day
-- 1-7 days
-- 8-14 days
-- 15-21 days
-- 22+ days
-
-### Waterfall
-
-This shows the cumulative impact of each of the major change factors in the outputs for each scenario. It helps to show how we get from baseline value to the principal projections, highlighting which change factors are adding activity and which are reducing activity. The activity type needs to be chosen as does the relevant measure.
-
-### Activity Avoidance Impact
-
-This summarises the reductions in types of potentially mitigatable activity (TPMA) due to assumptions made regarding activity avoidance. The TPMAs are ordered in descending scale of activity reduction. The activity type and measure need to be set via drop down.
-
-### Efficiencies Impact
-
-This is the same as the activity avoidance plot, but for efficiency TPMA assumptions. NB there are no inpatient admissions efficiency reductions by definition.
-
-### P10-P90 Intervals
-
-This shows the principal projection as well as the 10th and 90th percentiles (p10 and p90) of all the model runs for each point of delivery (chosen via drop down). 
-
-### Beeswarm
-
-This presents the distribution of model runs. Each dot represents an individual model run from the scenario. The thickness of the swarm indicates the density of runs in certain ranges. The activity type and measure to be set via drop down.
-
-### S-curve
-
-The curve shows the empirical (observed) cumulative distribution of all the model runs. The coloured dashed lines show the p10 and p90 of each scenario. The activity type and measure to be set via drop down.
+Detail on interpetation can be found on the respective tabs.
 
 ## Feedback
 
