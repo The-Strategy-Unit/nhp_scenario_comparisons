@@ -15,7 +15,7 @@ mod_efficiencies_impact_server <- function(id, processed){
   shiny::moduleServer(id, function(input, output, session){
     ns <- session$ns
     
-    df <- shiny::reactive(processed()$ndg_variants_sc_comparison) #takes ndg_variants_sc_comparison from processed
+    df <- shiny::reactive(processed()$pcfs_comparison) #takes pcfs_comparison from processed
     
     # could dynamically create UI here, based on the variables found within df?
     
