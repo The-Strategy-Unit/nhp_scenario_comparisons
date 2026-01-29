@@ -29,9 +29,13 @@ app_ui = function(request) {
       shiny::selectInput("scenario_1_runtime", "Scenario 1 runtime", choices = NULL),
       shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
       shiny::selectInput("scenario_2_runtime", "Scenario 2 runtime", choices = NULL),
-      shiny::actionButton("render_plot", "Render Plots"),
+      shiny::actionButton("render_plot",
+                          "Render Plots",
+                          disabled = TRUE),
       shiny::uiOutput("warning_text")
     ),
+    shiny::uiOutput("errors"),
+    shiny::verbatimTextOutput("debug"),
     shiny::tabsetPanel(
       shiny::tabPanel("Introduction",
                       bslib::card(
@@ -65,7 +69,6 @@ app_ui = function(request) {
         "View comparison",
         bslib::card(
           #bslib::card_header("Result"),
-          shiny::uiOutput("errors"),
           shiny::uiOutput("result_text"),
           shiny::tabsetPanel(
             shiny::tabPanel("Summary", mod_summary_ui("summary1")),

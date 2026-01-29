@@ -45,7 +45,7 @@ get_nhp_result_sets <- function(
   
   cat("getting metadata\n")
   files <- files |>
-    purrr::map(metadata, .progress=TRUE) |>
+    purrr::map(metadata, .progress="Initialising..") |>
     dplyr::bind_rows(.id = "file") |>
     # filter to available datasets for this user
     dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
