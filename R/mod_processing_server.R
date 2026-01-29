@@ -34,14 +34,12 @@ mod_processing_server <- function(id,
                         create_datetime == selected$scenario_1_runtime) |>
           dplyr::pull(file)
         
-        shiny::incProgress(0.2)
-        
         scenario_2_file <- nhp_model_runs |>
           dplyr::filter(scenario == selected$scenario_2,
                         create_datetime == selected$scenario_2_runtime) |>
           dplyr::pull(file)
         
-        shiny::incProgress(0.2)
+        shiny::incProgress(0.1)
         
         shiny::req(length(scenario_1_file) > 0, 
                    length(scenario_2_file) > 0)
@@ -73,12 +71,13 @@ mod_processing_server <- function(id,
         } else{
           
           result_1 <- get_nhp_results(file = scenario_1_file)
-          result_2 <- get_nhp_results(file = scenario_2_file)
+          shiny::incProgress(0.25)
           
+          result_2 <- get_nhp_results(file = scenario_2_file)
+          shiny::incProgress(0.25)
         }
         
         # grab the scenario_names
-        shiny::incProgress(0.2)
         
         scenario_1_name <- result_1$params$scenario
         scenario_2_name <- result_2$params$scenario
@@ -97,7 +96,7 @@ mod_processing_server <- function(id,
         # data processing
         data <- dplyr::bind_rows(df1, df2)
         
-        
+        shiny::incProgress(0.1)
         # get the measure from the pod name
         # cols [1] "scenario"      "pod_name"     
         #[3] "activity_type" "baseline"     
@@ -115,7 +114,6 @@ mod_processing_server <- function(id,
         # 
         # 
         # admissions dataset
-        shiny::incProgress(0.1)
         
         data_1_adm <- result_1 |>
           mod_principal_summary_los_data(sites = NULL, measure = "admissions") |> 
@@ -149,6 +147,8 @@ mod_processing_server <- function(id,
         #length of stay is the y axis and admissions on the x axis
         
         data_combine <- dplyr::bind_rows("Bed Days" = data_bed, "Admissions" = data_admissions, .id = "measure")
+        
+        shiny::incProgress(0.1)
         #
         # # impacts -----------------------------------------------------------------
         # 
@@ -157,7 +157,6 @@ mod_processing_server <- function(id,
         # # 2 lists are used to make the water falls
         # 
         # # Prep a list of summary dataframes, one per activity type
-        shiny::incProgress(0.1)
         
         pcfs_1 <- prepare_all_principal_change_factors(
           r = result_1,
