@@ -257,11 +257,6 @@ app_server = function(input, output, session) {
     )
   })
   
-  output$debug <- shiny::renderPrint(c(input$scenario_1, input$scenario_1_runtime,
-                                       input$scenario_2, input$scenario_2_runtime,
-                                       shiny::reactiveValuesToList(selections))
-  )
-  
   shiny::observe({
     
     errors <- c()
