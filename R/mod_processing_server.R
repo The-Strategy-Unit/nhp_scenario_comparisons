@@ -34,10 +34,14 @@ mod_processing_server <- function(id,
                         create_datetime == selected$scenario_1_runtime) |>
           dplyr::pull(file)
         
+        shiny::incProgress(0.2)
+        
         scenario_2_file <- nhp_model_runs |>
           dplyr::filter(scenario == selected$scenario_2,
                         create_datetime == selected$scenario_2_runtime) |>
           dplyr::pull(file)
+        
+        shiny::incProgress(0.2)
         
         shiny::req(length(scenario_1_file) > 0, 
                    length(scenario_2_file) > 0)
@@ -111,7 +115,7 @@ mod_processing_server <- function(id,
         # 
         # 
         # admissions dataset
-        shiny::incProgress(0.25)
+        shiny::incProgress(0.1)
         
         data_1_adm <- result_1 |>
           mod_principal_summary_los_data(sites = NULL, measure = "admissions") |> 
@@ -153,7 +157,7 @@ mod_processing_server <- function(id,
         # # 2 lists are used to make the water falls
         # 
         # # Prep a list of summary dataframes, one per activity type
-        shiny::incProgress(0.25)
+        shiny::incProgress(0.1)
         
         pcfs_1 <- prepare_all_principal_change_factors(
           r = result_1,
@@ -243,7 +247,7 @@ mod_processing_server <- function(id,
         # # 80% CI -----------------------------------------------------------
         # 
         # # load dataset 
-        shiny::incProgress(0.25)
+        shiny::incProgress(0.1)
         data_distribution_summary <- dplyr::bind_rows(
           result_1$results$default |> 
             dplyr::mutate(scenario = scenario_1_name,
@@ -315,7 +319,7 @@ mod_processing_server <- function(id,
         #   data = data
         # )
         
-        shiny::incProgress(0.25)
+        shiny::incProgress(0.1)
         list(data = data,
              data_combine = data_combine,
              waterfall_data = list(pcfs_1 = pcfs_1,
