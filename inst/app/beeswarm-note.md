@@ -2,4 +2,4 @@ Each circle (coloured by scenario) plotted on the beeswarm represents the result
 
 The dashed vertical lines indicate the principal projection for each scenario; the solid vertical grey lines indicate the baseline value. 
 
-Note: presently the ED counts exlcude Type 4 and Type 5 records. These will be added in due course.
+Note: presently the ED counts exclude Type 4 and Type 5 records. These will be added in due course.
