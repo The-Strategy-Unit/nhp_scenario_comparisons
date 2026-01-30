@@ -1,3 +1,3 @@
 The s-curve shows the range of results (or values) obtained from all the 256 simulations on the x-axis and probability that at least this level of activity will occur on the y-axis. The coloured dashed vertical lines show the p10 and p90 of each scenario, and the coloured solid lines indicate the principal projections.  The grey vertical line represents the baseline value.  For more information on how to read the s-curve, please see the <a href=https://connect.strategyunitwm.nhs.uk/nhp/project_information/ target="_blank">model project information site</a>.
 
-Note: presently the ED counts exlcude Type 4 and Type 5 records. These will be added in due course.
+Note: presently the ED counts exclude Type 4 and Type 5 records. These will be added in due course.
