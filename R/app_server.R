@@ -84,6 +84,8 @@ app_server = function(input, output, session) {
   
   shiny::observe({
     
+    req(input$scenario_1)
+    
     criteria <- selections$main_scenario |>
       dplyr::select(start_year, end_year, app_version) 
     
@@ -113,6 +115,7 @@ app_server = function(input, output, session) {
   })
   
   shiny::observe({
+    shiny::req(input$scenario_2)
     criteria <- selections$main_scenario |>
       dplyr::select(start_year, end_year, app_version) 
     
@@ -141,55 +144,29 @@ app_server = function(input, output, session) {
     
   })
   
-  # Alias management ----
-  # scenario_1_display <- shiny::reactive({
-  #   if(input$create_new_names && nzchar(input$scenario_1_alias)) {
-  #     input$scenario_1_alias
-  #   } else {
-  #     input$scenario_1
-  #   }
-  # })
-  # 
-  # scenario_2_display <- shiny::reactive({
-  #   if(input$create_new_names && nzchar(input$scenario_2_alias)) {
-  #     input$scenario_2_alias
-  #   } else {
-  #     input$scenario_2
-  #   }
-  #   
-  # })
-  
-  # Update alias text inputs with default values from selected scenarios
-  # shiny::observeEvent(c(input$scenario_1, input$scenario_2), {
-  #   # Only update if checkbox is NOT ticked (to preserve user edits when ticked)
-  #   if (!isTRUE(input$create_new_names)) {
-  #     shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
-  #     shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
-  #   }
-  # }, ignoreNULL = FALSE, ignoreInit = TRUE)
-  
-  # Enable/disable text inputs based on checkbox
-  # shiny::observeEvent(input$create_new_names, {
-  #   if (isTRUE(input$create_new_names)) {
-  #     shinyjs::enable("scenario_1_alias")
-  #     shinyjs::enable("scenario_2_alias")
-  #   } else {
-  #     shinyjs::disable("scenario_1_alias")
-  #     shinyjs::disable("scenario_2_alias")
-  #     # Reset to default values when unchecked
-  #     shiny::updateTextInput(session, "scenario_1_alias", value = input$scenario_1)
-  #     shiny::updateTextInput(session, "scenario_2_alias", value = input$scenario_2)
-  #   }
-  # }, ignoreInit = TRUE)
-  
-  # Disable text inputs on startup
-  # shinyjs::disable("scenario_1_alias")
-  # shinyjs::disable("scenario_2_alias")
-  
-  # End of alias management ----
-  
   # End of selectInput reactive logic ----
+ 
   
+  shiny::observe({
+    shiny::req(selections$main_scenario,
+               selections$comparator_scenario)
+    
+    main <- selections$main_scenario
+    comparator <- selections$comparator_scenario
+    
+    if(nrow(main) > 0 &&
+       nrow(comparator) > 0 &&
+       main$start_year == comparator$start_year &&
+       main$end_year == comparator$end_year &&
+       main$app_version == comparator$app_version
+    ) {
+      shinyjs::enable("render_plot")
+    } else {
+      shinyjs::disable("render_plot")
+    }
+    
+  })
+   
   
   output$metadata <- DT::renderDT({
     
@@ -221,15 +198,7 @@ app_server = function(input, output, session) {
     }
     
     DT::datatable(
-      df #|>
-        # dplyr::mutate(
-        #   scenario_alias = c(
-        #     scenario_1_display(),
-        #     scenario_2_display()
-        #   )
-        # ) |>
-        # dplyr::select(scenario_alias, dplyr::everything())
-        ,
+      df,
       rownames = FALSE,
       escape = FALSE,
       options = list(
@@ -240,16 +209,44 @@ app_server = function(input, output, session) {
     )
   })
   
+  last_render <- shiny::reactiveVal(NULL)
+  
+  shiny::observeEvent(input$render_plot, {
+    
+    shiny::req(nhp_model_runs(), input$scenario_1, input$scenario_1_runtime, input$scenario_2, input$scenario_2_runtime)
+    
+    
+    last_render(list(
+      s1 = input$scenario_1,
+      s1_time = input$scenario_1_runtime,
+      s2 = input$scenario_2,
+      s2_time = input$scenario_2_runtime,
+      scheme = input$selected_scheme,
+      version = nhp_model_runs() |> 
+        dplyr::filter(scenario == input$scenario_1,
+                      create_datetime == input$scenario_1_runtime) |> 
+        dplyr::pull(app_version)
+      
+    ))
+  })
+  
+  
   output$result_text <- shiny::renderUI({
+    
+    state <- last_render()
+    shiny::req(state)
+    
     shiny::tags$span(
       "You have selected ",
-      shiny::tags$b(input$scenario_1), " ",
-      paste0("(", lubridate::as_datetime(input$scenario_1_runtime), ") "),
-      "and ",
-      shiny::tags$b(input$scenario_2), " ",
-      paste0("(", lubridate::as_datetime(input$scenario_2_runtime), ") "),
-      "from the scheme ",
-      input$selected_scheme,
+      shiny::tags$b(state$s1),
+      " (", 
+      lubridate::as_datetime(state$s1_time), 
+      ") and ",
+      shiny::tags$b(state$s2), 
+      " (", 
+      lubridate::as_datetime(state$s2_time), 
+      ") from the scheme ",
+      state$scheme,
       " and model version ",
       nhp_model_runs() |>
         dplyr::filter(
@@ -260,65 +257,39 @@ app_server = function(input, output, session) {
     )
   })
   
-  
-  
-  errors_reactive <- shiny::reactiveVal()
-  
-  
-  output$warning_text <- shiny::renderUI({
-    shiny::req(nhp_model_runs(), input$scenario_1, input$scenario_1_runtime, input$scenario_2, input$scenario_2_runtime)
-    s1 <- nhp_model_runs() |> dplyr::filter(
-      scenario == input$scenario_1, 
-      dataset == input$selected_scheme,
-      create_datetime == input$scenario_1_runtime)
-    s2 <- nhp_model_runs() |> dplyr::filter(
-      scenario == input$scenario_2, 
-      dataset == input$selected_scheme,
-      create_datetime == input$scenario_2_runtime)
+  shiny::observe({
     
-    # tests that the start and end years match
-    starts_match <- identical(s1$start_year, s2$start_year) 
-    ends_match <- identical(s1$end_year, s2$end_year)  # fixed typo
-    
-    # collect errors
     errors <- c()
     
-    if (input$scenario_1 == input$scenario_2 &
-        input$scenario_1_runtime == input$scenario_2_runtime) {
-      errors <- c(errors, "Error: Scenario 1 and Scenario 2 must be different.")
-    }
-    
-    if (!starts_match || !ends_match) {
-      errors <- c(errors, "Error: The start and end years of the selected scenarios must match.")
-    }
-    
-    if ((nhp_model_runs() |> 
-         dplyr::filter(scenario == input$scenario_1,
-                       create_datetime == input$scenario_1_runtime) |> 
-         dplyr::pull(app_version)) != 
-        (nhp_model_runs() |> 
-         dplyr::filter(scenario == input$scenario_2,
-                       create_datetime == input$scenario_2_runtime) |> 
-         dplyr::pull(app_version))){
-      errors <- c(errors, "Error: Selected scenarios must have been built on the same version of the model.")
-    }
-    
-    errors_reactive(errors)
-    # collapse into a single string, separated by new lines
-    shiny::HTML(paste(errors, collapse = "<br>"))
-  })
-  
-  shiny::observe({
-    if(length(errors_reactive()) == 0){
-      shinyjs::enable("render_plot")
-      output$errors <- shiny::renderUI(NULL)
-    } else {
-      shinyjs::disable("render_plot")
-      output$errors <- shiny::renderUI(
-        htmltools::HTML("<p style='color:red;'>Please resolve scenario selection errors to produce plots.</p>")
+    if((nrow(shiny::req(nhp_model_runs())) == 0)){
+      errors <- c(errors, 
+                  "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
       )
     }
     
+    
+    state <- last_render()
+    if(is.null(state)) return(NULL) # no render yet
+    
+    # detect if selections have changed since last render
+    changed <- state$s1 != input$scenario_1 ||
+      state$s1_time != input$scenario_1_runtime ||
+      state$s2 != input$scenario_2 ||
+      state$s2_time != input$scenario_2_runtime
+    
+    if(changed) {
+      errors <- c(errors, 
+                  "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
+      )
+      
+    }
+    
+    if(length(errors) > 0){
+      
+      output$errors <- shiny::renderUI(shiny::HTML(paste(errors, collapse = "<br>")))
+    } else {
+      output$errors <- shiny::renderUI(NULL)
+    }
     
   })
   
@@ -326,13 +297,13 @@ app_server = function(input, output, session) {
   processed <- 
     mod_processing_server("processing1",
                           result_sets = nhp_model_runs(),
+                          selections = selections,
                           scenario_selections = shiny::reactive(
                             list(scenario_1 = input$scenario_1,
                                  scenario_1_runtime = input$scenario_1_runtime,
                                  scenario_2 = input$scenario_2,
                                  scenario_2_runtime = input$scenario_2_runtime)
                           ),
-                          errors = errors_reactive,
                           trigger = shiny::reactive(input$render_plot),
                           local_data_flag = load_local_data
     )
@@ -354,40 +325,5 @@ app_server = function(input, output, session) {
                       processed = processed)
   mod_ecdf_server("ecdf1",
                   processed = processed)
-  
-  
-  # shiny::observeEvent(input$render_plot, {
-  #   if (!(input$scenario_1 == input$scenario_2 &
-  #         input$scenario_1_runtime == input$scenario_2_runtime) & 
-  #       is.null(errors_reactive()) # Errors will prevent output rendering
-  #   ){
-  #     quarto::quarto_render(
-  #       "scenario_analysis_summary.qmd", 
-  #       output_file = "scenario_analysis_summary.html", 
-  #       execute_params = list(
-  #         scenario_1 = input$scenario_1,
-  #         scenario_1_runtime = 
-  #           as.character(
-  #             lubridate::as_datetime(
-  #               input$scenario_1_runtime
-  #             )
-  #           ),
-  #         scenario_2 = input$scenario_2,
-  #         scenario_2_runtime = 
-  #           as.character(
-  #             lubridate::as_datetime(
-  #               input$scenario_2_runtime 
-  #             )
-  #           )
-  #       ))
-  #     output$quarto_summary <- shiny::renderUI({
-  #       htmltools::includeHTML("scenario_analysis_summary.html")
-  #     })
-  #   } else {
-  #     output$quarto_summary <- shiny::renderUI({
-  #       htmltools::HTML("<p style='color:red;'>Resolve scenario selection errors to produce plots.</p>")
-  #     })
-  #   }
-  # })
   
 }
