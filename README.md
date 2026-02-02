@@ -41,7 +41,7 @@ Run the `deploy.R` script to deploy to connect, providing the relevant `appId` t
 
 #### Model runs
 
-All the model runs are stored within Azure. You will need an account@mlcsu.nhs.uk to access these. The .Renviron variables specify the exact credentials.
+All the model runs are stored within Azure. You will need an `account@mlcsu.nhs.uk` to access these and have been granted permission to access these. The .Renviron variables specify the exact credentials.
 
 #### Supporting_data
 
