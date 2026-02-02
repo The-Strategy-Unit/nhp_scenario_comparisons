@@ -31,7 +31,7 @@ If you're having authorisation issues (e.g. a 403 is being returned), try cleari
 
 #### Run the app
 
-Source the `app.R` script to run the app, assuming you've installed the packages and set up the environment variables.
+Run the `app.R` script to run the app, assuming you've installed the packages and set up the environment variables.
 
 ### Deploy
 
