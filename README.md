@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Compare New Hospital Programme (NHP) schemes' demand modelling scenarios. This is primarily for a given scheme to compare several of its own scenarios to each other, to enable them to iteratively arrive at a final scenario. The scenarios are based on the NHP [demand model](https://github.com/the-Strategy-Unit/nhp_project_information).
+Compare New Hospital Programme (NHP) schemes' demand modelling scenarios' results in the horizon year. This is primarily for a given scheme to compare several of its own scenarios to each other, to enable them to iteratively arrive at a final scenario. The scenarios are based on the NHP [demand model](https://github.com/the-Strategy-Unit/nhp_project_information).
 
 The app is [deployed to Posit Connect](https://connect.strategyunitwm.nhs.uk/scenario_comparison/) (login/permissions required).
 
