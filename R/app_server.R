@@ -261,7 +261,9 @@ app_server = function(input, output, session) {
     
     errors <- c()
     
-    if((nrow(shiny::req(nhp_model_runs())) == 0)){
+    model_runs <- nhp_model_runs()
+    
+    if(is.null(model_runs) || nrow(model_runs) == 0){
       errors <- c(errors, 
                   "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
       )
