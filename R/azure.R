@@ -165,12 +165,16 @@ get_nhp_results <- function(
   container <- get_container(container = container_results,
                              endpoint = blob_url)
   
-  temp_file <- withr::local_tempfile()
-  AzureStor::download_blob(container, file, temp_file)
+  r <- AzureStor::download_blob(container, file, NULL) |> 
+    jsonlite::parse_gzjson_raw(simplifyVector = FALSE) 
   
-  readBin(temp_file, raw(), n = file.size(temp_file)) |>
-    jsonlite::parse_gzjson_raw(simplifyVector = FALSE) |>
-    parse_results()  # applies patch logic dependent on app_version in params
+  
+  withr::defer({
+    rm(r)
+    gc()
+  })
+  
+    parse_results(r)  # applies patch logic dependent on app_version in params
   
 }
 
