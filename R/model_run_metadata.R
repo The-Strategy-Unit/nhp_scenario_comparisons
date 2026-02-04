@@ -29,7 +29,7 @@ get_metadata <- function(result_sets, scenario) {
       .before = outputs_link
     ) |> 
     dplyr::select(
-      user, scheme_name, scenario, seed, model_runs, start_year, end_year, app_version, create_datetime, outputs_app
+      user, dataset, scenario, seed, model_runs, start_year, end_year, app_version, create_datetime, outputs_app
     )
 }
 
