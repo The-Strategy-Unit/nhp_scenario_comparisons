@@ -3,10 +3,6 @@ get_metadata <- function(result_sets, scenario) {
   
   metadata <- scenario
   
-  metadata$scheme_name <- metadata$dataset |> 
-    purrr::map(make_scheme_name) |> 
-    unlist()
-  
   
   # Generate encrypted bit of the outputs app URL
   metadata$url_file_encrypted <- metadata$file |>
