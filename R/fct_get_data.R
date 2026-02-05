@@ -5,11 +5,10 @@ parse_results <- function(r) {
   
   r$results <- purrr::map(
     r$results,
-    purrr::map_dfr,
-    purrr::modify_at,
-    c("model_runs", "time_profiles"),  # ignores time_profiles if non-existent
-    purrr::compose(list, as.numeric)
+    tibble::as_tibble
   )
+  
+  r$params <- patch_params(r$params)
   
   # Various patches need to happen based on the model version (this logic is
   # required in the nhp_final_reports repo because we need to handle results
@@ -30,6 +29,19 @@ parse_results <- function(r) {
   # If model version is v1.2, then we only need to patch the tretspef and
   # tretspef+los_group.
   if (model_version == "v1.2") r$results <- patch_tretspef(r$results, "v1.2")
+  
+  r
+}
+
+ # patch params 
+patch_params <- function(r) {
+  if (is.list(r)) {
+    return(purrr::map(r, patch_params))
+  }
+  
+  if (is.numeric(r) && length(r) == 2) {
+    return(as.list(r))
+  }
   
   r
 }
