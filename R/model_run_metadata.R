@@ -3,10 +3,6 @@ get_metadata <- function(result_sets, scenario) {
   
   metadata <- scenario
   
-  metadata$scheme_name <- metadata$dataset |> 
-    purrr::map(make_scheme_name) |> 
-    unlist()
-  
   
   # Generate encrypted bit of the outputs app URL
   metadata$url_file_encrypted <- metadata$file |>
@@ -33,7 +29,7 @@ get_metadata <- function(result_sets, scenario) {
       .before = outputs_link
     ) |> 
     dplyr::select(
-      user, scheme_name, scenario, seed, model_runs, start_year, end_year, app_version, create_datetime, outputs_app
+      user, dataset, scenario, seed, model_runs, start_year, end_year, app_version, create_datetime, outputs_app
     )
 }
 
