@@ -145,7 +145,7 @@ app_server = function(input, output, session) {
   })
   
   # End of selectInput reactive logic ----
- 
+  
   
   shiny::observe({
     shiny::req(selections$main_scenario,
@@ -166,7 +166,7 @@ app_server = function(input, output, session) {
     }
     
   })
-   
+  
   
   output$metadata <- DT::renderDT({
     
@@ -261,7 +261,9 @@ app_server = function(input, output, session) {
     
     errors <- c()
     
-    if((nrow(shiny::req(nhp_model_runs())) == 0)){
+    model_runs <- nhp_model_runs()
+    
+    if(is.null(model_runs) || nrow(model_runs) == 0){
       errors <- c(errors, 
                   "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
       )
@@ -269,19 +271,20 @@ app_server = function(input, output, session) {
     
     
     state <- last_render()
-    if(is.null(state)) return(NULL) # no render yet
-    
-    # detect if selections have changed since last render
-    changed <- state$s1 != input$scenario_1 ||
-      state$s1_time != input$scenario_1_runtime ||
-      state$s2 != input$scenario_2 ||
-      state$s2_time != input$scenario_2_runtime
-    
-    if(changed) {
-      errors <- c(errors, 
-                  "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
-      )
+    if(!is.null(state)){ # no render yet
       
+      # detect if selections have changed since last render
+      changed <- state$s1 != input$scenario_1 ||
+        state$s1_time != input$scenario_1_runtime ||
+        state$s2 != input$scenario_2 ||
+        state$s2_time != input$scenario_2_runtime
+      
+      if(changed) {
+        errors <- c(errors, 
+                    "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
+        )
+        
+      }
     }
     
     if(length(errors) > 0){
