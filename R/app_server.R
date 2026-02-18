@@ -57,7 +57,14 @@ app_server = function(input, output, session) {
   
   shiny::observe(
     selections$scheme_scenarios <- nhp_model_runs() |>
-      dplyr::filter(dataset == selections$scheme)
+      dplyr::filter(dataset == selections$scheme) |> 
+      # ensure that we only show scenarios who have comparators
+      # essentially, we can group the entire data set by start year, end year, and
+      # model version. Then count the occurences in each of those groups as a new 
+      # column `comparable_scenarios_count`. Then just filter so > 1.
+      dplyr::mutate(comparable_scenarios = dplyr::n() - 1, 
+                    .by = c("start_year", "end_year", "app_version")) |> 
+      dplyr::filter(comparable_scenarios >= 1)
   )
   
   shiny::observe(
