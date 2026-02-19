@@ -20,6 +20,7 @@ Imports:
     ggbeeswarm,
     ggeasy,
     ggplot2,
+    ggtext,
     glue,
     gt,
     here,
