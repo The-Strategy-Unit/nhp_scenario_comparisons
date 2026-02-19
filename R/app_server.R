@@ -277,10 +277,21 @@ app_server = function(input, output, session) {
     
     model_runs <- nhp_model_runs()
     
-    if(is.null(model_runs) || nrow(model_runs) == 0){
-      errors <- c(errors, 
+    # No model runs at all
+    if (is.null(model_runs) || nrow(model_runs) == 0) {
+      errors <- c(errors,
                   "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
       )
+    } else {
+      
+      comparable <- get_comparable_scenarios(model_runs, selections$scheme)
+      
+      # No comparable scenarios
+      if (nrow(comparable) == 0) {
+        errors <- c(errors,
+                    "<b>No comparable scenarios exist for the selected Scheme.</b>"
+        )
+      }
     }
     
     
