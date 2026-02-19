@@ -12,6 +12,17 @@
 #   )
 
 app_server = function(input, output, session) {
+  get_comparable_scenarios <- function(model_runs, scheme) {
+    model_runs |>
+      dplyr::filter(dataset == scheme) |> 
+      dplyr::mutate(
+        comparable_scenarios = dplyr::n() - 1,
+        .by = c("start_year", "end_year", "app_version")
+      ) |> 
+      dplyr::filter(comparable_scenarios >= 1)
+  }
+  
+  
   load_local_data <- FALSE
   
   allowed_datasets <- shiny::reactive({
@@ -55,17 +66,13 @@ app_server = function(input, output, session) {
     selections$scheme <- input$selected_scheme
   )
   
-  shiny::observe(
-    selections$scheme_scenarios <- nhp_model_runs() |>
-      dplyr::filter(dataset == selections$scheme) |> 
-      # ensure that we only show scenarios who have comparators
-      # essentially, we can group the entire data set by start year, end year, and
-      # model version. Then count the occurences in each of those groups as a new 
-      # column `comparable_scenarios_count`. Then just filter so > 1.
-      dplyr::mutate(comparable_scenarios = dplyr::n() - 1, 
-                    .by = c("start_year", "end_year", "app_version")) |> 
-      dplyr::filter(comparable_scenarios >= 1)
-  )
+  shiny::observe({
+    selections$scheme_scenarios <- get_comparable_scenarios(
+      nhp_model_runs(),
+      selections$scheme
+    )
+  })
+  
   
   shiny::observe(
     shiny::updateSelectInput(session, "scenario_1", choices = selections$scheme_scenarios |> 
