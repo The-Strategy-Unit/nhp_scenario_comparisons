@@ -81,13 +81,18 @@ app_server = function(input, output, session) {
     )
   )
   
-  shiny::observeEvent(input$scenario_1, {
+  shiny::observe({
+    if (is.null(input$scenario_1) || 
+        !input$scenario_1 %in% selections$scheme_scenarios$scenario) {
+      shiny::updateSelectInput(session, "scenario_1_runtime", choices = character(0))
+      return()
+    }
+    
     runtime_choices <- selections$scheme_scenarios |> 
       dplyr::filter(scenario == input$scenario_1) |> 
       dplyr::pull(create_datetime)
     
-    
-    shiny::updateSelectInput(session, "scenario_1_runtime", choices =  runtime_choices)
+    shiny::updateSelectInput(session, "scenario_1_runtime", choices = runtime_choices)
   })
   
   shiny::observe(
