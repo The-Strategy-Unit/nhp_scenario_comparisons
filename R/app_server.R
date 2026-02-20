@@ -285,7 +285,7 @@ app_server = function(input, output, session) {
     # No model runs at all
     if (is.null(model_runs) || nrow(model_runs) == 0) {
       errors <- c(errors,
-                  "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
+                  "<b><p style='color:red;'>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</p></b>"
       )
     } else {
       
@@ -294,7 +294,7 @@ app_server = function(input, output, session) {
       # No comparable scenarios
       if (nrow(comparable) == 0) {
         errors <- c(errors,
-                    "<b>No comparable scenarios exist for the selected Scheme.</b>"
+                    "<b><p style='color:red;'>No comparable scenarios exist for the selected Scheme.</p></b>"
         )
       }
     }
