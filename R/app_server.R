@@ -12,6 +12,17 @@
 #   )
 
 app_server = function(input, output, session) {
+  get_comparable_scenarios <- function(model_runs, scheme) {
+    model_runs |>
+      dplyr::filter(dataset == scheme) |> 
+      dplyr::mutate(
+        comparable_scenarios = dplyr::n() - 1,
+        .by = c("start_year", "end_year", "app_version")
+      ) |> 
+      dplyr::filter(comparable_scenarios >= 1)
+  }
+  
+  
   load_local_data <- FALSE
   
   allowed_datasets <- shiny::reactive({
@@ -55,17 +66,13 @@ app_server = function(input, output, session) {
     selections$scheme <- input$selected_scheme
   )
   
-  shiny::observe(
-    selections$scheme_scenarios <- nhp_model_runs() |>
-      dplyr::filter(dataset == selections$scheme) |> 
-      # ensure that we only show scenarios who have comparators
-      # essentially, we can group the entire data set by start year, end year, and
-      # model version. Then count the occurences in each of those groups as a new 
-      # column `comparable_scenarios_count`. Then just filter so > 1.
-      dplyr::mutate(comparable_scenarios = dplyr::n() - 1, 
-                    .by = c("start_year", "end_year", "app_version")) |> 
-      dplyr::filter(comparable_scenarios >= 1)
-  )
+  shiny::observe({
+    selections$scheme_scenarios <- get_comparable_scenarios(
+      nhp_model_runs(),
+      selections$scheme
+    )
+  })
+  
   
   shiny::observe(
     shiny::updateSelectInput(session, "scenario_1", choices = selections$scheme_scenarios |> 
@@ -74,13 +81,18 @@ app_server = function(input, output, session) {
     )
   )
   
-  shiny::observeEvent(input$scenario_1, {
+  shiny::observe({
+    if (is.null(input$scenario_1) || 
+        !input$scenario_1 %in% selections$scheme_scenarios$scenario) {
+      shiny::updateSelectInput(session, "scenario_1_runtime", choices = character(0))
+      return()
+    }
+    
     runtime_choices <- selections$scheme_scenarios |> 
       dplyr::filter(scenario == input$scenario_1) |> 
       dplyr::pull(create_datetime)
     
-    
-    shiny::updateSelectInput(session, "scenario_1_runtime", choices =  runtime_choices)
+    shiny::updateSelectInput(session, "scenario_1_runtime", choices = runtime_choices)
   })
   
   shiny::observe(
@@ -266,14 +278,25 @@ app_server = function(input, output, session) {
   
   shiny::observe({
     
-    errors <- c()
+    warning_text <- c()
     
     model_runs <- nhp_model_runs()
     
-    if(is.null(model_runs) || nrow(model_runs) == 0){
-      errors <- c(errors, 
-                  "<b>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</b>"
+    # No model runs at all
+    if (is.null(model_runs) || nrow(model_runs) == 0) {
+      warning_text <- c(warning_text,
+                  "<b><p style='color:red;'>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</p></b>"
       )
+    } else {
+      
+      comparable <- get_comparable_scenarios(model_runs, selections$scheme)
+      
+      # No comparable scenarios
+      if (nrow(comparable) == 0) {
+        warning_text <- c(warning_text,
+                    "<b><p style='color:red;'>No comparable scenarios exist for the selected Scheme.</p></b>"
+        )
+      }
     }
     
     
@@ -287,18 +310,18 @@ app_server = function(input, output, session) {
         state$s2_time != input$scenario_2_runtime
       
       if(changed) {
-        errors <- c(errors, 
+        warning_text <- c(warning_text, 
                     "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
         )
         
       }
     }
     
-    if(length(errors) > 0){
+    if(length(warning_text) > 0){
       
-      output$errors <- shiny::renderUI(shiny::HTML(paste(errors, collapse = "<br>")))
+      output$warning_text <- shiny::renderUI(shiny::HTML(paste(warning_text, collapse = "<br>")))
     } else {
-      output$errors <- shiny::renderUI(NULL)
+      output$warning_text <- shiny::renderUI(NULL)
     }
     
   })
