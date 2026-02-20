@@ -23,6 +23,7 @@ app_ui = function(request) {
       )
     ),
     sidebar = bslib::sidebar(
+      shiny::uiOutput("warning_text"),
       title = "Scenario selection",
       shiny::selectInput("selected_scheme", "Select scheme", choices = NULL),
       shiny::selectInput("scenario_1", "Select Scenario 1", choices = NULL),
@@ -31,10 +32,8 @@ app_ui = function(request) {
       shiny::selectInput("scenario_2_runtime", "Scenario 2 runtime", choices = NULL),
       shiny::actionButton("render_plot",
                           "Render Plots",
-                          disabled = TRUE),
-      shiny::uiOutput("warning_text")
+                          disabled = TRUE)
     ),
-    shiny::uiOutput("errors"),
     shiny::verbatimTextOutput("debug"),
     shiny::tabsetPanel(
       shiny::tabPanel("Introduction",
