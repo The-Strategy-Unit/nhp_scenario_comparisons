@@ -278,13 +278,13 @@ app_server = function(input, output, session) {
   
   shiny::observe({
     
-    errors <- c()
+    warning_text <- c()
     
     model_runs <- nhp_model_runs()
     
     # No model runs at all
     if (is.null(model_runs) || nrow(model_runs) == 0) {
-      errors <- c(errors,
+      warning_text <- c(warning_text,
                   "<b><p style='color:red;'>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</p></b>"
       )
     } else {
@@ -293,7 +293,7 @@ app_server = function(input, output, session) {
       
       # No comparable scenarios
       if (nrow(comparable) == 0) {
-        errors <- c(errors,
+        warning_text <- c(warning_text,
                     "<b><p style='color:red;'>No comparable scenarios exist for the selected Scheme.</p></b>"
         )
       }
@@ -310,18 +310,18 @@ app_server = function(input, output, session) {
         state$s2_time != input$scenario_2_runtime
       
       if(changed) {
-        errors <- c(errors, 
+        warning_text <- c(warning_text, 
                     "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
         )
         
       }
     }
     
-    if(length(errors) > 0){
+    if(length(warning_text) > 0){
       
-      output$errors <- shiny::renderUI(shiny::HTML(paste(errors, collapse = "<br>")))
+      output$warning_text <- shiny::renderUI(shiny::HTML(paste(warning_text, collapse = "<br>")))
     } else {
-      output$errors <- shiny::renderUI(NULL)
+      output$warning_text <- shiny::renderUI(NULL)
     }
     
   })
