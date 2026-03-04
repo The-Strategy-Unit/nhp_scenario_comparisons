@@ -35,10 +35,12 @@ deploy <- function(type = c("dev", "prod")) {
   )
 }
 
-# Deploy development version between releases
+# Deploy development version between releases to
+# https://connect.strategyunitwm.nhs.uk/nhp/dev/scenario_comparison/
 deploy(type = "dev")
 
-# Deploy on release
+# Deploy on release to
+# https://connect.strategyunitwm.nhs.uk/nhp/scenario_comparison/
 deploy(type = "prod")
 
 
