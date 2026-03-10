@@ -114,7 +114,10 @@ app_server = function(input, output, session) {
       dplyr::pull(scenario) |> 
       unique()
     
-    default <- if(input$scenario_2 %in% comparable_scenarios){
+    # Auto-select if only one comparable scenario exists
+    default <- if(length(comparable_scenarios) == 1){
+      comparable_scenarios
+    } else if(input$scenario_2 %in% comparable_scenarios){
       input$scenario_2
     } else {
       character(0)
