@@ -114,7 +114,10 @@ app_server = function(input, output, session) {
       dplyr::pull(scenario) |> 
       unique()
     
-    default <- if(input$scenario_2 %in% comparable_scenarios){
+    # Auto-select if only one comparable scenario exists
+    default <- if(length(comparable_scenarios) == 1){
+      comparable_scenarios
+    } else if(input$scenario_2 %in% comparable_scenarios){
       input$scenario_2
     } else {
       character(0)
@@ -144,23 +147,24 @@ app_server = function(input, output, session) {
       dplyr::anti_join(selections$main_scenario) |>
       dplyr::pull(create_datetime)
     
-    default <- if(input$scenario_2_runtime %in% comparable_runtimes){
-      input$scenario_2_runtime
+    # Only set explicit selected if the current value is valid
+    if(input$scenario_2_runtime %in% comparable_runtimes){
+      shiny::updateSelectInput(session, 
+                               "scenario_2_runtime", 
+                               choices = comparable_runtimes,
+                               selected = input$scenario_2_runtime)
     } else {
-      character(0)
+      # Let Shiny auto-select the first choice (or leave empty if no choices)
+      shiny::updateSelectInput(session, 
+                               "scenario_2_runtime", 
+                               choices = comparable_runtimes)
     }
-    
-    shiny::updateSelectInput(session, 
-                             "scenario_2_runtime", 
-                             choices = comparable_runtimes,
-                             selected = default)
     
     selections$comparator_scenario <- selections$scheme_scenarios |> 
       dplyr::filter(
         scenario %in% input$scenario_2,
-        create_datetime %in% default
+        create_datetime %in% input$scenario_2_runtime
       )
-    
   })
   
   # End of selectInput reactive logic ----
