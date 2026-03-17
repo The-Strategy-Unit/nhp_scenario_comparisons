@@ -1,0 +1,48 @@
+name: "Connect Publish (prod)"
+on:
+  release:
+    types: [published]
+
+jobs:
+  get-variables:
+    name: "Get Variables"
+    runs-on: ubuntu-latest
+    env:
+      # these get set later
+      VERSION: ""
+      INPUTS_DATA_VERSION: ""
+    outputs:
+      NAMESPACE: ${{ steps.set-variables.outputs.NAMESPACE }}
+      INPUTS_DATA_VERSION: ${{ steps.set-variables.outputs.INPUTS_DATA_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get version
+        id: set-variables
+        run: |
+          NAMESPACE=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
+          INPUTS_DATA_VERSION=`echo $NAMESPACE | sed 's/-/./'`
+          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
+          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_OUTPUT
+          echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_ENV
+          echo "INPUTS_DATA_VERSION=$INPUTS_DATA_VERSION" >> $GITHUB_OUTPUT
+
+  publish-production:
+    name: "Publish (to production server)"
+    uses: ./.github/workflows/connect-publish-manual.yaml
+    needs: [get-variables]
+    with:
+      namespace: ${{ needs.get-variables.outputs.NAMESPACE }}
+      inputs_data_version: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+      environment: "production"
+    secrets: inherit
+
+  sync-data:
+    name: "Sync Data"
+    uses: ./.github/workflows/sync-data.yaml
+    needs: [get-variables, publish-production]
+    with:
+      from: "dev"
+      to: ${{ needs.get-variables.outputs.INPUTS_DATA_VERSION }}
+    secrets: inherit
