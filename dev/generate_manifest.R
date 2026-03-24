@@ -1,3 +1,5 @@
+# Run this file any time the packages are changed; else leave it.
+
 files <- c(
   "DESCRIPTION",
   "NAMESPACE",
@@ -7,5 +9,3 @@ files <- c(
 )
 
 rsconnect::writeManifest(appFiles = files)
-
-system("node remove_files_from_manifest.js")
