@@ -5,30 +5,11 @@ on:
       namespace:
         required: true
         type: string
-      inputs_data_version:
-        required: true
-        type: string
-      environment:
-        description: "The environment to deploy to"
-        required: true
-        type: choice
-        default: "production"
-        options:
-          - "production"
-          - "new-production"
   workflow_call:
     inputs:
       namespace:
         required: true
         type: string
-      inputs_data_version:
-        required: true
-        type: string
-      environment:
-        description: "The environment to deploy to"
-        required: true
-        type: string
-        default: "production"
 jobs:
   connect-publish:
     name: "Connect Publish: ${{ inputs.namespace }} [${{ inputs.environment }}]"
@@ -54,5 +35,5 @@ jobs:
           api-key: ${{ secrets.RSCONNECT_API_KEY }}
           access-type: logged_in
           force: true
-          dir: .:inputs
-          namespace: nhp/${{ inputs.namespace }}
+          dir: .:scenario_comparison
+          namespace: ${{ inputs.namespace }}

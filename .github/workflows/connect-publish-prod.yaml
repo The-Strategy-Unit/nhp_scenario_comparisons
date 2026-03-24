@@ -4,30 +4,9 @@ on:
     types: [published]
 
 jobs:
-  get-variables:
-    name: "Get Variables"
-    runs-on: ubuntu-latest
-    env:
-      # these get set later
-      VERSION: ""
-    outputs:
-      NAMESPACE: ${{ steps.set-variables.outputs.NAMESPACE }}
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Get version
-        id: set-variables
-        run: |
-          NAMESPACE=`echo ${{ github.ref_name }} | awk 'BEGIN { FS="."; } { print ""$1"-"$2; }'`
-          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_ENV
-          echo "NAMESPACE=$NAMESPACE" >> $GITHUB_OUTPUT
-
   publish-production:
     name: "Publish (to production server)"
     uses: ./.github/workflows/connect-publish-manual.yaml
-    needs: [get-variables]
     with:
-      namespace: ${{ needs.get-variables.outputs.NAMESPACE }}
-      environment: "production"
+      namespace: "nhp"
     secrets: inherit
