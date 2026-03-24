@@ -7,7 +7,9 @@ const files = [
   "NAMESPACE",
   "app.R",
   fs.readdirSync("R", { recursive: true }).map(f => "R/" + f),
-  fs.readdirSync("inst", { recursive: true }).map(f => "inst/" + f)
+  fs.readdirSync("inst", { recursive: true }).map(f => "inst/" + f),
+  fs.readdirSync("supporting_data", { recursive: true }).map(f => "supporting_data/" + f)
+
 ]
   .flat()
   // keep files, ignore directories

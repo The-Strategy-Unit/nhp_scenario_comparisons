@@ -4972,6 +4972,24 @@
     },
     "R/ZZZ.R": {
       "checksum": "2f90c2d6b92a450dd5e8f60d57b08ce9"
+    },
+    "supporting_data/datasets.json": {
+      "checksum": "6616b05cabe78e7cc7a942f0a3372fac"
+    },
+    "supporting_data/golem-config.yml": {
+      "checksum": "37480dbb4cc7500cf629c313327afe7c"
+    },
+    "supporting_data/mitigators.json": {
+      "checksum": "d1ed62fbed6c0dc915b07f9a125418e7"
+    },
+    "supporting_data/README.md": {
+      "checksum": "107190f8620d168115fde735740bd5d4"
+    },
+    "supporting_data/scheme-lookup.csv": {
+      "checksum": "80b36a67486b4a0f8f8d53b8dc9c94ba"
+    },
+    "supporting_data/tx-lookup.json": {
+      "checksum": "b6877d38594c5aa5322aa29f5016f1a8"
     }
   },
   "users": null
