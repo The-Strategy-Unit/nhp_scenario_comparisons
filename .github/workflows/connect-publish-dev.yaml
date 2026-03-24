@@ -10,7 +10,6 @@ jobs:
     uses: ./.github/workflows/connect-publish-manual.yaml
     with:
       namespace: "dev"
-      inputs_data_version: "dev"
       environment: "production"
     secrets: inherit
         
