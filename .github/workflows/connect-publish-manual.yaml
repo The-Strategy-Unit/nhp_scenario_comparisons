@@ -12,9 +12,8 @@ on:
         type: string
 jobs:
   connect-publish:
-    name: "Connect Publish: ${{ inputs.namespace }} [${{ inputs.environment }}]"
+    name: "Connect Publish: ${{ inputs.namespace }}"
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@v6
 
