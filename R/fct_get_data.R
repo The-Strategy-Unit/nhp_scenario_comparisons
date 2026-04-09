@@ -319,3 +319,15 @@ trust_site_aggregation <- function(data, sites) {
       .groups = "drop"
     )
 }
+
+#' Add scenario column safely, handling NULL results
+#' @param data Data frame or NULL from get_model_run_distribution
+#' @param scenario_name Character. Name of the scenario to add
+#' @return Tibble with scenario column, or empty tibble if input is NULL
+#' @export
+add_scenario_safe <- function(data, scenario_name) {
+  if (is.null(data)) {
+    return(tibble::tibble(value = numeric(), variant = character(), scenario = scenario_name))
+  }
+  data |> dplyr::mutate(scenario = scenario_name)
+}
