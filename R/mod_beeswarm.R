@@ -67,19 +67,19 @@ mod_beeswarm_server <- function(id, processed){
         dplyr::filter(activity_type_name == input$filter1) |> 
         dplyr::pull(pod)
       
-      combined_dist <- dplyr::bind_rows(scenario_1 = get_model_run_distribution(df(),
-                                                                                pod = selected_pods,
-                                                                                measure = input$filter2,
-                                                                                site_codes = NULL) |> 
-                                          dplyr::mutate(scenario = scn1())
-                                        ,
-                                        scenario_2 = get_model_run_distribution(df2(),
-                                                                                pod = selected_pods,
-                                                                                measure = input$filter2,
-                                                                                site_codes = NULL) |> 
-                                          dplyr::mutate(scenario = scn2())
-                                        #, .id = "scenario"
+      result_1 <- get_model_run_distribution(df(), pod = selected_pods, measure = input$filter2, site_codes = NULL)
+      result_2 <- get_model_run_distribution(df2(), pod = selected_pods, measure = input$filter2, site_codes = NULL)
+      
+      # Require at least one result has data
+      shiny::req(!is.null(result_1) || !is.null(result_2))
+      
+      combined_dist <- dplyr::bind_rows(
+        add_scenario_safe(result_1, scn1()),
+        add_scenario_safe(result_2, scn2())
       )
+      
+      # Require combined_dist has rows
+      shiny::req(nrow(combined_dist) > 0)
       
       
       mod_model_results_distribution_beeswarm_plot_scenario(combined_dist,
