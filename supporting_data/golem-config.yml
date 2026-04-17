@@ -77,6 +77,11 @@ default:
           measures:
             - walk-in
             - ambulance
+        aae_type-05:
+          name: "Type 5 Department (SDEC)"
+          measures:
+            - walk-in
+            - ambulance
 
   measures:
     admissions: Admissions
