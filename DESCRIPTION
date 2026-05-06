@@ -39,6 +39,7 @@ Imports:
     snakecase,
     stats,
     stringr,
+    The-Strategy-Unit/nhp_reskit,
     tibble,
     tidyr,
     utils,
@@ -48,3 +49,5 @@ Imports:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Remotes:
+    The-Strategy-Unit/azkit
