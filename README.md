@@ -17,7 +17,7 @@ The app is built primarily with the R packages [{shiny}](https://shiny.posit.co/
 #### Install packages
 
 You must ensure you have installed the packages listed in the `DESCRIPTION`.
-These can be installed with `devtools::install_deps(dependencies = TRUE)`.
+These can be installed with `pak::local_install_deps()`.
 This repo doesn't use {renv}.
 
 #### Add environmental variables
