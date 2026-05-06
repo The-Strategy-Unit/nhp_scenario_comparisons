@@ -17,7 +17,7 @@ The app is built primarily with the R packages [{shiny}](https://shiny.posit.co/
 #### Install packages
 
 You must ensure you have installed the packages listed in the `DESCRIPTION`.
-These can be installed with `devtools::install_deps(dependencies = TRUE)`.
+These can be installed with `pak::local_install_deps()`.
 This repo doesn't use {renv}.
 
 #### Add environmental variables
@@ -31,11 +31,11 @@ If you're having authorisation issues (e.g. a 403 is being returned), try cleari
 
 #### Run the app
 
-Run the `app.R` script to run the app, assuming you've installed the packages and set up the environment variables.
+Run the `R/app.R` script to run the app, assuming you've installed the packages and set up the environment variables.
 
 ### Deploy
 
-Run the `deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
+Run the `dev/deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
 
 ### Data
 

@@ -14,38 +14,38 @@
 #'
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
-    container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-    blob_url = Sys.getenv("AZ_STORAGE_EP"),
-    allowed_datasets = get_user_allowed_datasets(NULL)
+  container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
+  blob_url = Sys.getenv("AZ_STORAGE_EP"),
+  allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
-  
   ds <- tibble::tibble(dataset = allowed_datasets)
-  
-  container <- get_container(container = container_results,
-                             endpoint = blob_url)
-  
+
+  container <- get_container(container = container_results, endpoint = blob_url)
+
   metadata_cache <- cachem::cache_disk(".cache")
-  get_metadata <- purrr::partial(AzureStor::get_storage_metadata, object = container)
+  get_metadata <- purrr::partial(
+    AzureStor::get_storage_metadata,
+    object = container
+  )
   metadata <- memoise::memoise(get_metadata, cache = metadata_cache)
-  
-  cat  ("loading result sets filenames\n")
+
+  cat("loading result sets filenames\n")
   files <- container |>
     AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
     dplyr::filter(!.data[["isdir"]]) |>
     dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> #remove dev runs
-    dplyr::mutate(version_number = 
-                    as.numeric(
-                      stringr::str_replace_all(name,
-                                               ".*prod/v([0-9]+\\.[0-9]+)/.*", "\\1")
-                    )
-    )|> 
-    dplyr::filter(version_number >= 3.1) |>  #keep models on v3.1 or later only
+    dplyr::mutate(
+      version_number = as.numeric(
+        stringr::str_replace_all(name, ".*prod/v([0-9]+\\.[0-9]+)/.*", "\\1")
+      )
+    ) |>
+    dplyr::filter(version_number >= 3.1) |> #keep models on v3.1 or later only
     purrr::pluck("name") |>
     purrr::set_names()
-  
+
   cat("getting metadata\n")
   files <- files |>
-    purrr::map(metadata, .progress="Initialising..") |>
+    purrr::map(metadata, .progress = "Initialising..") |>
     dplyr::bind_rows(.id = "file") |>
     # filter to available datasets for this user
     dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
@@ -53,14 +53,17 @@ get_nhp_result_sets <- function(
       dplyr::across("viewable", as.logical)
     )
   cat("returning result sets\n")
-  
+
   files
 }
 
 get_user_allowed_datasets <- function(groups) {
-  p <- jsonlite::read_json("supporting_data/datasets.json", simplifyVector = TRUE) |>
+  p <- jsonlite::read_json(
+    "supporting_data/datasets.json",
+    simplifyVector = TRUE
+  ) |>
     names()
-  
+
   if (!(is.null(groups) || any(c("nhp_devs", "nhp_power_users") %in% groups))) {
     a <- groups |>
       stringr::str_subset("^nhp_(national|icb|provider)_") |>
@@ -91,7 +94,7 @@ get_token <- function(resource) {
       NULL
     }
   )
-  
+
   if (is.null(token)) {
     # list tokens already locally stored
     local_tokens <- AzureAuth::list_azure_tokens()
@@ -102,7 +105,7 @@ get_token <- function(resource) {
       token <- if (!is.na(token_index)) local_tokens[[token_index]] else NULL
     }
   }
-  
+
   token
 }
 
@@ -128,13 +131,14 @@ get_token <- function(resource) {
 get_container <- function(endpoint, container) {
   token <- azkit::get_auth_token()
   if (is.null(token)) {
-    stop("No Azure token found. Please authenticate using AzureAuth::get_azure_token().")
+    stop(
+      "No Azure token found. Please authenticate using AzureAuth::get_azure_token()."
+    )
   }
-  
+
   AzureStor::blob_endpoint(endpoint, token = token) |>
     AzureStor::blob_container(container)
 }
-
 
 
 #' Unzip, Read and Parse an NHP Results File
@@ -157,14 +161,12 @@ get_container <- function(endpoint, container) {
 #' r <- container |> get_nhp_results(file)
 #' }
 get_nhp_results <- function(
-    container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-    blob_url = Sys.getenv("AZ_STORAGE_EP"),
-    file
+  container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
+  blob_url = Sys.getenv("AZ_STORAGE_EP"),
+  file
 ) {
-  
-  container <- get_container(container = container_results,
-                             endpoint = blob_url)
-  
+  container <- get_container(container = container_results, endpoint = blob_url)
+
   AzureStor::download_blob(container, file, NULL) |>
     memDecompress(type = "gzip") |>
     yyjsonr::read_json_raw(
@@ -172,12 +174,10 @@ get_nhp_results <- function(
         obj_of_arrs_to_df = FALSE
       )
     ) |>
-    parse_results()  # applies patch logic dependent on app_version in params
-  
+    parse_results() # applies patch logic dependent on app_version in params
 }
 
 get_baseline_and_projections <- function(r_trust) {
-  
   r_trust[["results"]][["default"]] |>
     dplyr::group_by(measure, pod, sitetret) |>
     dplyr::summarise(
@@ -186,7 +186,6 @@ get_baseline_and_projections <- function(r_trust) {
       lwr_ci = sum(lwr_ci),
       upr_ci = sum(upr_ci)
     )
-  
 }
 
 get_stepcounts <- function(r_trust) {
@@ -194,16 +193,14 @@ get_stepcounts <- function(r_trust) {
 }
 
 get_losgroup <- function(r_trust) {
-  
   los_group_is_null <- is.null(r_trust[["results"]][["los_group"]])
-  
+
   if (los_group_is_null) {
     # tretspef+los_group renamed from tretspef_raw+los_group in v4.0
     r_trust <- r_trust[["results"]][["tretspef+los_group"]]
   } else {
     r_trust <- r_trust[["results"]][["los_group"]]
   }
-  
+
   r_trust
-  
 }

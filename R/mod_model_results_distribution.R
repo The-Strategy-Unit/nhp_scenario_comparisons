@@ -1,5 +1,9 @@
 #This code originated from nhp_outputs
-mod_model_results_distribution_get_data <- function(r, selected_measure, site_codes) {
+mod_model_results_distribution_get_data <- function(
+  r,
+  selected_measure,
+  site_codes
+) {
   activity_type <- pod <- measure <- NULL
   zeallot::`%<-%`(c(activity_type, pod, measure), selected_measure)
   get_model_run_distribution(r, pod, measure, site_codes)
@@ -20,7 +24,9 @@ mod_model_results_distribution_beeswarm_plot <- function(data, show_origin) {
           x = x_placeholder,
           y = .data$value,
           colour = .data$variant,
-          text = glue::glue("Value: {scales::comma(value, accuracy = 1)}\nVariant: {variant}")
+          text = glue::glue(
+            "Value: {scales::comma(value, accuracy = 1)}\nVariant: {variant}"
+          )
         ),
         alpha = 0.5
       )
@@ -77,10 +83,10 @@ mod_model_results_distribution_ecdf_plot <- function(data, show_origin) {
 
   line_guides <- tibble::tibble(
     x_start = c(rep(min_x, 3), x_quantiles, p),
-    x_end   = rep(c(x_quantiles, p), 2),
+    x_end = rep(c(x_quantiles, p), 2),
     y_start = c(probs_pcnts, p_pcnt, rep(0, 3)),
-    y_end   = rep(c(probs_pcnts, p_pcnt), 2),
-    colour  = "cornflowerblue"
+    y_end = rep(c(probs_pcnts, p_pcnt), 2),
+    colour = "cornflowerblue"
   )
 
   lines_n <- nrow(line_guides)

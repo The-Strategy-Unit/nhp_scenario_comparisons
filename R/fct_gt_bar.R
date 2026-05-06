@@ -1,5 +1,10 @@
 #This code originated from nhp_outputs
-gt_bar <- function(value, display_value_format = NULL, negative_colour = "#ec6555", positive_colour = "#f9bf07") {
+gt_bar <- function(
+  value,
+  display_value_format = NULL,
+  negative_colour = "#ec6555",
+  positive_colour = "#f9bf07"
+) {
   # find the range of value
   r <- range(value, na.rm = TRUE)
   # rescale the values:
