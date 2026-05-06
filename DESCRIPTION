@@ -3,7 +3,8 @@ Title: Scenario result comparison app
 Version: 0.1.0
 Authors@R: c(
     person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
-    person("Ozayr", "Mohammed", , "ozayr.mohammed@nhs.net", role = "aut")
+    person("Zoë", "Turner", , "zoe.turner3@nhs.net", role = "aut"),
+    person("Ozayr", "Mohammed", , , role = "ctb"),
   )
 Description: A shiny app for comparing model results for different
     scenarios
