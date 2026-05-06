@@ -41,8 +41,6 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tidyselect,
-    tidyverse,
     utils,
     withr,
     yaml,
