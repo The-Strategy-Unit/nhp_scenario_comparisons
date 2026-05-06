@@ -1,7 +1,7 @@
 #This code originated from nhp_outputs
 info_params_table_expat_repat_adjustment <- function(
-    p,
-    type = c("expat", "repat_local", "repat_nonlocal")
+  p,
+  type = c("expat", "repat_local", "repat_nonlocal")
 ) {
   df <- local({
     x <- p[[type]]
@@ -32,20 +32,22 @@ info_params_table_expat_repat_adjustment <- function(
       tidyselect::everything()
     ) |>
     dplyr::rename_with(
-      \(.x) dplyr::case_when(
-        .x == "value1" ~ "Low",
-        .x == "value2" ~ "High",
-        TRUE ~ .x
-      )
+      \(.x) {
+        dplyr::case_when(
+          .x == "value1" ~ "Low",
+          .x == "value2" ~ "High",
+          TRUE ~ .x
+        )
+      }
     ) |>
     gt::gt("specialty_name", c("activity_type_name", "pod")) |>
     gt_theme()
 }
 
 info_params_fix_data <- function(
-    df,
-    specs_path = "supporting_data/tx-lookup.json",
-    mitigators_path = "supporting_data/mitigators.json"
+  df,
+  specs_path = "supporting_data/tx-lookup.json",
+  mitigators_path = "supporting_data/mitigators.json"
 ) {
   at <- get_activity_type_pod_measure_options() |>
     dplyr::distinct(
@@ -124,7 +126,7 @@ info_params_table_activity_avoidance <- function(p) {
     purrr::map_depth(2, "interval") |>
     purrr::map(tibble::enframe, "strategy") |>
     dplyr::bind_rows(.id = "activity_type") |>
-    tidyr::unnest_wider("value", names_sep = "") |>  # added names_sep otherwise error
+    tidyr::unnest_wider("value", names_sep = "") |> # added names_sep otherwise error
     dplyr::left_join(
       time_profiles,
       by = dplyr::join_by("activity_type", "strategy")
@@ -151,7 +153,7 @@ info_params_table_efficiencies <- function(p) {
     purrr::map_depth(2, "interval") |>
     purrr::map(tibble::enframe, "strategy") |>
     dplyr::bind_rows(.id = "activity_type") |>
-    tidyr::unnest_wider("value", names_sep = "") |>  # added names_sep otherwise error
+    tidyr::unnest_wider("value", names_sep = "") |> # added names_sep otherwise error
     dplyr::left_join(
       time_profiles,
       by = dplyr::join_by("activity_type", "strategy")

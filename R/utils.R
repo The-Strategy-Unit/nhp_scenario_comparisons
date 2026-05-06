@@ -8,11 +8,10 @@
 #' @export
 #' @examples \dontrun{construct_scheme_name("XYZ")}
 make_scheme_name <- function(
-    scheme_code,
-    lookup_path = "supporting_data/scheme-lookup.csv",
-    as_filestring = FALSE
+  scheme_code,
+  lookup_path = "supporting_data/scheme-lookup.csv",
+  as_filestring = FALSE
 ) {
-
   scheme_string <- readr::read_csv(lookup_path, show_col_types = FALSE) |>
     dplyr::filter(scheme == scheme_code) |>
     dplyr::mutate(
@@ -29,5 +28,4 @@ make_scheme_name <- function(
   }
 
   scheme_string
-
 }

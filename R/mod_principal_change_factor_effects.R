@@ -1,11 +1,9 @@
 #This code originated from nhp_outputs
 #function to create waterfall chart
 
-
 mod_principal_change_factor_effects_cf_plot <- function(data) {
-  
   #labels <- c("scenario_1" = scenario_1_name, "scenario_2" = scenario_2_name)
-  
+
   data |>
     dplyr::mutate(
       tooltip = ifelse(
@@ -39,23 +37,32 @@ mod_principal_change_factor_effects_cf_plot <- function(data) {
       labels = scales::comma
     ) +
     ggplot2::scale_y_discrete(labels = snakecase::to_title_case) +
-    ggplot2::labs(x = "", y = "") + 
-    ggplot2::theme(strip.text.y = ggtext::element_markdown(lineheight = 1.5),
-                   strip.clip = "off")+
+    ggplot2::labs(x = "", y = "") +
+    ggplot2::theme(
+      strip.text.y = ggtext::element_markdown(lineheight = 1.5),
+      strip.clip = "off"
+    ) +
     ggplot2::facet_grid(
       rows = dplyr::vars(scenario),
-      labeller = ggplot2::labeller(scenario = get_label_map(data, 
-                                                            id_col = scenario,
-                                                            wrap_length = 20)
+      labeller = ggplot2::labeller(
+        scenario = get_label_map(data, id_col = scenario, wrap_length = 20)
       )
     )
 }
 
-mod_principal_change_factor_effects_ind_plot <- function(data, change_factor, colour, title, x_axis_label) {
+mod_principal_change_factor_effects_ind_plot <- function(
+  data,
+  change_factor,
+  colour,
+  title,
+  x_axis_label
+) {
   data |>
     dplyr::filter(.data$change_factor == .env$change_factor) |>
     dplyr::mutate(
-      tooltip = glue::glue("{mitigator_name}: {scales::comma(value, accuracy = 1)}")
+      tooltip = glue::glue(
+        "{mitigator_name}: {scales::comma(value, accuracy = 1)}"
+      )
     ) |>
     require_rows() |>
     ggplot2::ggplot(
