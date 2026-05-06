@@ -2,7 +2,9 @@
 #'
 #' @param container_results Name of the blob_container/storage_container object
 #'     that stores results files.
-#'
+#' @param blob_url Name of the Azure Storeage EP
+#' @param allowed_datasets uses `get_allowed_datasets`
+#' function.
 #' @details Assumes you're connecting to the container that holds NHP results.
 #'
 #' @return A data.frame. As many rows as there are files in `container`. As many
@@ -112,11 +114,8 @@ get_token <- function(resource) {
 
 #' Connect to an Azure Container
 #'
-#' @param tenant Character. The tenant ID.
-#' @param app_id Character. The app ID.
-#' @param ep_uri Character. The endpoint URI.
-#' @param container_name Character. The container name. Use `Sys.getenv()` with
-#'     `"AZ_STORAGE_CONTAINER_RESULTS"` or `"AZ_STORAGE_CONTAINER_RESULTS"`.
+#' @param endpoint An Azure endpoint URL.
+#' @param container Name of the container as a string.
 #'
 #' @details All arguments default to environmental variables stored in your
 #'     .Renviron file. Note that you'll be routed automatically to the browser
@@ -146,6 +145,7 @@ get_container <- function(endpoint, container) {
 #' @param container_results Name of a blob_container/storage_container object
 #'     that stores results files.
 #' @param file Character. The path to a file in the named `container`.
+#' @param blob_url Name of Azure Storage EP
 #'
 #' @details Assumes you've connected to the container that holds NHP results.
 #'

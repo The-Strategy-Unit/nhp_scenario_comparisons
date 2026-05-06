@@ -2,12 +2,14 @@ Package: nhpscenarioanalysis
 Title: Scenario result comparison app
 Version: 0.1.0
 Authors@R: c(
-    person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
-    person("Zoë", "Turner", , "zoe.turner3@nhs.net", role = "aut"),
-    person("Ozayr", "Mohammed", , , role = "ctb"),
+    person("Gabriel", "Hobro", email = "gabriel.hobro@nhs.net", role = c("aut", "cre")),
+    person("Zoë", "Turner", email = "zoe.turner3@nhs.net", role = "aut"),
+    person("Ozayr", "Mohammed", role = "ctb")
   )
-Description: A shiny app for comparing model results for different
-    scenarios
+Description: A shiny app for comparing scenarios from the New Hospital Programme.
+    Scenarios are based on the NHP demand model.
+Depends:
+    R (>= 4.3.0)
 License: MIT + file LICENSE
 Imports: 
     azkit,
@@ -24,9 +26,6 @@ Imports:
     ggtext,
     glue,
     gt,
-    here,
-    htmltools,
-    jsonlite,
     lubridate,
     markdown,
     openssl,
@@ -40,15 +39,20 @@ Imports:
     snakecase,
     stats,
     stringr,
-    The-Strategy-Unit/nhp_reskit,
     tibble,
     tidyr,
     utils,
-    withr,
     yaml,
     zeallot
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Remotes:
     The-Strategy-Unit/azkit
+Suggests: 
+    cachem,
+    here,
+    memoise,
+    tidyselect,
+    withr,
+    yyjsonr

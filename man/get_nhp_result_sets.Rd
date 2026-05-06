@@ -6,12 +6,18 @@
 \usage{
 get_nhp_result_sets(
   container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-  blob_url = Sys.getenv("AZ_STORAGE_EP")
+  blob_url = Sys.getenv("AZ_STORAGE_EP"),
+  allowed_datasets = get_user_allowed_datasets(NULL)
 )
 }
 \arguments{
 \item{container_results}{Name of the blob_container/storage_container object
 that stores results files.}
+
+\item{blob_url}{Name of the Azure Storeage EP}
+
+\item{allowed_datasets}{uses \code{get_allowed_datasets}
+function.}
 }
 \value{
 A data.frame. As many rows as there are files in \code{container}. As many

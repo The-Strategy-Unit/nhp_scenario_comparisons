@@ -7,14 +7,9 @@
 get_container(endpoint, container)
 }
 \arguments{
-\item{tenant}{Character. The tenant ID.}
+\item{endpoint}{An Azure endpoint URL.}
 
-\item{app_id}{Character. The app ID.}
-
-\item{ep_uri}{Character. The endpoint URI.}
-
-\item{container_name}{Character. The container name. Use \code{Sys.getenv()} with
-\code{"AZ_STORAGE_CONTAINER_RESULTS"} or \code{"AZ_STORAGE_CONTAINER_RESULTS"}.}
+\item{container}{Name of the container as a string.}
 }
 \value{
 A blob_container/storage_container object.

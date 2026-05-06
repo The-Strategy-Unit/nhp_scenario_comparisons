@@ -14,6 +14,8 @@ get_nhp_results(
 \item{container_results}{Name of a blob_container/storage_container object
 that stores results files.}
 
+\item{blob_url}{Name of Azure Storage EP}
+
 \item{file}{Character. The path to a file in the named \code{container}.}
 }
 \value{
