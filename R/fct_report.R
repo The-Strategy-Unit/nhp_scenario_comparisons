@@ -5,11 +5,9 @@ tabulate_model_run_info <- function(p) {
   p_model_run <- purrr::keep(p, rlang::is_atomic)
 
   p_model_run[["start_year"]] <- scales::number(
-    p_model_run[["start_year"]] +
-      ((p_model_run[["start_year"]] + 1) %% 100) / 100,
+    p_model_run[["start_year"]] + ((p_model_run[["start_year"]] + 1) %% 100) / 100,
     0.01,
-    big.mark = "",
-    decimal.mark = "/"
+    big.mark = "", decimal.mark = "/"
   )
 
   p_model_run[["end_year"]] <- scales::number(
@@ -37,9 +35,10 @@ tabulate_model_run_info <- function(p) {
 #' @details Used by 'plot_individual_change_factors'.
 #' @noRd
 prep_individual_change_factors <- function(
-  principal_change_factors,
-  measure
+    principal_change_factors,
+    measure
 ) {
+
   principal_change_factors |>
     dplyr::filter(
       .data$measure == .env$measure,
@@ -52,6 +51,7 @@ prep_individual_change_factors <- function(
         \(.x) forcats::fct_reorder(.x, -.data$value)
       )
     )
+
 }
 
 #' Plot Individual Change Factors Data
@@ -63,10 +63,11 @@ prep_individual_change_factors <- function(
 #' @details Used by `plot_impact_and_individual_change`.
 #' @noRd
 plot_individual_change_factors <- function(
-  principal_change_factors,
-  measure,
-  change_factor
+    principal_change_factors,
+    measure,
+    change_factor
 ) {
+
   individual_change_factors <-
     prep_individual_change_factors(principal_change_factors, measure) |>
     dplyr::filter(change_factor == .env$change_factor)
@@ -78,6 +79,7 @@ plot_individual_change_factors <- function(
     snakecase::to_title_case(change_factor),
     snakecase::to_title_case(measure)
   )
+
 }
 
 #' Plot Activity Distribution Charts (Beeswarm and S-curve)
@@ -90,12 +92,13 @@ plot_individual_change_factors <- function(
 #' @param measure Character. A selected measure (e.g. 'beddays').
 #' @noRd
 plot_activity_distributions <- function(
-  data,
-  site_codes,
-  activity_type,
-  pod,
-  measure
+    data,
+    site_codes,
+    activity_type,
+    pod,
+    measure
 ) {
+
   # Convert activity type to abbreviated form and filter for the set of site
   # codes specific to this activity type
   activity_type_short <-
@@ -119,6 +122,7 @@ plot_activity_distributions <- function(
   )
 
   dplyr::lst(beeswarm_plot, ecdf_plot)
+
 }
 
 #' Prepare Principal Change Factors Data
@@ -133,12 +137,13 @@ plot_activity_distributions <- function(
 #' @details This data will be used in the waterfall chart.
 #' @noRd
 prep_principal_change_factors <- function(
-  data,
-  site_codes,
-  mitigators,
-  at,
-  pods
+    data,
+    site_codes,
+    mitigators,
+    at,
+    pods
 ) {
+
   # Filter for the set of site codes specific to this activity type
   site_codes <- site_codes[[at]]
 
@@ -146,9 +151,7 @@ prep_principal_change_factors <- function(
     get_principal_change_factors(at, site_codes)
 
   # if a site is selected then there are no rows for A&E
-  if (nrow(principal_change_factors_raw) == 0) {
-    stop("No data")
-  }
+  if (nrow(principal_change_factors_raw) == 0) stop("No data")
 
   principal_change_factors_raw |>
     dplyr::mutate(
@@ -177,4 +180,5 @@ prep_principal_change_factors <- function(
       wt = .data[["value"]],
       name = "value"
     )
+
 }
