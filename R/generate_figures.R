@@ -4,7 +4,7 @@ write_all_figures <- function(r_ndg1, r_ndg2, site_codes, fig_dir) {
   h <- 4
   h_dist <- 2.5 # distribution plots (beeswarm and s-curves)
 
-  # Expat/repat figures (unnumbered)
+  # Expat/repeat figures (unnumbered)
 
   possibly_info_params_table_expat_repat_adjustment <-
     purrr::possibly(info_params_table_expat_repat_adjustment)
