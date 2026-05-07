@@ -35,7 +35,7 @@ Run the `app.R` script to run the app, assuming you've installed the packages an
 
 ### Deploy
 
-Run the `deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
+Run the `dev/deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
 
 ### Data
 
