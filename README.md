@@ -35,7 +35,8 @@ Run the `app.R` script to run the app, assuming you've installed the packages an
 
 ### Deploy
 
-Run the `deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
+Run the `deploy.R` script to deploy to connect, ensuring the relevant `appId` is in the code to deploy to either dev or prod.
+The appID is available from the existing Posit Connect published app from the Settings menu > Info and is called `Content ID`
 
 ### Data
 
