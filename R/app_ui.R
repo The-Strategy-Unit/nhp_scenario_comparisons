@@ -2,15 +2,14 @@
 #'
 #' @param request Internal parameter for `{shiny}`.
 #' @noRd
-#' 
+#'
 #' @import shinyjs
 #' @import htmltools
 app_ui = function(request) {
-  
   bslib::page_sidebar(
     shinyjs::useShinyjs(),
     shinybusy::add_busy_spinner(position = "bottom-right"),
-    
+
     title = shiny::div(
       style = "display:flex; justify-content:space-between; align-items:center; width:100%;",
       shiny::h1("Scenario Comparison App"),
@@ -27,37 +26,57 @@ app_ui = function(request) {
       title = "Scenario selection",
       shiny::selectInput("selected_scheme", "Select scheme", choices = NULL),
       shiny::selectInput("scenario_1", "Select Scenario 1", choices = NULL),
-      shiny::selectInput("scenario_1_runtime", "Scenario 1 runtime", choices = NULL),
+      shiny::selectInput(
+        "scenario_1_runtime",
+        "Scenario 1 runtime",
+        choices = NULL
+      ),
       shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
-      shiny::selectInput("scenario_2_runtime", "Scenario 2 runtime", choices = NULL),
-      shiny::actionButton("render_plot",
-                          "Render Plots",
-                          disabled = TRUE)
+      shiny::selectInput(
+        "scenario_2_runtime",
+        "Scenario 2 runtime",
+        choices = NULL
+      ),
+      shiny::actionButton("render_plot", "Render Plots", disabled = TRUE)
     ),
     shiny::verbatimTextOutput("debug"),
     shiny::tabsetPanel(
-      shiny::tabPanel("Introduction",
-                      bslib::card(
-                        id = "intro",
-                        bslib::card_body(
-                          shiny::HTML(markdown::markdownToHTML("inst/app/intro_text.md",
-                                                               fragment.only = TRUE)
-                          )
-                        )
-                      )
+      shiny::tabPanel(
+        "Introduction",
+        bslib::card(
+          id = "intro",
+          bslib::card_body(
+            shiny::HTML(markdown::markdownToHTML(
+              "inst/app/intro_text.md",
+              fragment.only = TRUE
+            ))
+          )
+        )
       ),
       shiny::tabPanel(
         "Guidance",
         bslib::card(
           id = "card_guidance",
-          shiny::HTML(markdown::mark_html("inst/app/model-version-warning.md",
-                                          output = FALSE, template = FALSE)),
-          shiny::HTML(markdown::mark_html("inst/app/scenario-timespan-warning.md",
-                                          output = FALSE, template = FALSE)),
-          shiny::HTML(markdown::mark_html("inst/app/model-naming-reminder.md",
-                                          output = FALSE, template = FALSE)),
-          shiny::HTML(markdown::mark_html("inst/app/bed-days-note.md",
-                                          output = FALSE, template = FALSE)),
+          shiny::HTML(markdown::mark_html(
+            "inst/app/model-version-warning.md",
+            output = FALSE,
+            template = FALSE
+          )),
+          shiny::HTML(markdown::mark_html(
+            "inst/app/scenario-timespan-warning.md",
+            output = FALSE,
+            template = FALSE
+          )),
+          shiny::HTML(markdown::mark_html(
+            "inst/app/model-naming-reminder.md",
+            output = FALSE,
+            template = FALSE
+          )),
+          shiny::HTML(markdown::mark_html(
+            "inst/app/bed-days-note.md",
+            output = FALSE,
+            template = FALSE
+          )),
           tagList(
             h3("Scenarios metadata"),
             DT::dataTableOutput("metadata")
@@ -73,9 +92,18 @@ app_ui = function(request) {
             shiny::tabPanel("Summary", mod_summary_ui("summary1")),
             shiny::tabPanel("Length of Stay", mod_los_ui("los1")),
             shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall1")),
-            shiny::tabPanel("Activity Avoidance Impact", mod_activity_avoidance_impact_ui("activity_avoidance1")),
-            shiny::tabPanel("Efficiencies Impact", mod_efficiencies_impact_ui("efficiencies1")),
-            shiny::tabPanel("P10-P90 Intervals", mod_p10_p90_bar_ui("p10p90_bar1")),
+            shiny::tabPanel(
+              "Activity Avoidance Impact",
+              mod_activity_avoidance_impact_ui("activity_avoidance1")
+            ),
+            shiny::tabPanel(
+              "Efficiencies Impact",
+              mod_efficiencies_impact_ui("efficiencies1")
+            ),
+            shiny::tabPanel(
+              "P10-P90 Intervals",
+              mod_p10_p90_bar_ui("p10p90_bar1")
+            ),
             shiny::tabPanel("Beeswarm", mod_beeswarm_ui("beeswarm1")),
             shiny::tabPanel("S-curve", mod_ecdf_ui("ecdf1"))
           )
