@@ -41,7 +41,15 @@ Run the `deploy.R` script to deploy to connect, providing the relevant `appId` t
 
 #### Model runs
 
-All the model runs are stored within Azure. You will need an `account@mlcsu.nhs.uk` to access these and have been granted permission to access these. The .Renviron variables specify the exact credentials.
+All the model runs are stored within Azure. 
+You will need an `account@mlcsu.nhs.uk` to access these and have been granted permission to access these. 
+The `.Renviron` variables specify the exact credentials.
+
+Also ensure that you are logged into the `mlcsu` account as it may be that you are automatically logged into the `nhs.net`.
+To ensure this is logged in you can open the [Azure Portal](https://portal.azure.com/auth/login/) where the log in box will prompt for choosing which account to use.
+If only one account shows you should also be able to add Microsoft accounts.
+
+You will be required to confirm the account multiple times when first rendering the plots on the app as these relate to the data sources.
 
 #### Supporting_data
 
