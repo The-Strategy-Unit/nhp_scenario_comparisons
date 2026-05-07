@@ -42,7 +42,6 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    tidyverse,
     utils,
     withr,
     yaml,
