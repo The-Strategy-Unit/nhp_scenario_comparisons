@@ -49,7 +49,7 @@ All the model runs are stored within Azure. You will need an `account@mlcsu.nhs.
 - `datasets.json`
 - `golem-config.yml`
 - `mitigators.json`
-- `scheme-lookup.json`
+- `scheme-lookup.csv`
 
 
 
