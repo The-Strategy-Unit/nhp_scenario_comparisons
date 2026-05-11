@@ -1,81 +1,86 @@
 #This code originated from final_reports
 parse_results <- function(r) {
-  
   r$population_variants <- as.character(r$population_variants)
-  
+
   r$results <- purrr::map(
     r$results,
     tibble::as_tibble
   )
-  
+
   r$params <- patch_params(r$params)
-  
+
   # Various patches need to happen based on the model version (this logic is
   # required in the nhp_final_reports repo because we need to handle results
   # from all possible model versions, whereas the main branch of nhp_outputs
   # needs only to handle the latest model version).
   model_version <- r$params$app_version
   major_version <- extract_major_version(model_version)
-  
+
   # The tretspef elements of the results object were renamed in v4.0, along with
   # some column names. It's easiest to just rename these in the results object,
   # regardless of app_version, and perform all wrangling on the basis of the new
   # names.
-  if (major_version < 4) r <- rename_tretspef(r)
-  
+  if (major_version < 4) {
+    r <- rename_tretspef(r)
+  }
+
   # If model version is after v1.2 then results should be fully patched
-  if (major_version >= 2) r <- patch_results(r)
-  
+  if (major_version >= 2) {
+    r <- patch_results(r)
+  }
+
   # If model version is v1.2, then we only need to patch the tretspef and
   # tretspef+los_group.
-  if (model_version == "v1.2") r$results <- patch_tretspef(r$results, "v1.2")
-  
+  if (model_version == "v1.2") {
+    r$results <- patch_tretspef(r$results, "v1.2")
+  }
+
   r
 }
 
- # patch params 
+# patch params
 patch_params <- function(r) {
   if (is.list(r)) {
     return(purrr::map(r, patch_params))
   }
-  
+
   if (is.numeric(r) && length(r) == 2) {
     return(as.list(r))
   }
-  
+
   r
 }
 
 rename_tretspef <- function(r) {
-  
   # Model v4.0 introduced renamed tretspef-related list-element and column names
   # to the results. Rename them.
   results <- r[["results"]]
-  
+
   # Rename relevant list-elements
-  names(results)[names(results) == "tretspef_raw+los_group"] <- "tretspef+los_group"
+  names(results)[
+    names(results) == "tretspef_raw+los_group"
+  ] <- "tretspef+los_group"
   names(results)[names(results) == "sex+tretspef"] <- "sex+tretspef_grouped"
   names(results)[names(results) == "tretspef_raw"] <- "tretspef"
-  
+
   # Rename columns within renamed list elements (conditionally, because
   # tretspef_raw+los_group didn't exist in some earlier versions).
-  
+
   has_tretspef_los <- !is.null(results[["tretspef+los_group"]])
   if (has_tretspef_los) {
     results[["tretspef+los_group"]] <- results[["tretspef+los_group"]] |>
       dplyr::rename("tretspef" = "tretspef_raw")
   }
-  
+
   results[["sex+tretspef_grouped"]] <- results[["sex+tretspef_grouped"]] |>
     dplyr::rename("tretspef_grouped" = "tretspef")
-  
+
   results[["tretspef"]] <- results[["tretspef"]] |>
     dplyr::rename("tretspef" = "tretspef_raw")
-  
+
   # Overwrite results with new tretspef names
   r[["results"]] <- results
   r
-  
 }
 
 patch_results <- function(r) {
@@ -86,10 +91,9 @@ patch_results <- function(r) {
 }
 
 patch_tretspef <- function(results, model_version) {
-  
   # Assumes tretspef elements have been renamed given changes made in model
   # v4.0, i.e. rename_tretspef() has been applied to incoming results.
-  
+
   results[["tretspef"]] <- dplyr::bind_rows(
     results[["tretspef"]],
     results[["tretspef+los_group"]] |>
@@ -100,12 +104,12 @@ patch_tretspef <- function(results, model_version) {
           sum
         ),
         dplyr::across(
-          tidyselect::any_of("time_profiles"),  # ignored if non-existent
+          tidyselect::any_of("time_profiles"), # ignored if non-existent
           \(.x) list(purrr::reduce(.x, `+`))
         )
       )
   )
-  
+
   # More granular LoS groups were introduced with model version v3.0
   los_groups <- c(
     "0 days",
@@ -117,12 +121,12 @@ patch_tretspef <- function(results, model_version) {
     "15-21 days",
     "22+ days"
   )
-  
+
   # Use less granular groupings for scenarios prior to  model v3.0
   if (extract_major_version(model_version) < 3) {
     los_groups <- c("0-day", "1-7 days", "8-14 days", "15-21 days", "22+ days")
   }
-  
+
   results[["tretspef+los_group"]] <- results[["tretspef+los_group"]] |>
     dplyr::mutate(
       dplyr::across(
@@ -131,16 +135,15 @@ patch_tretspef <- function(results, model_version) {
       )
     ) |>
     dplyr::arrange(.data$pod, .data$measure, .data$sitetret, .data$los_group)
-  
+
   results
-  
 }
 
 patch_principal <- function(results, name) {
   if (name == "step_counts") {
     return(patch_principal_step_counts(results))
   }
-  
+
   dplyr::mutate(
     results,
     principal = purrr::map_dbl(.data[["model_runs"]], mean),
@@ -169,12 +172,11 @@ patch_step_counts <- function(results) {
 }
 
 extract_major_version <- function(version_string) {
-  
   is_correct_format <- stringr::str_detect(
     version_string,
-    "^v\\d{1,}\\.\\d{1,}$"  # e.g. 'v3.6'
+    "^v\\d{1,}\\.\\d{1,}$" # e.g. 'v3.6'
   )
-  
+
   if (!is_correct_format) {
     stop(
       glue::glue(
@@ -182,21 +184,25 @@ extract_major_version <- function(version_string) {
       )
     )
   }
-  
+
   version_string |>
     stringr::str_remove("v") |>
     as.numeric() |>
     floor()
-  
 }
 
 get_principal_high_level <- function(r, measures, sites) {
   r$results$default |>
     dplyr::filter(.data$measure %in% measures) |>
     dplyr::select("pod", "sitetret", "baseline", "principal") |>
-    dplyr::mutate(dplyr::across("pod", ~ ifelse(
-      stringr::str_starts(.x, "aae"), "aae", .x
-    ))) |>
+    dplyr::mutate(dplyr::across(
+      "pod",
+      ~ ifelse(
+        stringr::str_starts(.x, "aae"),
+        "aae",
+        .x
+      )
+    )) |>
     dplyr::group_by(.data$pod, .data$sitetret) |>
     dplyr::summarise(dplyr::across(where(is.numeric), sum), .groups = "drop") |>
     trust_site_aggregation(sites)
@@ -215,11 +221,11 @@ get_model_run_distribution <- function(r, pod, measure, site_codes) {
       .data$measure %in% .env$measure
     ) |>
     dplyr::select("sitetret", "baseline", "principal", "model_runs")
-  
+
   if (nrow(filtered_results) == 0) {
     return(NULL)
   }
-  
+
   filtered_results |>
     dplyr::mutate(
       dplyr::across(
@@ -234,26 +240,22 @@ get_model_run_distribution <- function(r, pod, measure, site_codes) {
 
 get_aggregation <- function(r, pod, measure, agg_col, sites) {
   agg_type <- agg_col
-  
-  
+
   if (agg_col != "tretspef") {
     agg_type <- glue::glue("sex+{agg_col}")
   }
-  
-  
+
   filtered_results <- r$results[[agg_type]] |>
     dplyr::filter(
       .data$pod %in% .env$pod,
       .data$measure == .env$measure
     ) |>
     dplyr::select(-"pod", -"measure")
-  
-  
+
   if (nrow(filtered_results) == 0) {
     return(NULL)
   }
-  
-  
+
   filtered_results |>
     dplyr::mutate(
       dplyr::across(dplyr::matches("sex|tretspef"), as.character)
@@ -264,11 +266,13 @@ get_principal_change_factors <- function(r, activity_type, sites) {
   stopifnot(
     "Invalid activity_type" = activity_type %in% c("aae", "ip", "op")
   )
-  
+
   r$results$step_counts |>
     dplyr::filter(.data$activity_type == .env$activity_type) |>
     dplyr::select(-where(is.list)) |>
-    dplyr::mutate(dplyr::across("strategy", \(.x) tidyr::replace_na(.x, "-"))) |>
+    dplyr::mutate(dplyr::across("strategy", \(.x) {
+      tidyr::replace_na(.x, "-")
+    })) |>
     trust_site_aggregation(sites)
 }
 
@@ -302,7 +306,7 @@ trust_site_aggregation <- function(data, sites) {
   } else {
     dplyr::filter(data, .data$sitetret %in% sites)
   }
-  
+
   data_filtered |>
     dplyr::group_by(
       dplyr::across(
@@ -327,7 +331,11 @@ trust_site_aggregation <- function(data, sites) {
 #' @export
 add_scenario_safe <- function(data, scenario_name) {
   if (is.null(data)) {
-    return(tibble::tibble(value = numeric(), variant = character(), scenario = scenario_name))
+    return(tibble::tibble(
+      value = numeric(),
+      variant = character(),
+      scenario = scenario_name
+    ))
   }
   data |> dplyr::mutate(scenario = scenario_name)
 }

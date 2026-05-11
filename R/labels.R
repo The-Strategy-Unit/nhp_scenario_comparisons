@@ -1,5 +1,5 @@
 # Function to ensure plot titles use the full English labels where we are filtering on a field
-get_label <- function(value, aliases) {  
+get_label <- function(value, aliases) {
   names(aliases)[match(value, aliases)]
 }
 
