@@ -3,7 +3,9 @@ mod_principal_detailed_table <- function(data, aggregation, final_year) {
   data |>
     dplyr::mutate(
       dplyr::across("sex", \(.x) ifelse(.x == 1, "Male", "Female")),
-      dplyr::across("final", \(.x) gt_bar(.x, scales::comma_format(1), "#686f73", "#686f73")),
+      dplyr::across("final", \(.x) {
+        gt_bar(.x, scales::comma_format(1), "#686f73", "#686f73")
+      }),
       dplyr::across("change", \(.x) gt_bar(.x, scales::comma_format(1))),
       dplyr::across("change_pcnt", \(.x) gt_bar(.x, scales::percent_format(1)))
     ) |>
@@ -32,5 +34,3 @@ mod_principal_detailed_table <- function(data, aggregation, final_year) {
     ) |>
     gt_theme()
 }
-
-
