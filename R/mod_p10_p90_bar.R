@@ -38,12 +38,18 @@ mod_p10_p90_bar_server <- function(id, processed) {
     })
 
     observeEvent(input$category, {
-      req(input$category)
+      req(input$category, df())
+
+      # All possible PODs for this category
+      all_choices <- pod_categories[[input$category]]
+
+      # Only keep PODs that actually appear in the data
+      available <- all_choices[all_choices %in% unique(df()$pod)]
 
       updateSelectInput(
         session,
         "filter1",
-        choices = pod_categories[[input$category]]
+        choices = available
       )
     })
 
