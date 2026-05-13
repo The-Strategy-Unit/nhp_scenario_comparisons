@@ -125,8 +125,14 @@ app_server = function(input, output, session) {
       dplyr::select(start_year, end_year, app_version)
 
     comparable_scenarios <- selections$scheme_scenarios |>
-      dplyr::inner_join(criteria) |>
-      dplyr::anti_join(selections$main_scenario) |>
+      dplyr::inner_join(
+        criteria,
+        by = dplyr::join_by(start_year, end_year, app_version)
+      ) |>
+      dplyr::anti_join(
+        selections$main_scenario,
+        by = dplyr::join_by(start_year, end_year, app_version)
+      ) |>
       dplyr::pull(scenario) |>
       unique()
 
