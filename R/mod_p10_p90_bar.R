@@ -24,11 +24,32 @@ mod_p10_p90_bar_server <- function(id, processed) {
         shiny::tags$div(
           style = "display: flex; gap: 15px;",
           shiny::selectInput(
+            ns("category"),
+            "Activity Type",
+            choices = names(pod_categories)
+          ),
+          shiny::selectInput(
             ns("filter1"),
             "Point of Delivery",
-            choices = pod_pretty_names[pod_pretty_names %in% unique(df()$pod)]
+            choices = NULL # will be filled dynamically
           )
         )
+      )
+    })
+
+    observeEvent(input$category, {
+      req(input$category, df())
+
+      # All possible PODs for this category
+      all_choices <- pod_categories[[input$category]]
+
+      # Only keep PODs that actually appear in the data
+      available <- all_choices[all_choices %in% unique(df()$pod)]
+
+      updateSelectInput(
+        session,
+        "filter1",
+        choices = available
       )
     })
 
@@ -40,7 +61,7 @@ mod_p10_p90_bar_server <- function(id, processed) {
           df(),
           input$filter1,
           glue::glue(
-            "{get_label(input$filter1, pod_pretty_names)}",
+            "{get_label(input$filter1, unlist(pod_categories))}",
             "- Principal projection (with p10 and p90 indicator)",
             .sep = " "
           )
