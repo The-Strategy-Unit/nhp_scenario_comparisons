@@ -234,7 +234,7 @@ get_model_run_distribution <- function(r, pod, measure, site_codes) {
       )
     ) |>
     tidyr::unnest("model_runs") |>
-    dplyr::inner_join(get_variants(r), by = "model_run") |>
+    dplyr::inner_join(get_variants(r), by = dplyr::join_by("model_run")) |>
     trust_site_aggregation(site_codes)
 }
 
@@ -297,7 +297,7 @@ get_bed_occupancy <- function(r) {
       )
     ) |>
     tidyr::unnest("model_runs") |>
-    dplyr::inner_join(get_variants(r), by = "model_run")
+    dplyr::inner_join(get_variants(r), by = dplyr::join_by("model_run"))
 }
 
 trust_site_aggregation <- function(data, sites) {
