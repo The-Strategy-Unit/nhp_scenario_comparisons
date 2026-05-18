@@ -25,7 +25,7 @@ mod_p10_p90_bar_server <- function(id, processed) {
           style = "display: flex; gap: 15px;",
           shiny::selectInput(
             ns("category"),
-            "Point of Delivery Category",
+            "Activity Type",
             choices = names(pod_categories)
           ),
           shiny::selectInput(
