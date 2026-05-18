@@ -6,6 +6,11 @@ mod_beeswarm_ui <- function(id) {
     shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
     shiny::includeMarkdown("inst/app/beeswarm-note.md"),
     shiny::uiOutput(ns("filters_ui")),
+    shiny::checkboxInput(
+      ns("show_origin"),
+      "Show Origin (zero)?",
+      value = TRUE
+    ),
     shiny::plotOutput(ns("plot"))
   )
 }
@@ -99,7 +104,7 @@ mod_beeswarm_server <- function(id, processed) {
           combined_dist,
           scenario_1_name = scn1(),
           scenario_2_name = scn2(),
-          FALSE
+          show_origin = input$show_origin
         ) +
           ggplot2::labs(
             y = get_label(input$filter2, measure_pretty_names),
