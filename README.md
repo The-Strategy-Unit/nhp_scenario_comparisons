@@ -17,7 +17,7 @@ The app is built primarily with the R packages [{shiny}](https://shiny.posit.co/
 #### Install packages
 
 You must ensure you have installed the packages listed in the `DESCRIPTION`.
-These can be installed with `devtools::install_deps(dependencies = TRUE)`.
+These can be installed with `pak::local_install_deps(dependencies = TRUE)`.
 This repo doesn't use {renv}.
 
 #### Add environmental variables
@@ -35,13 +35,22 @@ Run the `app.R` script to run the app, assuming you've installed the packages an
 
 ### Deploy
 
-Run the `deploy.R` script to deploy to connect, providing the relevant `appId` to deploy to either dev or prod.
+Run the `dev/deploy.R` script to deploy to connect, ensuring the relevant `appId` is in the code to deploy to either dev or prod.
+The appID is available from the existing Posit Connect published app from the Settings menu > Info and is called `Content ID`
 
 ### Data
 
 #### Model runs
 
-All the model runs are stored within Azure. You will need an `account@mlcsu.nhs.uk` to access these and have been granted permission to access these. The .Renviron variables specify the exact credentials.
+All the model runs are stored within Azure. 
+You will need an `account@mlcsu.nhs.uk` to access these and have been granted permission to access these. 
+The `.Renviron` variables specify the exact credentials.
+
+Also ensure that you are logged into the `mlcsu` account as it may be that you are automatically logged into the `nhs.net`.
+To ensure this is logged in you can open the [Azure Portal](https://portal.azure.com/auth/login/) where the log in box will prompt for choosing which account to use.
+If only one account shows you should also be able to add Microsoft accounts.
+
+You will be required to confirm the account multiple times when first rendering the plots on the app as these relate to the data sources.
 
 #### Supporting_data
 
@@ -49,8 +58,4 @@ All the model runs are stored within Azure. You will need an `account@mlcsu.nhs.
 - `datasets.json`
 - `golem-config.yml`
 - `mitigators.json`
-- `scheme-lookup.json`
-
-
-
-
+- `scheme-lookup.csv`
