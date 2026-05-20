@@ -59,7 +59,3 @@ You will be required to confirm the account multiple times when first rendering 
 - `golem-config.yml`
 - `mitigators.json`
 - `scheme-lookup.csv`
-
-
-
-
