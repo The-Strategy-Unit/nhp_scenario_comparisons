@@ -2,10 +2,10 @@
 on:
   push:
     branches:
-      - 308-air-gha
+      - main
   pull_request:
     branches:
-      - 308-air-gha
+      - main
   workflow_dispatch:
 
 name: format-suggest.yaml
