@@ -10,9 +10,7 @@ mod_beeswarm_ui <- function(id) {
   )
 }
 
-mod_beeswarm_server <- function(id, processed) {
-  shiny::moduleServer(id, function(input, output, session) {
-    ns <- session$ns
+mod_beeswarm_server <- function(id, processed) {shiny::moduleServer(id, function(input, output, session) {ns <- session$ns
 
     #will result_1 and result_2 always have the same activity_type and measures
     #available? or will using result_1 to make the filters leave out some
