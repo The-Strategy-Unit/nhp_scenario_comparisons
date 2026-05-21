@@ -6,6 +6,11 @@ mod_ecdf_ui <- function(id) {
     shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
     shiny::includeMarkdown("inst/app/s-curve-note.md"),
     shiny::uiOutput(ns("filters_ui")),
+    shiny::checkboxInput(
+      ns("show_origin"),
+      "Show Origin (zero)?",
+      value = TRUE
+    ),
     shiny::plotOutput(ns("plot"))
   )
 }
@@ -94,7 +99,7 @@ mod_ecdf_server <- function(id, processed) {
 
         mod_model_results_distribution_ecdf_plot_scenario(
           combined_dist,
-          FALSE
+          show_origin = input$show_origin
         ) +
           ggplot2::ggtitle(glue::glue(
             input$filter1,

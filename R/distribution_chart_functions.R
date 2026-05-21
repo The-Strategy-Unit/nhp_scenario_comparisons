@@ -92,7 +92,7 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
 
   x_placeholder <- "100%" # dummy label to help line up beeswarm and ECDF plots
 
-  data |>
+  g <- data |>
     require_rows() |>
     ggplot2::ggplot() +
     suppressWarnings(
@@ -115,7 +115,13 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
       labels = get_label_map(data, id_col = scenario)
       #values = c(scenario_1_name = "red", scenario_2_name = "blue"),
       #labels = c(scenario_1_name, scenario_2_name)
-    ) +
+    )
+
+  if (show_origin) {
+    g <- g + ggplot2::geom_hline(yintercept = b, colour = "dimgrey")
+  }
+
+  g <- g +
     ggplot2::geom_hline(yintercept = b, colour = "dimgrey") +
     # two lines instead of 1 below for the separate principal projections
     #ggplot2::geom_hline(yintercept = p1, linetype = "dashed", colour = "red") +
@@ -154,6 +160,8 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
       rows = dplyr::vars(scenario) #,
       #labeller = ggplot2::labeller(scenario = labels)
     )
+
+  g
 }
 
 
@@ -281,7 +289,9 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
       y = "Percentage of model runs",
       title = "S-curve (empirical cumulative distribution function)"
     ) +
-    ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
+    ggplot2::expand_limits(
+      x = ifelse(show_origin, 0, percentiles$baseline[[1]])
+    ) +
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(10),
       labels = scales::comma,
