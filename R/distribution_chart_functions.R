@@ -289,7 +289,9 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
       y = "Percentage of model runs",
       title = "S-curve (empirical cumulative distribution function)"
     ) +
-    ggplot2::expand_limits(x = ifelse(FALSE, 0, percentiles$baseline[[1]])) +
+    ggplot2::expand_limits(
+      x = ifelse(show_origin, 0, percentiles$baseline[[1]])
+    ) +
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(10),
       labels = scales::comma,
