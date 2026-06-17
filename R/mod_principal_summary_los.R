@@ -28,7 +28,7 @@ mod_principal_summary_los_data <- function(r, sites, measure) {
   summary_los <- los_data |>
     dplyr::filter(.data$measure == .env$measure) |>
     trust_site_aggregation(sites) |>
-    dplyr::inner_join(pods, by = "pod") |>
+    dplyr::inner_join(pods, by = dplyr::join_by("pod")) |>
     dplyr::mutate(
       change = .data$principal - .data$baseline,
       change_pcnt = .data$change / .data$baseline
