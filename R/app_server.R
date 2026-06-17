@@ -125,13 +125,16 @@ app_server = function(input, output, session) {
       dplyr::select(start_year, end_year, app_version)
 
     comparable_scenarios <- selections$scheme_scenarios |>
+      # Inner join to get the list of comparable
       dplyr::inner_join(
         criteria,
         by = dplyr::join_by(start_year, end_year, app_version)
       ) |>
+      # Drop the the one we are comparing to (to avoid comparing the scenario
+      # to itself)
       dplyr::anti_join(
         selections$main_scenario,
-        by = dplyr::join_by(start_year, end_year, app_version)
+        by = dplyr::join_by(scenario, create_datetime)
       ) |>
       dplyr::pull(scenario) |>
       unique()
@@ -166,8 +169,17 @@ app_server = function(input, output, session) {
 
     comparable_runtimes <- selections$scheme_scenarios |>
       dplyr::filter(scenario == input$scenario_2) |>
-      dplyr::inner_join(criteria) |>
-      dplyr::anti_join(selections$main_scenario) |>
+      # Inner join to get the list of comparable
+      dplyr::inner_join(
+        criteria,
+        by = dplyr::join_by(start_year, end_year, app_version)
+      ) |>
+      # Drop the the one we are comparing to (to avoid comparing the scenario
+      # to itself)
+      dplyr::anti_join(
+        selections$main_scenario,
+        by = dplyr::join_by(scenario, create_datetime)
+      ) |>
       dplyr::pull(create_datetime)
 
     # Only set explicit selected if the current value is valid
