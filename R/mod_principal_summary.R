@@ -10,7 +10,7 @@ mod_principal_summary_data <- function(r, sites) {
     dplyr::inner_join(pods, by = "pod")
 
   tele_attendances <- get_principal_high_level(r, "tele_attendances", sites) |>
-    dplyr::inner_join(pods, by = join_by("pod")) |>
+    dplyr::inner_join(pods, by = dplyr::join_by("pod")) |>
     dplyr::filter(.data$pod_name != "Outpatient Procedure") |>
     dplyr::mutate(
       "pod_name" = stringr::str_replace(
