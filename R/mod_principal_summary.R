@@ -7,7 +7,7 @@ mod_principal_summary_data <- function(r, sites) {
     c("admissions", "attendances", "walk-in", "ambulance"),
     sites
   ) |>
-    dplyr::inner_join(pods, by = "pod")
+    dplyr::inner_join(pods, by = dplyr::join_by("pod"))
 
   tele_attendances <- get_principal_high_level(r, "tele_attendances", sites) |>
     dplyr::inner_join(pods, by = dplyr::join_by("pod")) |>
@@ -21,7 +21,7 @@ mod_principal_summary_data <- function(r, sites) {
     )
 
   bed_days <- get_principal_high_level(r, "beddays", sites) |>
-    dplyr::inner_join(pods, by = join_by("pod")) |>
+    dplyr::inner_join(pods, by = dplyr::join_by("pod")) |>
     dplyr::mutate(
       "pod_name" = stringr::str_replace(.data$pod_name, "Admission", "Bed Days")
     )
