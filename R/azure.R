@@ -20,7 +20,6 @@ get_nhp_result_sets <- function(
   allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
   ds <- tibble::tibble(dataset = allowed_datasets)
-  
   azkit::read_azure_table(
     table_name = runs_table_name,
     table_endpoint = table_ep,
