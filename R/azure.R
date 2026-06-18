@@ -29,9 +29,9 @@ get_nhp_result_sets <- function(
     dplyr::filter(app_version >= "v3.1") |>
     # filter to available datasets for this user
     dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
-      dplyr::mutate(
-        dplyr::across("viewable", as.logical)
-      )
+    dplyr::mutate(
+      dplyr::across("viewable", as.logical)
+    )
 }
 
 get_user_allowed_datasets <- function(groups) {
