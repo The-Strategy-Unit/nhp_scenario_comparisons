@@ -14,10 +14,10 @@
 #'
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
-    auth_token = azkit::get_auth_token(),
-    table_ep = Sys.getenv("AZ_TABLE_EP"),
-    runs_table_name = Sys.getenv("AZ_TABLE_NAME"),
-    allowed_datasets = get_user_allowed_datasets(NULL)
+  auth_token = azkit::get_auth_token(),
+  table_ep = Sys.getenv("AZ_TABLE_EP"),
+  runs_table_name = Sys.getenv("AZ_TABLE_NAME"),
+  allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
   ds <- tibble::tibble(dataset = allowed_datasets)
   
