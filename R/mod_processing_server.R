@@ -36,14 +36,14 @@ mod_processing_server <- function(
             scenario == selected$scenario_1,
             create_datetime == selected$scenario_1_runtime
           ) |>
-          dplyr::pull(file)
+          dplyr::pull(results_json_gz_path)
 
         scenario_2_file <- nhp_model_runs |>
           dplyr::filter(
             scenario == selected$scenario_2,
             create_datetime == selected$scenario_2_runtime
           ) |>
-          dplyr::pull(file)
+          dplyr::pull(results_json_gz_path)
 
         shiny::incProgress(0.1)
 

@@ -14,47 +14,23 @@
 #'
 #' @examples \dontrun{get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
-  container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-  blob_url = Sys.getenv("AZ_STORAGE_EP"),
+  auth_token = azkit::get_auth_token(),
+  table_ep = Sys.getenv("AZ_TABLE_EP"),
+  runs_table_name = Sys.getenv("AZ_TABLE_NAME"),
   allowed_datasets = get_user_allowed_datasets(NULL)
 ) {
   ds <- tibble::tibble(dataset = allowed_datasets)
-
-  container <- get_container(container = container_results, endpoint = blob_url)
-
-  metadata_cache <- cachem::cache_disk(".cache")
-  get_metadata <- purrr::partial(
-    AzureStor::get_storage_metadata,
-    object = container
-  )
-  metadata <- memoise::memoise(get_metadata, cache = metadata_cache)
-
-  cat("loading result sets filenames\n")
-  files <- container |>
-    AzureStor::list_blobs("prod", info = "all", recursive = TRUE) |>
-    dplyr::filter(!.data[["isdir"]]) |>
-    dplyr::filter(!stringr::str_detect(name, "prod/dev")) |> #remove dev runs
-    dplyr::mutate(
-      version_number = as.numeric(
-        stringr::str_replace_all(name, ".*prod/v([0-9]+\\.[0-9]+)/.*", "\\1")
-      )
-    ) |>
-    dplyr::filter(version_number >= 3.1) |> #keep models on v3.1 or later only
-    purrr::pluck("name") |>
-    purrr::set_names()
-
-  cat("getting metadata\n")
-  files <- files |>
-    purrr::map(metadata, .progress = "Initialising..") |>
-    dplyr::bind_rows(.id = "file") |>
+  azkit::read_azure_table(
+    table_name = runs_table_name,
+    table_endpoint = table_ep,
+    token = auth_token,
+    filter = "aggregated_results_path ne ''"
+  ) |>
     # filter to available datasets for this user
     dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
     dplyr::mutate(
       dplyr::across("viewable", as.logical)
     )
-  cat("returning result sets\n")
-
-  files
 }
 
 get_user_allowed_datasets <- function(groups) {
