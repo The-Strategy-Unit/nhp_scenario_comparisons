@@ -24,9 +24,8 @@ get_nhp_result_sets <- function(
     table_name = runs_table_name,
     table_endpoint = table_ep,
     token = auth_token,
-    select = NULL
+    filter = "aggregated_results_path ne ''"
   ) |>
-    dplyr::filter(app_version >= "v3.1") |>
     # filter to available datasets for this user
     dplyr::semi_join(ds, by = dplyr::join_by("dataset")) |>
     dplyr::mutate(
