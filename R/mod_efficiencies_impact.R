@@ -58,7 +58,6 @@ mod_efficiencies_impact_server <- function(id, processed) {
           shiny::need(!is.null(df()), message = "No data available"),
           shiny::need(nrow(df()) > 0, message = "No data available")
         )
-        
         # Add validation for filtered data
         filtered_data <- df() |>
           dplyr::filter(
