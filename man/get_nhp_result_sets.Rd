@@ -5,8 +5,10 @@
 \title{List All NHP Results Data Files and their Metadata}
 \usage{
 get_nhp_result_sets(
-  container_results = Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS"),
-  blob_url = Sys.getenv("AZ_STORAGE_EP")
+  auth_token = azkit::get_auth_token(),
+  table_ep = Sys.getenv("AZ_TABLE_EP"),
+  runs_table_name = Sys.getenv("AZ_TABLE_NAME"),
+  allowed_datasets = get_user_allowed_datasets(NULL)
 )
 }
 \arguments{

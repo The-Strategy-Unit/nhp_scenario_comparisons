@@ -61,31 +61,6 @@ filter_result_sets <- function(result_sets, ds, sc, cd) {
     require_rows()
 }
 
-get_token <- function(resource) {
-  token <- tryCatch(
-    {
-      AzureAuth::get_managed_token(resource = resource)
-    },
-    error = function(e) {
-      NULL
-    }
-  )
-
-  if (is.null(token)) {
-    # list tokens already locally stored
-    local_tokens <- AzureAuth::list_azure_tokens()
-    if (length(local_tokens) > 0) {
-      resources <- purrr::map(local_tokens, "resource")
-      # if there are token(s) matching the `resource` argument then return one
-      token_index <- match(resource, resources)[1]
-      token <- if (!is.na(token_index)) local_tokens[[token_index]] else NULL
-    }
-  }
-
-  token
-}
-
-
 #' Connect to an Azure Container
 #'
 #' @param tenant Character. The tenant ID.
