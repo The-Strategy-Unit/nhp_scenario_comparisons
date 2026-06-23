@@ -65,7 +65,6 @@ mod_efficiencies_impact_server <- function(id, processed) {
             activity_type == input$filter1,
             measure == input$filter2
           )
-        
         shiny::validate(
           shiny::need(nrow(filtered_data) > 0, message = "No efficiency TPMAs impact this activity type and measure")
         )
