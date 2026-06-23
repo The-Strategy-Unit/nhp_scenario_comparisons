@@ -12,7 +12,7 @@
 #'
 #' @export
 #'
-#' @examples \dontrun{get_container() |> get_nhp_result_sets()}
+#' @examples \dontrun{azkit::get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
   auth_token = azkit::get_auth_token(),
   table_ep = Sys.getenv("AZ_TABLE_EP"),
@@ -61,37 +61,6 @@ filter_result_sets <- function(result_sets, ds, sc, cd) {
     require_rows()
 }
 
-#' Connect to an Azure Container
-#'
-#' @param tenant Character. The tenant ID.
-#' @param app_id Character. The app ID.
-#' @param ep_uri Character. The endpoint URI.
-#' @param container_name Character. The container name. Use `Sys.getenv()` with
-#'     `"AZ_STORAGE_CONTAINER_RESULTS"` or `"AZ_STORAGE_CONTAINER_RESULTS"`.
-#'
-#' @details All arguments default to environmental variables stored in your
-#'     .Renviron file. Note that you'll be routed automatically to the browser
-#'     for authentication if you don't have a cached token already.
-#'
-#' @return A blob_container/storage_container object.
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{get_container()}
-get_container <- function(endpoint, container) {
-  token <- azkit::get_auth_token()
-  if (is.null(token)) {
-    stop(
-      "No Azure token found. Please authenticate using AzureAuth::get_azure_token()."
-    )
-  }
-
-  AzureStor::blob_endpoint(endpoint, token = token) |>
-    AzureStor::blob_container(container)
-}
-
-
 #' Unzip, Read and Parse an NHP Results File
 #'
 #' @param container_results Name of a blob_container/storage_container object
@@ -106,7 +75,7 @@ get_container <- function(endpoint, container) {
 #'
 #' @examples
 #' \dontrun{
-#' container <- get_container()
+#' container <- azkit::get_container()
 #' result_sets <- container |> get_nhp_result_sets()
 #' file <- result_sets |> dplyr::slice(1) |> dplyr::pull(file)
 #' r <- container |> get_nhp_results(file)
@@ -116,7 +85,10 @@ get_nhp_results <- function(
   blob_url = Sys.getenv("AZ_STORAGE_EP"),
   file
 ) {
-  container <- get_container(container = container_results, endpoint = blob_url)
+  container <- azkit::get_container(
+    container = container_results,
+    endpoint = blob_url
+  )
 
   AzureStor::download_blob(container, file, NULL) |>
     memDecompress(type = "gzip") |>
