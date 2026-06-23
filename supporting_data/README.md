@@ -6,7 +6,8 @@ This folder should contain supporting data files only. Results data are fetched 
 
 The folder contains:
 
-* `scheme-lookup.csv` looks up scheme names and codes and also contains full trust names.
+* `scheme-lookup.csv` looks up NHP scheme names and codes and also contains full trust names 
+* `datastets.json` a lookup from the dataset codes to the full names for all trusts (and national and synthetic)
 
 And copied here from [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) are:
 
