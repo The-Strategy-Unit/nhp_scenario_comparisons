@@ -67,7 +67,10 @@ mod_activity_avoidance_impact_server <- function(id, processed) {
             measure == input$filter2
           )
         shiny::validate(
-          shiny::need(nrow(filtered_data) > 0, message = "No activity avoidance TPMAs impact this activity type and measure")
+          shiny::need(
+            nrow(filtered_data) > 0,
+            message = "No activity avoidance TPMAs impact this activity type and measure"
+          )
         )
 
         impact_bar_plot(
