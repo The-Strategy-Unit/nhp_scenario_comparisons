@@ -54,24 +54,12 @@ mod_activity_avoidance_impact_server <- function(id, processed) {
 
     output$plot <- shiny::renderPlot(
       {
-        shiny::req(df(), input$filter1, input$filter2)
+        #shiny::req(df())
         shiny::validate(
           shiny::need(!is.null(df()), message = "No data available"),
           shiny::need(nrow(df()) > 0, message = "No data available")
         )
-        # Add validation for filtered data
-        filtered_data <- df() |>
-          dplyr::filter(
-            change_factor == "activity_avoidance",
-            activity_type == input$filter1,
-            measure == input$filter2
-          )
-        shiny::validate(
-          shiny::need(
-            nrow(filtered_data) > 0,
-            message = "No activity avoidance TPMAs impact this activity type and measure"
-          )
-        )
+        shiny::req(input$filter1, input$filter2)
 
         impact_bar_plot(
           df(),
