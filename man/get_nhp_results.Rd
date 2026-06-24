@@ -27,7 +27,7 @@ Assumes you've connected to the container that holds NHP results.
 }
 \examples{
 \dontrun{
-container <- get_container()
+container <- azkit::get_container()
 result_sets <- container |> get_nhp_result_sets()
 file <- result_sets |> dplyr::slice(1) |> dplyr::pull(file)
 r <- container |> get_nhp_results(file)

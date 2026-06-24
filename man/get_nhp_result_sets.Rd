@@ -26,5 +26,5 @@ List All NHP Results Data Files and their Metadata
 Assumes you're connecting to the container that holds NHP results.
 }
 \examples{
-\dontrun{get_container() |> get_nhp_result_sets()}
+\dontrun{azkit::get_container() |> get_nhp_result_sets()}
 }

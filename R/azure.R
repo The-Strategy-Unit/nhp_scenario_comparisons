@@ -12,7 +12,7 @@
 #'
 #' @export
 #'
-#' @examples \dontrun{get_container() |> get_nhp_result_sets()}
+#' @examples \dontrun{azkit::get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
   auth_token = azkit::get_auth_token(),
   table_ep = Sys.getenv("AZ_TABLE_EP"),
@@ -106,7 +106,7 @@ get_container <- function(endpoint, container) {
 #'
 #' @examples
 #' \dontrun{
-#' container <- get_container()
+#' container <- azkit::get_container()
 #' result_sets <- container |> get_nhp_result_sets()
 #' file <- result_sets |> dplyr::slice(1) |> dplyr::pull(file)
 #' r <- container |> get_nhp_results(file)
@@ -116,7 +116,10 @@ get_nhp_results <- function(
   blob_url = Sys.getenv("AZ_STORAGE_EP"),
   file
 ) {
-  container <- get_container(container = container_results, endpoint = blob_url)
+  container <- azkit::get_container(
+    container = container_results,
+    endpoint = blob_url
+  )
 
   AzureStor::download_blob(container, file, NULL) |>
     memDecompress(type = "gzip") |>
