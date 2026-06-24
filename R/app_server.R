@@ -34,7 +34,7 @@ app_server = function(input, output, session) {
     )
 
     # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
-    if (any(c("nhp_devs") %in% session$groups)) {
+    if (any(c("nhp_devs") %in% session$groups) || is.null(session$groups)) {
       return(rs)
     }
 
