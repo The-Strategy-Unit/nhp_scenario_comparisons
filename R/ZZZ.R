@@ -1,4 +1,4 @@
-#' #This code originated from nhp_outputs
+# This code originated from nhp_outputs
 #' @importFrom zeallot %<-%
 NULL
 

@@ -1,8 +1,8 @@
 #' Prepare Individual Change Factors Data
 #' @param principal_change_factors Data.frame. Prepared data for prinicpal
-#'     change factors, derived using [prep_principal_change_factors].
+#'     change factors, derived using prep_principal_change_factors.
 #' @param measure Character. A selected measure (e.g. 'beddays').
-#' @details Used by [plot_individual_change_factors].
+#' @details Used by plot_individual_change_factors.
 #' @noRd
 prep_individual_change_factors <- function(
   principal_change_factors,
@@ -24,11 +24,11 @@ prep_individual_change_factors <- function(
 
 #' Plot Individual Change Factors Data
 #' @param principal_change_factors Data.frame. Prepared data for principal
-#'     change factors, derived using [prep_principal_change_factors].
+#'     change factors, derived using prep_principal_change_factors.
 #' @param measure Character. A selected measure (e.g. 'beddays').
 #' @param change_factor Character. The change factor grouping (e.g.
 #'     activity_avoidance').
-#' @details Used by [plot_impact_and_individual_change].
+#' @details Used by plot_impact_and_individual_change.
 #' @noRd
 plot_individual_change_factors <- function(
   principal_change_factors,
