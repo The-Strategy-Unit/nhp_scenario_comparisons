@@ -318,13 +318,13 @@ mod_processing_server <- function(
             upr_ci = sum(upr_ci)
           ) |>
           dplyr::ungroup()
-        #
+
         data_distribution_summary <- data_distribution_summary |>
           dplyr::mutate(
             activity_type = dplyr::case_when(
-              substr(pod, 1, 2) == "ip" ~ "Inpatient",
-              substr(pod, 1, 2) == "op" ~ "Outpatient",
-              substr(pod, 1, 2) == "aa" ~ "A&E",
+              startsWith(pod, "ip") ~ "Inpatient",
+              startsWith(pod, "op") ~ "Outpatient",
+              startsWith(pod, "aa") ~ "A&E",
               TRUE ~ "Other"
             )
           ) |>
