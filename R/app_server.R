@@ -65,9 +65,9 @@ app_server = function(input, output, session) {
     )
   )
 
-  shiny::observe(
+  shiny::observe({
     selections$scheme <- input$selected_scheme
-  )
+  })
 
   shiny::observe({
     selections$scheme_scenarios <- get_comparable_scenarios(
@@ -110,13 +110,13 @@ app_server = function(input, output, session) {
     )
   })
 
-  shiny::observe(
+  shiny::observe({
     selections$main_scenario <- selections$scheme_scenarios |>
       dplyr::filter(
         scenario == input$scenario_1,
         create_datetime == input$scenario_1_runtime
       )
-  )
+  })
 
   shiny::observe({
     req(input$scenario_1)
