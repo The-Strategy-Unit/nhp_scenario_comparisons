@@ -11,10 +11,8 @@ Description: A shiny app for comparing model results for different
 License: MIT + file LICENSE
 Imports: 
     azkit,
-    AzureAuth,
     AzureStor,
     bslib,
-    cli,
     dplyr,
     DT,
     forcats,
@@ -23,12 +21,10 @@ Imports:
     ggplot2,
     ggtext,
     glue,
-    gt,
     htmltools,
     jsonlite,
     lubridate,
     markdown,
-    openssl,
     purrr,
     readr,
     rlang,
@@ -43,7 +39,6 @@ Imports:
     tidyr,
     tidyselect,
     utils,
-    withr,
     yaml,
     zeallot
 Encoding: UTF-8
