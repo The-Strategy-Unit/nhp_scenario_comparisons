@@ -260,3 +260,4 @@ pyrightconfig.json
 .cache/
 
 app_data/
+.positai
