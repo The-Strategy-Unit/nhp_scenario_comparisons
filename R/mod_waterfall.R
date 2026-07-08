@@ -44,7 +44,7 @@ mod_waterfall_server <- function(id, processed) {
       shiny::req(df(), input$filter1)
 
       filter2_values <- df()[[input$filter1]] |>
-        dplyr::pull(measure) |>
+        dplyr::pull(.data$measure) |>
         unique()
 
       filter2_choices <- measure_pretty_names[
