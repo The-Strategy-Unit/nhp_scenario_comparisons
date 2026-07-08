@@ -131,23 +131,23 @@ impact_bar_plot <- function(
   ggplot2::ggplot(
     data |>
       dplyr::filter(
-        change_factor == chosen_change_factor,
-        activity_type == chosen_activity_type,
-        chosen_measure == measure,
-        value != 0.00
+        .data$change_factor == chosen_change_factor,
+        .data$activity_type == chosen_activity_type,
+        chosen_measure == .data$measure,
+        .data$value != 0.00
       ) |>
       dplyr::mutate(
         mitigator_name = dplyr::case_when(
-          strategy == "convert_to_tele" ~ strategy,
-          T ~ mitigator_name
+          strategy == "convert_to_tele" ~ .data$strategy,
+          TRUE ~ .data$mitigator_name
         ),
-        mitigator_name = stringr::str_wrap(mitigator_name, width = 60)
+        mitigator_name = stringr::str_wrap(.data$mitigator_name, width = 60)
       ) |>
-      dplyr::filter(strategy != "activity_avoidance_interaction_term"),
+      dplyr::filter(.data$strategy != "activity_avoidance_interaction_term"),
     ggplot2::aes(
-      x = value,
-      y = stats::reorder(mitigator_name, dplyr::desc(value)),
-      fill = id
+      x = .data$value,
+      y = stats::reorder(.data$mitigator_name, dplyr::desc(.data$value)),
+      fill = .data$id
     )
   ) +
     ggplot2::geom_col(position = "dodge") +
