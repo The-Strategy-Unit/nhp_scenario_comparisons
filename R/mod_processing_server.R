@@ -33,17 +33,17 @@ mod_processing_server <- function(
         #get files
         scenario_1_file <- nhp_model_runs |>
           dplyr::filter(
-            scenario == selected$scenario_1,
-            create_datetime == selected$scenario_1_runtime
+            .data$scenario == selected$scenario_1,
+            .data$create_datetime == selected$scenario_1_runtime
           ) |>
-          dplyr::pull(results_json_gz_path)
+          dplyr::pull(.data$results_json_gz_path)
 
         scenario_2_file <- nhp_model_runs |>
           dplyr::filter(
-            scenario == selected$scenario_2,
-            create_datetime == selected$scenario_2_runtime
+            .data$scenario == selected$scenario_2,
+            .data$create_datetime == selected$scenario_2_runtime
           ) |>
-          dplyr::pull(results_json_gz_path)
+          dplyr::pull(.data$results_json_gz_path)
 
         shiny::incProgress(0.1)
 
@@ -53,8 +53,10 @@ mod_processing_server <- function(
           jsons <- tibble::tibble(
             paths = list.files("jsons/", full.names = TRUE)
           ) |>
-            dplyr::filter(stringr::str_ends(paths, "\\.json\\.gz")) |>
-            dplyr::mutate(file_name = stringr::str_remove(paths, "jsons/"))
+            dplyr::filter(stringr::str_ends(.data$paths, "\\.json\\.gz")) |>
+            dplyr::mutate(
+              file_name = stringr::str_remove(.data$paths, "jsons/")
+            )
 
           json_1_file <- jsons$paths[
             jsons$file_name ==
@@ -181,7 +183,7 @@ mod_processing_server <- function(
             scenario = dplyr::case_when(
               scenario == "scenario_1" ~ scenario_1_name,
               scenario == "scenario_2" ~ scenario_2_name,
-              T ~ scenario
+              TRUE ~ .data$scenario
             )
           )
 
@@ -303,35 +305,35 @@ mod_processing_server <- function(
         #p <- mod_model_results_distribution_get_data(result_1,selected_measure = c("Ip","ip_elective_admission","admissions"),site_codes = NULL)
         data_distribution_summary <- data_distribution_summary |>
           dplyr::select(
-            id,
-            scenario,
-            pod,
-            measure,
-            principal,
-            lwr_ci,
-            upr_ci
+            .data$id,
+            .data$scenario,
+            .data$pod,
+            .data$measure,
+            .data$principal,
+            .data$lwr_ci,
+            .data$upr_ci
           ) |>
-          dplyr::group_by(id, scenario, pod, measure) |>
+          dplyr::group_by(id, .data$scenario, .data$pod, .data$measure) |>
           dplyr::summarise(
-            principal = sum(principal),
-            lwr_ci = sum(lwr_ci),
-            upr_ci = sum(upr_ci)
+            principal = sum(.data$principal),
+            lwr_ci = sum(.data$lwr_ci),
+            upr_ci = sum(.data$upr_ci)
           ) |>
           dplyr::ungroup()
 
         data_distribution_summary <- data_distribution_summary |>
           dplyr::mutate(
             activity_type = dplyr::case_when(
-              startsWith(pod, "ip") ~ "Inpatient",
-              startsWith(pod, "op") ~ "Outpatient",
-              startsWith(pod, "aa") ~ "A&E",
+              startsWith(.data$pod, "ip") ~ "Inpatient",
+              startsWith(.data$pod, "op") ~ "Outpatient",
+              startsWith(.data$pod, "aa") ~ "A&E",
               TRUE ~ "Other"
             )
           ) |>
-          dplyr::relocate(activity_type, .before = 1) |>
+          dplyr::relocate(.data$activity_type, .before = 1) |>
           dplyr::filter(
-            !(pod == "op_procedure" &
-              measure == "tele_attendances")
+            !(.data$pod == "op_procedure" &
+              .data$measure == "tele_attendances")
           )
         #
         #
