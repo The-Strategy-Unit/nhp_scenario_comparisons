@@ -29,7 +29,7 @@ mod_ecdf_server <- function(id, processed) {
 
     pods <- shiny::reactive({
       get_activity_type_pod_measure_options() |>
-        dplyr::filter(pod %in% unique(df()$result$default$pod))
+        dplyr::filter(.data$pod %in% unique(df()$result$default$pod))
     })
 
     # could dynamically create UI here, based on the variables found within df?
@@ -54,8 +54,8 @@ mod_ecdf_server <- function(id, processed) {
       shiny::req(df(), input$filter1)
 
       filter2_values <- pods() |>
-        dplyr::filter(activity_type_name == input$filter1) |>
-        dplyr::pull(measures) |>
+        dplyr::filter(.data$activity_type_name == input$filter1) |>
+        dplyr::pull(.data$measures) |>
         unique()
 
       filter2_choices <- measure_pretty_names[
@@ -70,8 +70,8 @@ mod_ecdf_server <- function(id, processed) {
         shiny::req(df(), df2(), scn1(), scn2(), input$filter1, input$filter2)
 
         selected_pods <- pods() |>
-          dplyr::filter(activity_type_name == input$filter1) |>
-          dplyr::pull(pod)
+          dplyr::filter(.data$activity_type_name == input$filter1) |>
+          dplyr::pull(.data$pod)
 
         result_1 <- get_model_run_distribution(
           df(),
