@@ -1,15 +1,15 @@
 create_bar_plot_distribution <- function(data, pod_filter, title_text) {
   # Create a new column for the measure names using the lookup
   data <- data |>
-    dplyr::mutate(measure_name = get_label(measure, measure_pretty_names))
+    dplyr::mutate(measure_name = get_label(.data$measure, measure_pretty_names))
 
   ggplot2::ggplot(
-    dplyr::filter(data, pod == pod_filter),
-    ggplot2::aes(x = principal, y = measure_name, fill = id)
+    dplyr::filter(data, .data$pod == pod_filter),
+    ggplot2::aes(x = .data$principal, y = .data$measure_name, fill = .data$id)
   ) +
     ggplot2::geom_bar(stat = 'identity', position = 'dodge', width = 0.7) +
     ggplot2::geom_errorbar(
-      ggplot2::aes(xmin = lwr_ci, xmax = upr_ci),
+      ggplot2::aes(xmin = .data$lwr_ci, xmax = .data$upr_ci),
       width = 0.6,
       position = ggplot2::position_dodge(0.7)
     ) +
@@ -87,8 +87,8 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
   # p2 <- data$principal[data$scenario==scenario_2_name][[1]]
 
   p <- data |>
-    dplyr::group_by(scenario) |>
-    dplyr::summarise(principal = unique(principal))
+    dplyr::group_by(.data$scenario) |>
+    dplyr::summarise(principal = unique(.data$principal))
 
   x_placeholder <- "100%" # dummy label to help line up beeswarm and ECDF plots
 
@@ -112,7 +112,7 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
     # new line here for manually setting the colours
     ggplot2::scale_color_manual(
       values = c("red", "blue"),
-      labels = get_label_map(data, id_col = scenario)
+      labels = get_label_map(data, id_col = .data$scenario)
       #values = c(scenario_1_name = "red", scenario_2_name = "blue"),
       #labels = c(scenario_1_name, scenario_2_name)
     )
@@ -128,7 +128,7 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
     #ggplot2::geom_hline(yintercept = p2, linetype = "dashed", colour = "blue") +
     ggplot2::geom_hline(
       data = p,
-      ggplot2::aes(yintercept = principal, colour = scenario),
+      ggplot2::aes(yintercept = .data$principal, colour = .data$scenario),
       linetype = "dashed",
       linewidth = 1
     ) +
@@ -157,7 +157,7 @@ mod_model_results_distribution_beeswarm_plot_scenario <- function(
       strip.background = ggplot2::element_blank()
     ) +
     ggplot2::facet_grid(
-      rows = dplyr::vars(scenario) #,
+      rows = dplyr::vars(.data$scenario) #,
       #labeller = ggplot2::labeller(scenario = labels)
     )
 
@@ -172,12 +172,12 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
   show_origin
 ) {
   percentiles <- data |>
-    dplyr::group_by(scenario) |>
+    dplyr::group_by(.data$scenario) |>
     dplyr::summarise(
-      baseline = baseline[[1]],
-      p10 = stats::quantile(value, 0.1),
-      principal = principal[[1]],
-      p90 = stats::quantile(value, 0.9)
+      baseline = .data$baseline[[1]],
+      p10 = stats::quantile(.data$value, 0.1),
+      principal = .data$principal[[1]],
+      p90 = stats::quantile(.data$value, 0.9)
     )
 
   # Calculate y value for principal x value (find nearest % for the principal)
@@ -201,12 +201,12 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
   # lines_n <- nrow(line_guides)
   # line_guides[c(lines_n, lines_n / 2), "colour"] <- "red"
 
-  ggplot2::ggplot(data, ggplot2::aes(x = value, color = scenario)) +
+  ggplot2::ggplot(data, ggplot2::aes(x = .data$value, color = .data$scenario)) +
     ggplot2::stat_ecdf(geom = "step", alpha = 0.8) +
     # Add vertical dashed lines at 10% and 90%
     ggplot2::geom_segment(
       data = percentiles,
-      ggplot2::aes(x = p10, xend = p10, y = 0, yend = 0.1),
+      ggplot2::aes(x = .data$p10, xend = .data$p10, y = 0, yend = 0.1),
       linetype = "dashed",
       #color = "red",
       show.legend = FALSE
@@ -218,7 +218,7 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     #                      show.legend = FALSE) +
     ggplot2::geom_segment(
       data = percentiles,
-      ggplot2::aes(x = p90, xend = p90, y = 0, yend = 0.9),
+      ggplot2::aes(x = .data$p90, xend = .data$p90, y = 0, yend = 0.9),
       linetype = "dashed",
       #color = "red",
       show.legend = FALSE
@@ -230,7 +230,12 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     #                      show.legend = FALSE) +
     ggplot2::geom_segment(
       data = percentiles,
-      ggplot2::aes(x = principal, xend = principal, y = 0, yend = 1),
+      ggplot2::aes(
+        x = .data$principal,
+        xend = .data$principal,
+        y = 0,
+        yend = 1
+      ),
       linetype = "solid",
       #color = "red",
       show.legend = FALSE
@@ -243,7 +248,7 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     # Add horizontal dashed lines at 10% and 90%
     ggplot2::geom_segment(
       data = percentiles,
-      ggplot2::aes(x = -Inf, xend = p10, y = 0.1, yend = 0.1),
+      ggplot2::aes(x = -Inf, xend = .data$p10, y = 0.1, yend = 0.1),
       linetype = "dashed",
       color = "grey20",
       show.legend = FALSE
@@ -255,7 +260,7 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     #              show.legend = FALSE) +
     ggplot2::geom_segment(
       data = percentiles,
-      ggplot2::aes(x = -Inf, xend = p90, y = 0.9, yend = 0.9),
+      ggplot2::aes(x = -Inf, xend = .data$p90, y = 0.9, yend = 0.9),
       linetype = "dashed",
       color = "grey20",
       show.legend = FALSE
@@ -278,7 +283,7 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     ggplot2::geom_vline(xintercept = percentiles$baseline, colour = "dimgrey") +
     # Add text labels at the baseline positions
     ggplot2::geom_text(
-      ggplot2::aes(x = baseline, y = 0.5, label = "Baseline"),
+      ggplot2::aes(x = .data$baseline, y = 0.5, label = "Baseline"),
       colour = "dimgrey",
       angle = 90,
       hjust = 0,
@@ -306,7 +311,7 @@ mod_model_results_distribution_ecdf_plot_scenario <- function(
     ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
     ggplot2::scale_colour_manual(
       values = c("red", "blue"),
-      labels = get_label_map(data, id_col = scenario)
+      labels = get_label_map(data, id_col = .data$scenario)
     ) +
     ggplot2::theme(
       legend.text = ggtext::element_markdown(
