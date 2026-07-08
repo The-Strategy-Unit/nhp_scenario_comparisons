@@ -36,8 +36,8 @@ mod_summary_server <- function(id, processed) {
       shiny::req(df(), input$filter1)
 
       filter2_choices <- df() |>
-        dplyr::filter(activity_type == input$filter1) |>
-        dplyr::pull(measure) |>
+        dplyr::filter(.data$activity_type == input$filter1) |>
+        dplyr::pull(.data$measure) |>
         unique()
 
       shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
