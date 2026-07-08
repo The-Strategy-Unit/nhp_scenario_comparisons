@@ -12,8 +12,8 @@ prepare_all_principal_change_factors <- function(
     activity_types_long,
     \(x) {
       atmpo_lookup |>
-        dplyr::filter(activity_type == x) |>
-        dplyr::pull(pod) |>
+        dplyr::filter(.data$activity_type == x) |>
+        dplyr::pull(.data$pod) |>
         unique()
     }
   ) |>
@@ -64,7 +64,7 @@ read_mitigators <- function(remove_codes = TRUE) {
     mitigators = mitigators |>
       dplyr::mutate(
         mitigator_name = stringr::str_remove(
-          mitigator_name,
+          .data$mitigator_name,
           " \\(\\w{2}-\\w{2}-\\d{3}\\)"
         )
       )
@@ -78,7 +78,7 @@ read_atmpo <- function() {
     dplyr::select("activity_type", "pod", "measure" = "measures") |>
     dplyr::mutate(
       activity_type = dplyr::case_match(
-        activity_type,
+        .data$activity_type,
         "ip" ~ "inpatients",
         "op" ~ "outpatients",
         "aae" ~ "aae"
