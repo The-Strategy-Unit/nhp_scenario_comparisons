@@ -8,10 +8,10 @@ create_bar_plot <- function(
   ggplot2::ggplot(
     dplyr::filter(
       data,
-      activity_type == chosen_activity_type,
-      measure == chosen_measure
+      .data$activity_type == chosen_activity_type,
+      .data$measure == chosen_measure
     ),
-    ggplot2::aes(x = principal, y = pod_name, fill = id)
+    ggplot2::aes(x = .data$principal, y = .data$pod_name, fill = .data$id)
   ) +
     ggplot2::geom_col(position = "dodge") +
     ggplot2::scale_x_continuous(labels = scales::comma) +
@@ -82,19 +82,23 @@ create_bar_plot_los <- function(
   ggplot2::ggplot(
     dplyr::filter(
       data,
-      pod_name == chosen_pod_name,
-      measure == chosen_measure
+      .data$pod_name == chosen_pod_name,
+      .data$measure == chosen_measure
     ) |>
       dplyr::mutate(
         los_group = factor(
-          los_group,
-          levels = los_group[order(as.numeric(stringr::str_extract(
-            unique(los_group),
+          .data$los_group,
+          levels = .data$los_group[order(as.numeric(stringr::str_extract(
+            unique(.data$los_group),
             "^\\d+"
           )))]
         )
       ),
-    ggplot2::aes(x = principal, y = forcats::fct_rev(los_group), fill = id)
+    ggplot2::aes(
+      x = .data$principal,
+      y = forcats::fct_rev(.data$los_group),
+      fill = .data$id
+    )
   ) +
     ggplot2::geom_col(position = "dodge") +
     ggplot2::scale_x_continuous(labels = scales::comma) +
