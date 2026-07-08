@@ -1,18 +1,3 @@
-#' List All NHP Results Data Files and their Metadata
-#'
-#' @param container_results Name of the blob_container/storage_container object
-#'     that stores results files.
-#'
-#' @details Assumes you're connecting to the container that holds NHP results.
-#'
-#' @return A data.frame. As many rows as there are files in `container`. As many
-#'    columns as there are metadata elements, plus the file path.
-#'
-#' @importFrom rlang .data
-#'
-#' @export
-#'
-#' @examples \dontrun{azkit::get_container() |> get_nhp_result_sets()}
 get_nhp_result_sets <- function(
   auth_token = azkit::get_auth_token(),
   table_ep = Sys.getenv("AZ_TABLE_EP"),
@@ -50,24 +35,6 @@ get_user_allowed_datasets <- function(groups) {
   }
 }
 
-#' Connect to an Azure Container
-#'
-#' @param tenant Character. The tenant ID.
-#' @param app_id Character. The app ID.
-#' @param ep_uri Character. The endpoint URI.
-#' @param container_name Character. The container name. Use `Sys.getenv()` with
-#'     `"AZ_STORAGE_CONTAINER_RESULTS"` or `"AZ_STORAGE_CONTAINER_RESULTS"`.
-#'
-#' @details All arguments default to environmental variables stored in your
-#'     .Renviron file. Note that you'll be routed automatically to the browser
-#'     for authentication if you don't have a cached token already.
-#'
-#' @return A blob_container/storage_container object.
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{get_container()}
 get_container <- function(endpoint, container) {
   token <- azkit::get_auth_token()
   if (is.null(token)) {
