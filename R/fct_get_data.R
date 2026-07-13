@@ -238,30 +238,6 @@ get_model_run_distribution <- function(r, pod, measure, site_codes) {
     trust_site_aggregation(site_codes)
 }
 
-get_aggregation <- function(r, pod, measure, agg_col, sites) {
-  agg_type <- agg_col
-
-  if (agg_col != "tretspef") {
-    agg_type <- glue::glue("sex+{agg_col}")
-  }
-
-  filtered_results <- r$results[[agg_type]] |>
-    dplyr::filter(
-      .data$pod %in% .env$pod,
-      .data$measure == .env$measure
-    ) |>
-    dplyr::select(-"pod", -"measure")
-
-  if (nrow(filtered_results) == 0) {
-    return(NULL)
-  }
-
-  filtered_results |>
-    dplyr::mutate(
-      dplyr::across(dplyr::matches("sex|tretspef"), as.character)
-    ) |>
-    trust_site_aggregation(sites)
-}
 get_principal_change_factors <- function(r, activity_type, sites) {
   stopifnot(
     "Invalid activity_type" = activity_type %in% c("aae", "ip", "op")
@@ -274,30 +250,6 @@ get_principal_change_factors <- function(r, activity_type, sites) {
       tidyr::replace_na(.x, "-")
     })) |>
     trust_site_aggregation(sites)
-}
-
-get_bed_occupancy <- function(r) {
-  r$results$bed_occupancy |>
-    dplyr::select(
-      "measure",
-      "quarter",
-      "ward_type",
-      "ward_group",
-      "baseline",
-      "principal",
-      "median",
-      "lwr_ci",
-      "upr_ci",
-      "model_runs"
-    ) |>
-    dplyr::mutate(
-      dplyr::across(
-        "model_runs",
-        \(.x) purrr::map(.x, tibble::enframe, name = "model_run")
-      )
-    ) |>
-    tidyr::unnest("model_runs") |>
-    dplyr::inner_join(get_variants(r), by = dplyr::join_by("model_run"))
 }
 
 trust_site_aggregation <- function(data, sites) {
