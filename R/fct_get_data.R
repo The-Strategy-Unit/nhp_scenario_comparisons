@@ -172,6 +172,10 @@ patch_step_counts <- function(results) {
 }
 
 extract_major_version <- function(version_string) {
+  if (identical(version_string, "dev")) {
+    return(Inf)
+  }
+  
   is_correct_format <- stringr::str_detect(
     version_string,
     "^v\\d{1,}\\.\\d{1,}$" # e.g. 'v3.6'
