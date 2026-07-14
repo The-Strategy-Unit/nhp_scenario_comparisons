@@ -39,7 +39,7 @@ prepare_all_principal_change_factors <- function(
 
   # Scenarios run under v1.0 don't have A&E data when filtering by site, so
   # provide results for whole-scheme level.
-  if (r$params$app_version == "v1.0" & !is.null(site_codes[["aae"]])) {
+  if (r$params$app_version == "v1.0" && !is.null(site_codes[["aae"]])) {
     principal_change_data[["aae"]] <-
       possibly_prep_principal_change_factors(
         data = r,
