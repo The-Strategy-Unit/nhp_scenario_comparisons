@@ -173,7 +173,7 @@ patch_step_counts <- function(results) {
 
 extract_major_version <- function(version_string) {
   if (identical(version_string, "dev")) {
-    return(99)
+    return(Inf)
   }
   
   is_correct_format <- stringr::str_detect(
