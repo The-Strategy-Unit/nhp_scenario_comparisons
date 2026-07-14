@@ -49,7 +49,7 @@ mod_processing_server <- function(
 
         shiny::req(length(scenario_1_file) > 0, length(scenario_2_file) > 0)
 
-        if (local_data_flag == TRUE) {
+        if (local_data_flag) {
           jsons <- tibble::tibble(
             paths = list.files("jsons/", full.names = TRUE)
           ) |>
