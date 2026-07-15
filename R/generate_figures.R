@@ -61,7 +61,7 @@ read_mitigators <- function(remove_codes = TRUE) {
     tibble::enframe("strategy", "mitigator_name")
 
   if (remove_codes) {
-    mitigators = mitigators |>
+    mitigators <- mitigators |>
       dplyr::mutate(
         mitigator_name = stringr::str_remove(
           .data$mitigator_name,
