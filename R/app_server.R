@@ -11,7 +11,7 @@
 #                   list.files("jsons/")
 #   )
 
-app_server = function(input, output, session) {
+app_server <- function(input, output, session) {
   get_comparable_scenarios <- function(model_runs, scheme) {
     model_runs |>
       dplyr::filter(.data$dataset == scheme) |>
