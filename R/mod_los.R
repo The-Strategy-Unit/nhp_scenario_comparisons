@@ -36,8 +36,8 @@ mod_los_server <- function(id, processed) {
       shiny::req(df(), input$filter1)
 
       filter2_choices <- df() |>
-        dplyr::filter(pod_name == input$filter1) |>
-        dplyr::pull(measure) |>
+        dplyr::filter(.data$pod_name == input$filter1) |>
+        dplyr::pull(.data$measure) |>
         unique() |>
         stringr::str_to_title()
 

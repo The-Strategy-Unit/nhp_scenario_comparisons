@@ -13,7 +13,7 @@ make_scheme_name <- function(
   as_filestring = FALSE
 ) {
   scheme_string <- readr::read_csv(lookup_path, show_col_types = FALSE) |>
-    dplyr::filter(scheme == scheme_code) |>
+    dplyr::filter(.data$scheme == scheme_code) |>
     dplyr::mutate(
       hosp_site_scheme = glue::glue("{hosp_site} ({scheme})"),
       .keep = "none"

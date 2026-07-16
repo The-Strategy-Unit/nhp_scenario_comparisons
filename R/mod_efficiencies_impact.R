@@ -38,10 +38,10 @@ mod_efficiencies_impact_server <- function(id, processed) {
 
       filter2_values <- df() |>
         dplyr::filter(
-          activity_type == input$filter1,
-          measure != "admissions"
+          .data$activity_type == input$filter1,
+          .data$measure != "admissions"
         ) |>
-        dplyr::pull(measure) |>
+        dplyr::pull(.data$measure) |>
         unique()
 
       filter2_choices <- measure_pretty_names[
@@ -61,9 +61,9 @@ mod_efficiencies_impact_server <- function(id, processed) {
         # Add validation for filtered data
         filtered_data <- df() |>
           dplyr::filter(
-            change_factor == "efficiencies",
-            activity_type == input$filter1,
-            measure == input$filter2
+            .data$change_factor == "efficiencies",
+            .data$activity_type == input$filter1,
+            .data$measure == input$filter2
           )
         shiny::validate(
           shiny::need(
@@ -73,11 +73,11 @@ mod_efficiencies_impact_server <- function(id, processed) {
         )
 
         impact_bar_plot(
-          df(),
+          data = df(),
           chosen_change_factor = "efficiencies",
-          input$filter1,
-          input$filter2,
-          title = glue::glue(
+          chosen_activity_type = input$filter1,
+          chosen_measure = input$filter2,
+          title_text = glue::glue(
             "{get_label(input$filter1, activity_type_pretty_names)}",
             "{get_label(input$filter2, measure_pretty_names)}",
             "- Impact of Individual Efficiencies TPMA Assumptions",

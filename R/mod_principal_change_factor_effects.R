@@ -43,9 +43,13 @@ mod_principal_change_factor_effects_cf_plot <- function(data) {
       strip.clip = "off"
     ) +
     ggplot2::facet_grid(
-      rows = dplyr::vars(scenario),
+      rows = dplyr::vars(.data$scenario),
       labeller = ggplot2::labeller(
-        scenario = get_label_map(data, id_col = scenario, wrap_length = 20)
+        scenario = get_label_map(
+          data,
+          id_col = .data$scenario,
+          wrap_length = 20
+        )
       )
     )
 }

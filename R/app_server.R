@@ -11,10 +11,10 @@
 #                   list.files("jsons/")
 #   )
 
-app_server = function(input, output, session) {
+app_server <- function(input, output, session) {
   get_comparable_scenarios <- function(model_runs, scheme) {
     model_runs |>
-      dplyr::filter(dataset == scheme) |>
+      dplyr::filter(.data$dataset == scheme) |>
       dplyr::mutate(
         comparable_scenarios = dplyr::n() - 1,
         .by = c("start_year", "end_year", "app_version")
@@ -81,7 +81,7 @@ app_server = function(input, output, session) {
       session,
       "scenario_1",
       choices = selections$scheme_scenarios |>
-        dplyr::pull(scenario) |>
+        dplyr::pull(.data$scenario) |>
         unique()
     )
   )
@@ -100,8 +100,8 @@ app_server = function(input, output, session) {
     }
 
     runtime_choices <- selections$scheme_scenarios |>
-      dplyr::filter(scenario == input$scenario_1) |>
-      dplyr::pull(create_datetime)
+      dplyr::filter(.data$scenario == input$scenario_1) |>
+      dplyr::pull(.data$create_datetime)
 
     shiny::updateSelectInput(
       session,
@@ -113,30 +113,30 @@ app_server = function(input, output, session) {
   shiny::observe({
     selections$main_scenario <- selections$scheme_scenarios |>
       dplyr::filter(
-        scenario == input$scenario_1,
-        create_datetime == input$scenario_1_runtime
+        .data$scenario == input$scenario_1,
+        .data$create_datetime == input$scenario_1_runtime
       )
   })
 
   shiny::observe({
-    req(input$scenario_1)
+    shiny::req(input$scenario_1)
 
     criteria <- selections$main_scenario |>
-      dplyr::select(start_year, end_year, app_version)
+      dplyr::select(.data$start_year, .data$end_year, .data$app_version)
 
     comparable_scenarios <- selections$scheme_scenarios |>
       # Inner join to get the list of comparable
       dplyr::inner_join(
         criteria,
-        by = dplyr::join_by(start_year, end_year, app_version)
+        by = dplyr::join_by("start_year", "end_year", "app_version")
       ) |>
       # Drop the the one we are comparing to (to avoid comparing the scenario
       # to itself)
       dplyr::anti_join(
         selections$main_scenario,
-        by = dplyr::join_by(scenario, create_datetime)
+        by = dplyr::join_by("scenario", "create_datetime")
       ) |>
-      dplyr::pull(scenario) |>
+      dplyr::pull(.data$scenario) |>
       unique()
 
     # Auto-select if only one comparable scenario exists
@@ -157,30 +157,30 @@ app_server = function(input, output, session) {
 
     selections$comparator_scenario <- selections$scheme_scenarios |>
       dplyr::filter(
-        scenario %in% default,
-        create_datetime %in% input$scenario_2_runtime
+        .data$scenario %in% default,
+        .data$create_datetime %in% input$scenario_2_runtime
       )
   })
 
   shiny::observe({
     shiny::req(input$scenario_2)
     criteria <- selections$main_scenario |>
-      dplyr::select(start_year, end_year, app_version)
+      dplyr::select(.data$start_year, .data$end_year, .data$app_version)
 
     comparable_runtimes <- selections$scheme_scenarios |>
-      dplyr::filter(scenario == input$scenario_2) |>
+      dplyr::filter(.data$scenario == input$scenario_2) |>
       # Inner join to get the list of comparable
       dplyr::inner_join(
         criteria,
-        by = dplyr::join_by(start_year, end_year, app_version)
+        by = dplyr::join_by("start_year", "end_year", "app_version")
       ) |>
       # Drop the the one we are comparing to (to avoid comparing the scenario
       # to itself)
       dplyr::anti_join(
         selections$main_scenario,
-        by = dplyr::join_by(scenario, create_datetime)
+        by = dplyr::join_by("scenario", "create_datetime")
       ) |>
-      dplyr::pull(create_datetime)
+      dplyr::pull(.data$create_datetime)
 
     # Only set explicit selected if the current value is valid
     if (input$scenario_2_runtime %in% comparable_runtimes) {
@@ -201,8 +201,8 @@ app_server = function(input, output, session) {
 
     selections$comparator_scenario <- selections$scheme_scenarios |>
       dplyr::filter(
-        scenario %in% input$scenario_2,
-        create_datetime %in% input$scenario_2_runtime
+        .data$scenario %in% input$scenario_2,
+        .data$create_datetime %in% input$scenario_2_runtime
       )
   })
 
@@ -286,10 +286,10 @@ app_server = function(input, output, session) {
       scheme = input$selected_scheme,
       version = nhp_model_runs() |>
         dplyr::filter(
-          scenario == input$scenario_1,
-          create_datetime == input$scenario_1_runtime
+          .data$scenario == input$scenario_1,
+          .data$create_datetime == input$scenario_1_runtime
         ) |>
-        dplyr::pull(app_version)
+        dplyr::pull(.data$app_version)
     ))
   })
 
@@ -311,10 +311,10 @@ app_server = function(input, output, session) {
       " and model version ",
       nhp_model_runs() |>
         dplyr::filter(
-          scenario == input$scenario_1,
-          create_datetime == input$scenario_1_runtime
+          .data$scenario == input$scenario_1,
+          .data$create_datetime == input$scenario_1_runtime
         ) |>
-        dplyr::pull(app_version)
+        dplyr::pull(.data$app_version)
     )
   })
 

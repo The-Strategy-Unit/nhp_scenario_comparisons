@@ -208,7 +208,10 @@ get_principal_high_level <- function(r, measures, sites) {
       )
     )) |>
     dplyr::group_by(.data$pod, .data$sitetret) |>
-    dplyr::summarise(dplyr::across(where(is.numeric), sum), .groups = "drop") |>
+    dplyr::summarise(
+      dplyr::across(tidyselect::where(is.numeric), sum),
+      .groups = "drop"
+    ) |>
     trust_site_aggregation(sites)
 }
 
@@ -249,7 +252,7 @@ get_principal_change_factors <- function(r, activity_type, sites) {
 
   r$results$step_counts |>
     dplyr::filter(.data$activity_type == .env$activity_type) |>
-    dplyr::select(-where(is.list)) |>
+    dplyr::select(-tidyselect::where(is.list)) |>
     dplyr::mutate(dplyr::across("strategy", \(.x) {
       tidyr::replace_na(.x, "-")
     })) |>
@@ -275,7 +278,7 @@ trust_site_aggregation <- function(data, sites) {
       )
     ) |>
     dplyr::summarise(
-      dplyr::across(where(is.numeric), \(.x) sum(.x, na.rm = TRUE)),
+      dplyr::across(tidyselect::where(is.numeric), \(.x) sum(.x, na.rm = TRUE)),
       .groups = "drop"
     )
 }

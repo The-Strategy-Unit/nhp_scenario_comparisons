@@ -6,7 +6,7 @@
 # id_col is the column name containing the unique "scenario+datetime"
 # wrap_length can be used to adjust the character length for wrapping
 
-get_label_map <- function(df, id_col = id, wrap_length = 50) {
+get_label_map <- function(df, id_col = .data$id, wrap_length = 50) {
   df |>
     dplyr::distinct({{ id_col }}) |>
     dplyr::mutate(
@@ -21,14 +21,14 @@ get_label_map <- function(df, id_col = id, wrap_length = 50) {
       ),
 
       name = dplyr::if_else(
-        stringr::str_detect(name, "<br>", negate = TRUE) &
-          nchar(name) > wrap_length,
+        stringr::str_detect(.data$name, "<br>", negate = TRUE) &
+          nchar(.data$name) > wrap_length,
         stringr::str_replace_all(
-          name,
+          .data$name,
           paste0("(.{", wrap_length, "})"),
           "\\1<br>"
         ),
-        name
+        .data$name
       ),
 
       datetime = lubridate::ymd_hms(
@@ -37,15 +37,15 @@ get_label_map <- function(df, id_col = id, wrap_length = 50) {
 
       formatted_label = paste0(
         "<b>",
-        name,
+        .data$name,
         "</b><br>",
         "<span style='display:block; text-align:center;'>",
         "(",
-        datetime,
+        .data$datetime,
         ")",
         "</span>"
       )
     ) |>
-    dplyr::select({{ id_col }}, formatted_label) |>
+    dplyr::select({{ id_col }}, .data$formatted_label) |>
     tibble::deframe()
 }
