@@ -27,7 +27,6 @@ deploy <- function(type = c("dev", "prod")) {
     envVars = c(
       "AZ_STORAGE_EP",
       "AZ_STORAGE_CONTAINER_RESULTS",
-      "AZ_STORAGE_CONTAINER_SUPPORT",
       "NHP_ENCRYPT_KEY",
       "FEEDBACK_FORM_URL"
     ),
