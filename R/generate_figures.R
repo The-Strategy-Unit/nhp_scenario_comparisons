@@ -55,7 +55,7 @@ prepare_all_principal_change_factors <- function(
 
 
 get_tpma_lookup <- function(
-    path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
+  path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
 ) {
   readr::read_csv(path, col_types = "c") |>
     dplyr::filter(is.na(active_to)) |> # retain only the active TPMAs
