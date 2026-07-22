@@ -2,7 +2,7 @@ prepare_all_principal_change_factors <- function(
   r,
   site_codes = list(ip = NULL, op = NULL, aae = NULL) # character vectors
 ) {
-  mitigators_lookup <- read_mitigators()
+  mitigators_lookup <- get_tpma_lookup()
   atmpo_lookup <- read_atmpo()
 
   activity_types_long <- list("inpatients", "outpatients", "aae")
@@ -54,23 +54,21 @@ prepare_all_principal_change_factors <- function(
 }
 
 
-read_mitigators <- function(remove_codes = TRUE) {
-  mitigators <- "supporting_data/mitigators.json" |>
-    jsonlite::read_json(simplifyVector = TRUE) |>
-    purrr::simplify() |>
-    tibble::enframe("strategy", "mitigator_name")
-
-  if (remove_codes) {
-    mitigators <- mitigators |>
-      dplyr::mutate(
-        mitigator_name = stringr::str_remove(
-          .data$mitigator_name,
-          " \\(\\w{2}-\\w{2}-\\d{3}\\)"
-        )
+get_tpma_lookup <- function(
+    path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
+) {
+  readr::read_csv(path, col_types = "c") |>
+    dplyr::filter(is.na(active_to)) |> # retain only the active TPMAs
+    dplyr::mutate(
+      .keep = "none",
+      strategy = .data$tpma_variable,
+      mitigator_name = dplyr::if_else(
+        # Append subtype (if it exists) to build a full TPMA name
+        is.na(.data$tpma_subtype),
+        .data$tpma_name,
+        glue::glue("{.data$tpma_name} ({.data$tpma_subtype})")
       )
-  }
-
-  mitigators
+    )
 }
 
 read_atmpo <- function() {
