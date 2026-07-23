@@ -12,5 +12,4 @@ The folder contains:
 And copied here from [nhp_outputs](https://github.com/The-Strategy-Unit/nhp_outputs) are:
 
 * `nhp_outputs/inst/golem-config.yml` for its POD measures lookup
-* `nhp_outputs/inst/app/supporting_data/mitigators.json` for its mitigator code/name lookup
 * `nhp_outputs/inst/app/supporting_data/tx-lookup.json` for its treatment-specialty code lookup
