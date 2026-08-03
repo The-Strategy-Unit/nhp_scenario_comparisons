@@ -317,12 +317,24 @@ app_server <- function(input, output, session) {
         dplyr::pull(.data$app_version)
     )
   })
-
-  shiny::observe({
+  
+    shiny::observe({
     warning_text <- c()
-
+    
+    # Checking about lack of model runs
     model_runs <- nhp_model_runs()
-
+    
+    # get the list of datasets allowed for the user
+    list_of_datasets <- get_user_allowed_datasets(session$groups)
+    
+    # list of the datasets with runs
+    datasets_on_azure <- unique(model_runs$dataset)
+    
+    # datasets without run
+    datasets_without_run <- setdiff(list_of_datasets, datasets_on_azure)
+    
+    warning_text <- c(warning_text, "Missing: ", datasets_without_run)
+    
     # No model runs at all
     if (is.null(model_runs) || nrow(model_runs) == 0) {
       warning_text <- c(
