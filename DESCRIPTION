@@ -32,6 +32,7 @@ Imports:
     shiny,
     shinybusy,
     shinyjs,
+    shinyWidgets,
     snakecase,
     stats,
     stringr,
