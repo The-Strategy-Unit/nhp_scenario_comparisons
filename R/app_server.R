@@ -57,13 +57,24 @@ app_server <- function(input, output, session) {
   # instead of input$ values
   selections <- shiny::reactiveValues()
 
-  shiny::observe(
-    shiny::updateSelectInput(
-      session,
-      "selected_scheme",
-      choices = datasets_list[datasets_list %in% nhp_model_runs()$dataset]
-    )
-  )
+  shiny::observe({
+    choices <- datasets_list[datasets_list %in% nhp_model_runs()$dataset]
+    selected <- input$selected_scheme
+    if (shiny::isTruthy(selected) && selected %in% choices) {
+      shinyWidgets::updatePickerInput(
+        session,
+        "selected_scheme",
+        choices = choices,
+        selected = selected
+      )
+    } else {
+      shinyWidgets::updatePickerInput(
+        session,
+        "selected_scheme",
+        choices = choices
+      )
+    }
+  })
 
   shiny::observe({
     selections$scheme <- input$selected_scheme
@@ -76,19 +87,30 @@ app_server <- function(input, output, session) {
     )
   })
 
-  shiny::observe(
-    shiny::updateSelectInput(
-      session,
-      "scenario_1",
-      choices = selections$scheme_scenarios |>
-        dplyr::pull(.data$scenario) |>
-        unique()
-    )
-  )
+  shiny::observe({
+    choices <- selections$scheme_scenarios |>
+      dplyr::pull(.data$scenario) |>
+      unique()
+    selected <- input$scenario_1
+    if (shiny::isTruthy(selected) && selected %in% choices) {
+      shinyWidgets::updatePickerInput(
+        session,
+        "scenario_1",
+        choices = choices,
+        selected = selected
+      )
+    } else {
+      shinyWidgets::updatePickerInput(
+        session,
+        "scenario_1",
+        choices = choices
+      )
+    }
+  })
 
   shiny::observe({
     if (
-      is.null(input$scenario_1) ||
+      !shiny::isTruthy(input$scenario_1) ||
         !input$scenario_1 %in% selections$scheme_scenarios$scenario
     ) {
       shiny::updateSelectInput(
@@ -111,10 +133,11 @@ app_server <- function(input, output, session) {
   })
 
   shiny::observe({
+    # %in% safely handles NULL / character(0) → returns 0-row data.frame
     selections$main_scenario <- selections$scheme_scenarios |>
       dplyr::filter(
-        .data$scenario == input$scenario_1,
-        .data$create_datetime == input$scenario_1_runtime
+        .data$scenario %in% input$scenario_1,
+        .data$create_datetime %in% input$scenario_1_runtime
       )
   })
 
@@ -124,13 +147,17 @@ app_server <- function(input, output, session) {
     criteria <- selections$main_scenario |>
       dplyr::select(.data$start_year, .data$end_year, .data$app_version)
 
+    all_scenarios <- selections$scheme_scenarios |>
+      dplyr::pull(.data$scenario) |>
+      unique()
+    
     comparable_scenarios <- selections$scheme_scenarios |>
       # Inner join to get the list of comparable
       dplyr::inner_join(
         criteria,
         by = dplyr::join_by("start_year", "end_year", "app_version")
       ) |>
-      # Drop the the one we are comparing to (to avoid comparing the scenario
+      # Drop the one we are comparing to (to avoid comparing the scenario
       # to itself)
       dplyr::anti_join(
         selections$main_scenario,
@@ -142,17 +169,23 @@ app_server <- function(input, output, session) {
     # Auto-select if only one comparable scenario exists
     default <- if (length(comparable_scenarios) == 1) {
       comparable_scenarios
-    } else if (input$scenario_2 %in% comparable_scenarios) {
+    } else if (shiny::isTruthy(input$scenario_2) && input$scenario_2 %in% comparable_scenarios) {
       input$scenario_2
     } else {
       character(0)
     }
 
-    shiny::updateSelectInput(
+    disabled <- !all_scenarios %in% comparable_scenarios
+    
+    shinyWidgets::updatePickerInput(
       session,
       "scenario_2",
-      choices = comparable_scenarios,
-      selected = default
+      choices = all_scenarios,
+      selected = default,
+      choicesOpt = list(
+        disabled = disabled,
+        style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
+      )
     )
 
     selections$comparator_scenario <- selections$scheme_scenarios |>
@@ -174,7 +207,7 @@ app_server <- function(input, output, session) {
         criteria,
         by = dplyr::join_by("start_year", "end_year", "app_version")
       ) |>
-      # Drop the the one we are comparing to (to avoid comparing the scenario
+      # Drop the one we are comparing to (to avoid comparing the scenario
       # to itself)
       dplyr::anti_join(
         selections$main_scenario,
@@ -183,7 +216,7 @@ app_server <- function(input, output, session) {
       dplyr::pull(.data$create_datetime)
 
     # Only set explicit selected if the current value is valid
-    if (input$scenario_2_runtime %in% comparable_runtimes) {
+    if (shiny::isTruthy(input$scenario_2_runtime) && input$scenario_2_runtime %in% comparable_runtimes) {
       shiny::updateSelectInput(
         session,
         "scenario_2_runtime",
