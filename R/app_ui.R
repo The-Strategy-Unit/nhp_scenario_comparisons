@@ -24,6 +24,11 @@ app_ui = function(request) {
     sidebar = bslib::sidebar(
       shiny::uiOutput("warning_text"),
       title = "Scenario selection",
+      shiny::tags$p(
+        style = "font-size: 0.85em; color: #555; margin-bottom: 12px;",
+        "Select a scheme, then two comparable scenarios (same start/end year and model version). ",
+        "Greyed-out options are not available or not comparable."
+      ),
       shinyWidgets::pickerInput(
         "selected_scheme", 
         "Select scheme", 
