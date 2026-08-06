@@ -66,20 +66,37 @@ app_server <- function(input, output, session) {
   selections <- shiny::reactiveValues()
 
   shiny::observe({
-    choices <- datasets_list[datasets_list %in% nhp_model_runs()$dataset]
+    # All possible schemes (trust codes)
+    all_schemes <- datasets_list
+    
+    # Those that actually have model runs
+    available <- datasets_list[datasets_list %in% nhp_model_runs()$dataset]
+    
+    # Disable the ones that are missing
+    disabled <- !all_schemes %in% available
+    
     selected <- input$selected_scheme
-    if (shiny::isTruthy(selected) && selected %in% choices) {
+    # Only keep the current selection if it is still available (i.e. not disabled)
+    if (shiny::isTruthy(selected) && selected %in% available) {
       shinyWidgets::updatePickerInput(
         session,
         "selected_scheme",
-        choices = choices,
-        selected = selected
+        choices = all_schemes,
+        selected = selected,
+        choicesOpt = list(
+          disabled = disabled,
+          style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
+        )
       )
     } else {
       shinyWidgets::updatePickerInput(
         session,
         "selected_scheme",
-        choices = choices
+        choices = all_schemes,
+        choicesOpt = list(
+          disabled = disabled,
+          style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
+        )
       )
     }
   })
