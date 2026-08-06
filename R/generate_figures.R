@@ -58,7 +58,7 @@ get_tpma_lookup <- function(
   path = "https://raw.githubusercontent.com/The-Strategy-Unit/TPMAs/refs/heads/main/reference/tpma-lookup.csv"
 ) {
   readr::read_csv(path, col_types = "c") |>
-    dplyr::filter(is.na(active_to)) |> # retain only the active TPMAs
+    dplyr::filter(is.na(.data$active_to)) |> # retain only the active TPMAs
     dplyr::mutate(
       .keep = "none",
       strategy = .data$tpma_variable,
