@@ -411,18 +411,6 @@ app_server <- function(input, output, session) {
     
     model_runs <- nhp_model_runs()
     
-    # get the list of datasets allowed for the user
-    list_of_datasets <- get_user_allowed_datasets(session$groups)
-    
-    # Only compute "missing" datasets when model_runs is usable
-    if (!is.null(model_runs) && nrow(model_runs) > 0) {
-      datasets_on_azure <- unique(model_runs$dataset)
-      datasets_without_run <- setdiff(list_of_datasets, datasets_on_azure)
-      # if (length(datasets_without_run) > 0) {
-      #   warning_text <- c(warning_text, "Missing: ", paste(datasets_without_run, collapse = ", "))
-      # }
-    }
-    
     # No model runs at all
     if (is.null(model_runs) || nrow(model_runs) == 0) {
       warning_text <- c(
