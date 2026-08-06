@@ -53,6 +53,7 @@ get_container <- function(endpoint, container) {
 #' @param container_results Name of a blob_container/storage_container object
 #'     that stores results files.
 #' @param file Character. The path to a file in the named `container`.
+#' @param blob_url String. Default is AZ_STORAGE_EP saved in environment.
 #'
 #' @details Assumes you've connected to the container that holds NHP results.
 #'
