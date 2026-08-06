@@ -392,7 +392,6 @@ app_server <- function(input, output, session) {
     shiny::observe({
     warning_text <- c()
     
-    # Checking about lack of model runs
     model_runs <- nhp_model_runs()
     
     # get the list of datasets allowed for the user
