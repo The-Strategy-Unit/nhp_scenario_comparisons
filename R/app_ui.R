@@ -50,27 +50,17 @@ app_ui <- function(request) {
         "Introduction",
         bslib::card(
           id = "intro",
-          bslib::card_body(
-            shiny::HTML(litedown::mark("inst/app/intro_text.md"))
-          )
+          bslib::card_body(htmltools::includeMarkdown("inst/app/intro_text.md"))
         )
       ),
       shiny::tabPanel(
         "Guidance",
         bslib::card(
           id = "card_guidance",
-          shiny::HTML(litedown::mark(
-            "inst/app/model-version-warning.md"
-          )),
-          shiny::HTML(litedown::mark(
-            "inst/app/scenario-timespan-warning.md"
-          )),
-          shiny::HTML(litedown::mark(
-            "inst/app/model-naming-reminder.md"
-          )),
-          shiny::HTML(litedown::mark(
-            "inst/app/bed-days-note.md"
-          )),
+          htmltools::includeMarkdown("inst/app/model-version-warning.md"),
+          htmltools::includeMarkdown("inst/app/scenario-timespan-warning.md"),
+          htmltools::includeMarkdown("inst/app/model-naming-reminder.md"),
+          htmltools::includeMarkdown("inst/app/bed-days-note.md"),
           shiny::tagList(
             shiny::tags$h3("Scenarios metadata"),
             DT::dataTableOutput("metadata")
@@ -82,8 +72,8 @@ app_ui <- function(request) {
         bslib::card(
           shiny::uiOutput("result_text"),
           shiny::tabsetPanel(
-            shiny::tabPanel("Summary", mod_summary_ui("summary")),
-            shiny::tabPanel("Length of Stay", mod_los_ui("los")),
+            shiny::tabPanel("Summary", mod_summary_bar_ui("summary")),
+            shiny::tabPanel("Length of Stay", mod_los_bar_ui("los")),
             shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall")),
             shiny::tabPanel(
               "Activity Avoidance Impact",

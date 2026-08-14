@@ -54,8 +54,8 @@ get_results_metadata <- function(allowed_datasets) {
     select = select_cols
   ) |>
     dplyr::filter(
-      .data[["dataset"]] %in% allowed_datasets,
-      .data[["app_version"]] >= "v3.1"
+      dplyr::if_any("dataset", \(x) x %in% allowed_datasets),
+      dplyr::if_any("app_version", \(x) x >= "v3.1" | x == "dev")
     ) |>
     error_on_zero_rows() |>
     dplyr::select(tidyselect::all_of(table_cols)) |>
@@ -65,7 +65,7 @@ get_results_metadata <- function(allowed_datasets) {
 
 get_user_allowed_datasets <- function(groups = NULL) {
   groups <- groups %||% "nhp_devs"
-  codes <- names(yyjsonr::read_json_file("inst/data/datasets.json"))
+  codes <- names(yyjsonr::read_json_file("inst/ref/datasets.json"))
   if (any(c("nhp_devs", "nhp_power_users") %in% groups)) {
     codes
   } else {

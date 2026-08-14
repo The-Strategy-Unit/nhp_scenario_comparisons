@@ -1,4 +1,4 @@
-mod_los_ui <- function(id) {
+mod_los_bar_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
@@ -8,7 +8,7 @@ mod_los_ui <- function(id) {
   )
 }
 
-mod_los_server <- function(id, processed_data) {
+mod_los_bar_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

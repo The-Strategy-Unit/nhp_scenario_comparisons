@@ -3,17 +3,17 @@ app_server <- function(input, output, session) {
     allowed_datasets <- get_user_allowed_datasets(session$groups)
     results_metadata_tbl <- get_results_metadata(allowed_datasets)
 
-    # if a user isn't in the nhp_devs group, don't display unviewable/dev runs
+    # only show non-viewable scenarios to members of nhp_devs group
     if ("nhp_devs" %in% session$groups || is.null(session$groups)) {
       results_metadata_tbl
     } else {
       results_metadata_tbl |>
-        dplyr::filter(.data[["viewable"]]) |>
+        dplyr::filter(.data[["viewable"]], .data[["app_version"]] != "dev") |>
         require_rows()
     }
   })
 
-  all_schemes <- swap_names(yyjsonr::read_json_file("inst/data/datasets.json"))
+  all_schemes <- swap_names(yyjsonr::read_json_file("inst/ref/datasets.json"))
   selections <- shiny::reactiveValues()
 
   shiny::observe({
@@ -108,9 +108,11 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
     if (
-      shiny::isTruthy(input$scenario1) &&
-        !is.null(selections$scheme_scenarios) &&
+      all(
+        shiny::isTruthy(input$scenario1),
+        !is.null(selections$scheme_scenarios),
         input$scenario1 %in% selections$scheme_scenarios$scenario
+      )
     ) {
       runtime_choices <- selections$scheme_scenarios |>
         dplyr::filter(.data[["scenario"]] == input$scenario1) |>
@@ -178,7 +180,6 @@ app_server <- function(input, output, session) {
       session,
       "scenario2",
       choices = comparable_scenarios
-      # selected = default_scenario
       # choicesOpt = list(
       #   disabled = disabled_scenarios,
       #   style = ifelse(
@@ -223,11 +224,13 @@ app_server <- function(input, output, session) {
     comparator <- selections$comparator_scenario
 
     if (
-      nrow(main) > 0 &&
-        nrow(comparator) > 0 &&
-        main$start_year == comparator$start_year &&
-        main$end_year == comparator$end_year &&
+      all(
+        nrow(main) > 0,
+        nrow(comparator) > 0,
+        main$start_year == comparator$start_year,
+        main$end_year == comparator$end_year,
         main$app_version == comparator$app_version
+      )
     ) {
       shinyjs::enable("render_plot")
     } else {
@@ -308,40 +311,32 @@ app_server <- function(input, output, session) {
     } else {
       comparable <- get_comparable_scenarios(model_runs, selections$scheme)
 
-      # No comparable scenarios
       if (nrow(comparable) == 0) {
-        warning_text <- c(
-          warning_text,
-          bold_red("No comparable scenarios exist for the selected Scheme.")
-        )
+        txt <- "No comparable scenarios exist for the selected Scheme."
+        warning_text <- c(warning_text, bold_red(txt))
       }
     }
 
     state <- last_render()
     if (!is.null(state)) {
       # detect if selections have changed since last render
-      changed <- any(
-        state$s1 != input$scenario1,
-        state$s1_rt != input$scenario1_rt,
-        state$s2 != input$scenario2,
-        state$s2_rt != input$scenario2_rt
-      )
-
-      if (changed) {
-        warning_text <- c(
-          warning_text,
-          bold_red(
-            "Scenario Selections have changed. Press Render Plots to view."
-          )
+      if (
+        any(
+          state$s1 != input$scenario1,
+          state$s1_rt != input$scenario1_rt,
+          state$s2 != input$scenario2,
+          state$s2_rt != input$scenario2_rt
         )
+      ) {
+        txt <- "Scenario Selections have changed. Press Render Plots to view."
+        warning_text <- c(warning_text, bold_red(txt))
       }
     }
 
     if (length(warning_text) > 0) {
-      output$warning_text <- shiny::renderUI(shiny::HTML(paste0(
-        warning_text,
-        collapse = "<br />"
-      )))
+      output$warning_text <- shiny::renderUI({
+        shiny::HTML(paste0(warning_text, collapse = "<br />"))
+      })
     } else {
       output$warning_text <- shiny::renderUI(NULL)
     }
@@ -363,8 +358,8 @@ app_server <- function(input, output, session) {
     local_data_flag = FALSE
   )
 
-  mod_summary_server("summary", processed_data)
-  mod_los_server("los", processed_data)
+  mod_summary_bar_server("summary", processed_data)
+  mod_los_bar_server("los", processed_data)
   mod_waterfall_server("waterfall", processed_data)
   mod_activity_avoidance_impact_server("activity_avoidance", processed_data)
   mod_efficiencies_impact_server("efficiencies", processed_data)

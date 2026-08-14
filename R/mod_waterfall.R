@@ -3,7 +3,7 @@ mod_waterfall_ui <- function(id) {
 
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::includeMarkdown("inst/app/waterfall-text.md"),
+    htmltools::includeMarkdown("inst/app/waterfall-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )

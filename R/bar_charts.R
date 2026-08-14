@@ -26,6 +26,7 @@ create_los_chart <- function(los_data, pod) {
   los_data <- los_data |>
     dplyr::filter(.data[["pod_label"]] == .env[["pod"]])
   measure <- pull_unique(los_data, "measure")
+
   los_data |>
     ggplot2::ggplot(ggplot2::aes(.data[["principal"]], .data[["los_group"]])) +
     ggplot2::geom_col(
@@ -41,7 +42,7 @@ create_los_chart <- function(los_data, pod) {
 
 create_principal_pi_chart <- function(principal_pi_data, at, pod) {
   pod_lab <- glue::glue("{at} {pod}")
-  titl <- glue::glue("{pod_lab} - Principal projection (with p10 and p90 bar)")
+  title <- glue::glue("{pod_lab} - Principal projection (with p10 and p90 bar)")
   fill_colours <- c("#f9bf07", "#686f73")
 
   principal_pi_data |>
@@ -62,7 +63,7 @@ create_principal_pi_chart <- function(principal_pi_data, at, pod) {
     ) +
     ggplot2::scale_fill_manual(name = "Scenario", values = fill_colours) +
     ggplot2::scale_x_continuous(labels = scales::label_comma()) +
-    ggplot2::labs(title = titl, x = "Principal projection", y = "Measure") +
+    ggplot2::labs(title = title, x = "Principal projection", y = "Measure") +
     core_chart_theme()
 }
 

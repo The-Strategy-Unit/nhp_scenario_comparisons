@@ -24,8 +24,7 @@ create_beeswarm_chart <- function(beeswarm_data, activity_type, measure) {
     ) +
     ggplot2::geom_vline(
       ggplot2::aes(xintercept = .data[["principal"]]),
-      colour = "grey25",
-      show.legend = FALSE,
+      colour = "white",
       linewidth = 1.2
     ) +
     ggplot2::geom_vline(
@@ -34,7 +33,7 @@ create_beeswarm_chart <- function(beeswarm_data, activity_type, measure) {
         xintercept = .data[["principal"]]
       ),
       show.legend = FALSE,
-      linewidth = 0.8
+      linewidth = 0.6
     ) +
     ggplot2::geom_vline(
       ggplot2::aes(xintercept = .data[["baseline"]]),
@@ -76,7 +75,7 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
   ecdf_data_list <- ecdf_data |>
     tidyr::nest(.by = "scenario") |>
     tibble::deframe()
-  scens <- names(ecdf_data_list)
+  sns <- names(ecdf_data_list)
 
   p_quantiles <- c(0.1, 0.9)
   get_quantiles <- \(x) stats::quantile(x, p_quantiles)
@@ -90,41 +89,24 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
       x_vals = list(sort(.data[["value"]])),
       .by = "scenario"
     ) |>
-    dplyr::mutate(
-      principal_matched_value = purrr::map2_int(
-        .data[["principal"]],
-        .data[["x_vals"]],
-        \(x, y) which.min(abs(x - y))
-      ),
-      y_vals = y_vals,
-      x_quantiles = x_quantiles,
-      principal_matched_pct = purrr::map2_dbl(
-        .data[["y_vals"]],
-        .data[["principal_matched_value"]],
-        \(x, y) x[[y]]
-      )
-    )
+    dplyr::mutate(y_vals = y_vals)
 
-  line_guides <- summary_tbl |>
-    dplyr::reframe(
-      x = unlist(.data[["x_quantiles"]]),
+  # data to support positioning of dashed lines indicating p10 and p90 values
+  line_guides <- x_quantiles |>
+    tibble::enframe("scenario", "x") |>
+    dplyr::mutate(
       y_start = 0,
-      y_end = unlist(p_quantiles),
-      .by = "scenario"
+      y_end = list(p_quantiles),
+      # Try to distinguish some lines at least (we can affect dashed but not
+      # solid) in the case where the two scenarios have the same values and so
+      # their lines are overplotted and one scenario becomes invisible.
+      dashtype = dplyr::if_else(.data[["scenario"]] == sns[[1]], "2262", "6222")
     ) |>
-    # Try to distinguish some lines at least (we can affect dashed but not
-    # solid) in the case where the two scenarios have the same values and so
-    # their lines are overplotted and one scenario becomes invisible.
-    dplyr::mutate(
-      line_type = dplyr::case_when(
-        .data[["scenario"]] == scens[[1]] ~ "2262",
-        .data[["scenario"]] == scens[[2]] ~ "6222",
-        .default = "22"
-      )
-    )
+    tidyr::unnest_longer(c("x", "y_end"), indices_include = FALSE)
 
+  baseline_value <- unique(summary_tbl[["baseline"]])
   summary_tbl |>
-    dplyr::select(c("scenario", "baseline", "principal", "x_vals", "y_vals")) |>
+    dplyr::select(c("scenario", "principal", "x_vals", "y_vals")) |>
     tidyr::unnest_longer(c("x_vals", "y_vals")) |>
     ggplot2::ggplot(ggplot2::aes(
       .data[["x_vals"]],
@@ -141,27 +123,27 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
         x = .data[["x"]],
         y = .data[["y_start"]],
         yend = .data[["y_end"]],
-        linetype = .data[["line_type"]]
+        linetype = .data[["dashtype"]]
       ),
-      linewidth = 0.8,
+      linewidth = 0.6,
       show.legend = FALSE
     ) +
     ggplot2::geom_hline(
-      yintercept = c(0.1, 0.9),
+      yintercept = p_quantiles,
       colour = "dimgrey",
       linetype = "dashed",
       alpha = 0.6,
       linewidth = 0.6
     ) +
     ggplot2::geom_vline(
-      ggplot2::aes(xintercept = .data[["baseline"]]),
+      ggplot2::aes(xintercept = baseline_value),
       colour = "dimgrey",
       linewidth = 1
     ) +
     ggplot2::geom_vline(
       ggplot2::aes(xintercept = .data[["principal"]]),
       colour = "white",
-      linewidth = 1.4
+      linewidth = 1.2
     ) +
     ggplot2::geom_vline(
       ggplot2::aes(
@@ -174,7 +156,7 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
     # Add text labels at the baseline positions
     ggplot2::annotate(
       "text",
-      x = unique(summary_tbl[["baseline"]]),
+      x = baseline_value,
       y = 0.95,
       label = "baseline",
       colour = "dimgrey",
@@ -188,7 +170,7 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(8),
       labels = scales::label_comma(),
-      expand = ggplot2::expansion(c(0.002, 0)),
+      expand = ggplot2::expansion(c(0.005, 0)),
       limits = c(min_x_value, NA)
     ) +
     ggplot2::scale_y_continuous(
@@ -196,7 +178,6 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
       labels = scales::label_percent(),
       expand = ggplot2::expansion(0)
     ) +
-    ggplot2::labs(title = title_text, y = "Percentage of model runs") +
-    ggplot2::xlab(measure) +
+    ggplot2::labs(title = title_text, x = measure, y = "% of model runs") +
     core_chart_theme()
 }

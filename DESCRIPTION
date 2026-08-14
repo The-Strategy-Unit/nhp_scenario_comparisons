@@ -25,7 +25,7 @@ Imports:
     ggbeeswarm,
     ggplot2,
     glue,
-    litedown,
+    htmltools,
     purrr,
     readr,
     reskit (== 1.1.0),

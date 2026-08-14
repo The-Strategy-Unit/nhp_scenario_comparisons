@@ -1,4 +1,4 @@
-mod_summary_ui <- function(id) {
+mod_summary_bar_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
@@ -8,7 +8,7 @@ mod_summary_ui <- function(id) {
   )
 }
 
-mod_summary_server <- function(id, processed_data) {
+mod_summary_bar_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 

@@ -9,7 +9,6 @@ get_comparable_scenarios <- function(model_runs, scheme) {
     dplyr::select(!"comparable_scenarios")
 }
 
-
 core_chart_theme <- function() {
   ggplot2::theme(
     text = ggplot2::element_text(family = "Segoe UI", size = 12),
@@ -33,17 +32,9 @@ create_dt <- function(...) {
     ))(...)
 }
 
-
-split_on_space <- function(...) {
-  purrr::partial(tidyr::separate_wider_delim, delim = " ", too_many = "merge")(
-    ...
-  )
-}
-
-
-swap_names <- function(lst) {
-  stopifnot(rlang::is_named(lst))
-  rlang::set_names(names(lst), lst)
+swap_names <- function(vec) {
+  stopifnot(rlang::is_named(vec))
+  rlang::set_names(names(vec), vec)
 }
 
 tidy_dttm <- \(x) as.character(sub("Z", "", sub("T", " ", x)))

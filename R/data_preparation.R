@@ -3,13 +3,13 @@ prepare_beeswarm_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  core_tbl,
-  pod_lookup,
+  core_mat_tbl,
+  full_ap_lookup,
   atl_lookup
 ) {
   pt_compile_distr_data <- purrr::partial(
     reskit::compile_distribution_plot_data,
-    pod_lookup = pod_lookup
+    pod_lookup = full_ap_lookup
   )
   pt_compile_dst_data1 <- purrr::partial(
     pt_compile_distr_data,
@@ -19,10 +19,10 @@ prepare_beeswarm_data <- function(
     pt_compile_distr_data,
     results = results2
   )
-  core_tbl |>
+  core_mat_tbl |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_tbl, pt_compile_dst_data1),
-      !!scenario2_name := purrr::pmap(core_tbl, pt_compile_dst_data2)
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data2)
     ) |>
     unnest_mat_scenarios_tbl() |>
     dplyr::left_join(atl_lookup, "activity_type") |>
@@ -37,12 +37,12 @@ prepare_principal_pi_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  pod_lookup
+  full_atp_lookup
 ) {
   pt_compile_principal_pi_data <- purrr::partial(
     reskit::compile_distribution_summary_data,
     value_type = "principal",
-    pod_lookup = pod_lookup
+    pod_lookup = full_atp_lookup
   )
   list(results1, results2) |>
     purrr::map(pt_compile_principal_pi_data) |>
@@ -57,28 +57,28 @@ prepare_icf_impact_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  core_tbl,
-  pod_lookup,
+  core_mat_tbl,
+  cond_ap_lookup,
   tpma_lookup,
   atl_lookup
 ) {
-  pt_compile_icf_impact_data <- purrr::partial(
+  pt_compile_icf_data <- purrr::partial(
     reskit::compile_indiv_change_factor_data,
-    pod_lookup = pod_lookup,
+    pod_lookup = cond_ap_lookup,
     tpma_lookup = tpma_lookup
   )
-  pt_compile_icf_impact_data1 <- purrr::partial(
-    pt_compile_icf_impact_data,
+  pt_compile_icf_data1 <- purrr::partial(
+    pt_compile_icf_data,
     results = results1
   )
-  pt_compile_icf_impact_data2 <- purrr::partial(
-    pt_compile_icf_impact_data,
+  pt_compile_icf_data2 <- purrr::partial(
+    pt_compile_icf_data,
     results = results2
   )
-  core_tbl |>
+  core_mat_tbl |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_tbl, pt_compile_icf_impact_data1),
-      !!scenario2_name := purrr::pmap(core_tbl, pt_compile_icf_impact_data2)
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_icf_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_icf_data2)
     ) |>
     unnest_cfmat_scenarios_tbl() |>
     dplyr::left_join(atl_lookup, "activity_type") |>
@@ -91,22 +91,22 @@ prepare_waterfall_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  core_tbl,
-  pod_lookup,
+  core_mat_tbl,
+  full_ap_lookup,
   tpma_lookup,
   atl_lookup
 ) {
   pt_compile_cf_data <- purrr::partial(
     reskit::compile_change_factor_data,
-    pod_lookup = pod_lookup,
+    pod_lookup = full_ap_lookup,
     tpma_lookup = tpma_lookup
   )
   pt_compile_cf_data1 <- purrr::partial(pt_compile_cf_data, results = results1)
   pt_compile_cf_data2 <- purrr::partial(pt_compile_cf_data, results = results2)
-  core_tbl |>
+  core_mat_tbl |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_tbl, pt_compile_cf_data1),
-      !!scenario2_name := purrr::pmap(core_tbl, pt_compile_cf_data2)
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data2)
     ) |>
     unnest_mat_scenarios_tbl() |>
     dplyr::left_join(atl_lookup, "activity_type") |>
@@ -173,44 +173,11 @@ prepare_summary_data <- function(
 }
 
 
-pt_compile_principal_pod_data <- function(...) {
-  purrr::partial(
-    reskit::compile_principal_pod_data,
-    pod_lookup = cond_ap_lookup
-  )(...)
+split_on_space <- function(...) {
+  purrr::partial(tidyr::separate_wider_delim, delim = " ", too_many = "merge")(
+    ...
+  )
 }
-
-
-pt_compile_principal_los_data <- function(...) {
-  purrr::partial(
-    reskit::compile_principal_los_data,
-    pod_lookup = cond_ap_lookup
-  )(...)
-}
-
-pt_compile_icf_impact_data <- function(...) {
-  purrr::partial(
-    reskit::compile_indiv_change_factor_data,
-    pod_lookup = cond_ap_lookup,
-    tpma_lookup = tpma_lookup
-  )(...)
-}
-
-pt_compile_principal_pi_data <- function(...) {
-  purrr::partial(
-    reskit::compile_distribution_summary_data,
-    value_type = "principal",
-    pod_lookup = full_atp_lookup
-  )(...)
-}
-
-pt_compile_distr_data <- function(...) {
-  purrr::partial(
-    reskit::compile_distribution_plot_data,
-    pod_lookup = full_ap_lookup
-  )(...)
-}
-
 
 unnest_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
   mat_scenarios_tbl |>
@@ -221,7 +188,6 @@ unnest_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
     dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
     tidyr::unnest("value")
 }
-
 
 unnest_cfmat_scenarios_tbl <- function(mat_scenarios_tbl) {
   mat_scenarios_tbl |>

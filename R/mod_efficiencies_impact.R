@@ -3,7 +3,7 @@ mod_efficiencies_impact_ui <- function(id) {
 
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::includeMarkdown("inst/app/efficiencies-impact-text.md"),
+    htmltools::includeMarkdown("inst/app/efficiencies-impact-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"), height = "800px")
   )

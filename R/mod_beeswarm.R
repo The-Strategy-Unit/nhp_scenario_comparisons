@@ -3,8 +3,8 @@ mod_beeswarm_ui <- function(id) {
 
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
-    shiny::includeMarkdown("inst/app/beeswarm-note.md"),
+    htmltools::includeMarkdown("inst/app/probabilistic-model-note.md"),
+    htmltools::includeMarkdown("inst/app/beeswarm-note.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
