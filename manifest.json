@@ -1458,40 +1458,6 @@
         "RemoteSha": "4.0.3"
       }
     },
-    "ggtext": {
-      "Source": "posit_pkgman",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
-      "description": {
-        "Package": "ggtext",
-        "Type": "Package",
-        "Title": "Improved Text Rendering Support for 'ggplot2'",
-        "Version": "0.1.2",
-        "Authors@R": "\n    c(\n      person(\n        given = \"Claus O.\",\n        family = \"Wilke\",\n        role = c(\"aut\"),\n        email = \"wilke@austin.utexas.edu\",\n        comment = c(ORCID = \"0000-0002-7470-9261\")\n      ),\n      person(\n        given = \"Brenton M.\",\n        family = \"Wiernik\",\n        role = c(\"aut\", \"cre\"),\n        email = \"brenton@wiernik.org\",\n        comment = c(ORCID = \"0000-0001-9560-6336\", Twitter = \"@bmwiernik\")\n      )\n    )",
-        "Description": "A 'ggplot2' extension that enables the rendering of\n    complex formatted plot labels (titles, subtitles, facet labels,\n    axis labels, etc.). Text boxes with automatic word wrap are also\n    supported.",
-        "URL": "https://wilkelab.org/ggtext/",
-        "BugReports": "https://github.com/wilkelab/ggtext/issues",
-        "License": "GPL-2",
-        "Depends": "R (>= 3.5)",
-        "Imports": "ggplot2 (>= 3.3.0), grid, gridtext, rlang, scales",
-        "Suggests": "cowplot, dplyr, glue, knitr, rmarkdown, testthat, vdiffr",
-        "Encoding": "UTF-8",
-        "RoxygenNote": "7.1.1",
-        "VignetteBuilder": "knitr",
-        "NeedsCompilation": "no",
-        "Packaged": "2022-09-15 13:50:50 UTC; brentonw",
-        "Author": "Claus O. Wilke [aut] (<https://orcid.org/0000-0002-7470-9261>),\n  Brenton M. Wiernik [aut, cre] (<https://orcid.org/0000-0001-9560-6336>,\n    @bmwiernik)",
-        "Maintainer": "Brenton M. Wiernik <brenton@wiernik.org>",
-        "Repository": "RSPM",
-        "Date/Publication": "2022-09-16 11:36:07 UTC",
-        "Built": "R 4.6.0; ; 2026-04-23 23:24:01 UTC; windows",
-        "RemoteType": "standard",
-        "RemotePkgRef": "ggtext",
-        "RemoteRef": "ggtext",
-        "RemoteRepos": "https://packagemanager.posit.co/cran/latest",
-        "RemotePkgPlatform": "i386+x86_64-w64-mingw32",
-        "RemoteSha": "0.1.2"
-      }
-    },
     "glue": {
       "Source": "CRAN",
       "Repository": "https://packagemanager.posit.co/cran/latest",
@@ -1528,41 +1494,6 @@
         "RemoteRepos": "https://www.stats.bris.ac.uk/R/",
         "RemotePkgPlatform": "x86_64-w64-mingw32",
         "RemoteSha": "1.8.1"
-      }
-    },
-    "gridtext": {
-      "Source": "posit_pkgman",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
-      "description": {
-        "Package": "gridtext",
-        "Type": "Package",
-        "Title": "Improved Text Rendering Support for 'Grid' Graphics",
-        "Version": "0.1.6",
-        "Authors@R": "\n    c(\n      person(\n        given = \"Claus O.\",\n        family = \"Wilke\",\n        role = c(\"aut\"),\n        email = \"wilke@austin.utexas.edu\",\n        comment = c(ORCID = \"0000-0002-7470-9261\")\n      ),\n      person(\n        given = \"Brenton M.\",\n        family = \"Wiernik\",\n        role = c(\"aut\", \"cre\"),\n        email = \"brenton@wiernik.org\",\n        comment = c(ORCID = \"0000-0001-9560-6336\", Twitter = \"@bmwiernik\")\n      )\n    )",
-        "Description": "Provides support for rendering of formatted text using 'grid' graphics. Text can be\n    formatted via a minimal subset of 'Markdown', 'HTML', and inline 'CSS' directives, and it can be\n    rendered both with and without word wrap.",
-        "URL": "https://wilkelab.org/gridtext/",
-        "BugReports": "https://github.com/wilkelab/gridtext/issues",
-        "License": "MIT + file LICENSE",
-        "Depends": "R (>= 3.5)",
-        "Imports": "curl, grid, grDevices, markdown, rlang, Rcpp, png, jpeg,\nstringr, xml2",
-        "Suggests": "covr, knitr, rmarkdown, testthat, vdiffr",
-        "LinkingTo": "Rcpp",
-        "Encoding": "UTF-8",
-        "RoxygenNote": "7.1.1",
-        "NeedsCompilation": "yes",
-        "Packaged": "2026-02-18 22:56:00 UTC; brentonw",
-        "Author": "Claus O. Wilke [aut] (ORCID: <https://orcid.org/0000-0002-7470-9261>),\n  Brenton M. Wiernik [aut, cre] (ORCID:\n    <https://orcid.org/0000-0001-9560-6336>, Twitter: @bmwiernik)",
-        "Maintainer": "Brenton M. Wiernik <brenton@wiernik.org>",
-        "Repository": "RSPM",
-        "Date/Publication": "2026-02-19 06:10:21 UTC",
-        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-07-06 15:32:03 UTC; windows",
-        "Archs": "x64",
-        "RemoteType": "standard",
-        "RemotePkgRef": "gridtext",
-        "RemoteRef": "gridtext",
-        "RemoteRepos": "https://packagemanager.posit.co/cran/latest",
-        "RemotePkgPlatform": "i386+x86_64-w64-mingw32",
-        "RemoteSha": "0.1.6"
       }
     },
     "gt": {
@@ -1964,37 +1895,6 @@
         "RemoteRepos": "https://www.stats.bris.ac.uk/R/",
         "RemotePkgPlatform": "i386+x86_64-w64-mingw32",
         "RemoteSha": "2.0.0"
-      }
-    },
-    "jpeg": {
-      "Source": "posit_pkgman",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
-      "description": {
-        "Package": "jpeg",
-        "Version": "0.1-11",
-        "Title": "Read and write JPEG images",
-        "Author": "Simon Urbanek [aut, cre, cph] (https://urbanek.org,\n    <https://orcid.org/0000-0003-2297-1732>)",
-        "Authors@R": "person(\"Simon\", \"Urbanek\", role=c(\"aut\",\"cre\",\"cph\"), email=\"Simon.Urbanek@r-project.org\", comment=c(\"https://urbanek.org\", ORCID=\"0000-0003-2297-1732\"))",
-        "Maintainer": "Simon Urbanek <Simon.Urbanek@r-project.org>",
-        "Depends": "R (>= 2.9.0)",
-        "Description": "This package provides an easy and simple way to read, write and display bitmap images stored in the JPEG format. It can read and write both files and in-memory raw vectors.",
-        "License": "GPL-2 | GPL-3",
-        "SystemRequirements": "libjpeg",
-        "URL": "https://www.rforge.net/jpeg/",
-        "BugReports": "https://github.com/s-u/jpeg/issues",
-        "NeedsCompilation": "yes",
-        "Packaged": "2025-03-21 03:05:05 UTC; rforge",
-        "Repository": "RSPM",
-        "Date/Publication": "2025-03-21 15:37:18 UTC",
-        "Encoding": "UTF-8",
-        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-04-23 22:38:11 UTC; windows",
-        "Archs": "x64",
-        "RemoteType": "standard",
-        "RemotePkgRef": "jpeg",
-        "RemoteRef": "jpeg",
-        "RemoteRepos": "https://packagemanager.posit.co/cran/latest",
-        "RemotePkgPlatform": "i386+x86_64-w64-mingw32",
-        "RemoteSha": "0.1-11"
       }
     },
     "jquerylib": {
@@ -2638,36 +2538,6 @@
         "RemoteRepos": "https://www.stats.bris.ac.uk/R/",
         "RemotePkgPlatform": "i386+x86_64-w64-mingw32",
         "RemoteSha": "1.5.2"
-      }
-    },
-    "png": {
-      "Source": "CRAN",
-      "Repository": "https://packagemanager.posit.co/cran/latest",
-      "description": {
-        "Package": "png",
-        "Version": "0.1-9",
-        "Title": "Read and write PNG images",
-        "Author": "Simon Urbanek [aut, cre, cph] (https://urbanek.nz, ORCID:\n    <https://orcid.org/0000-0003-2297-1732>)",
-        "Authors@R": "person(\"Simon\", \"Urbanek\", role=c(\"aut\",\"cre\",\"cph\"), email=\"Simon.Urbanek@r-project.org\", comment=c(\"https://urbanek.nz\", ORCID=\"0000-0003-2297-1732\"))",
-        "Maintainer": "Simon Urbanek <Simon.Urbanek@r-project.org>",
-        "Depends": "R (>= 2.9.0)",
-        "Description": "This package provides an easy and simple way to read, write and display bitmap images stored in the PNG format. It can read and write both files and in-memory raw vectors.",
-        "License": "GPL-2 | GPL-3",
-        "SystemRequirements": "libpng",
-        "URL": "https://www.rforge.net/png/",
-        "BugReports": "https://github.com/s-u/png/issues/",
-        "NeedsCompilation": "yes",
-        "Packaged": "2026-03-15 03:28:25 UTC; rforge",
-        "Repository": "CRAN",
-        "Date/Publication": "2026-03-15 16:50:02 UTC",
-        "Built": "R 4.6.0; x86_64-w64-mingw32; 2026-04-21 00:42:12 UTC; windows",
-        "Archs": "x64",
-        "RemoteType": "standard",
-        "RemotePkgRef": "png",
-        "RemoteRef": "png",
-        "RemoteRepos": "https://www.stats.bris.ac.uk/R/",
-        "RemotePkgPlatform": "x86_64-w64-mingw32",
-        "RemoteSha": "0.1-9"
       }
     },
     "prettyunits": {
@@ -4223,7 +4093,7 @@
       "checksum": "90d7b1569146d23a00176cbd5ed6f9d4"
     },
     "DESCRIPTION": {
-      "checksum": "06bd5465635a0ce71a092c22acf11e58"
+      "checksum": "777e3f0730487d9b4fe11832b7a1f180"
     },
     "inst/app/aa-impact-text.md": {
       "checksum": "016a03edd418edeb7b5d24fa7d780d91"
@@ -4259,70 +4129,67 @@
       "checksum": "e8f07112db5840363f1368b3b3c8c4fb"
     },
     "inst/app/waterfall-text.md": {
-      "checksum": "e7930ea89ea7579d62f83f9365832bb5"
+      "checksum": "8c1969da122a474468109eb3b93e2671"
     },
-    "inst/data/datasets.json": {
+    "inst/datasets/datasets.json": {
       "checksum": "6616b05cabe78e7cc7a942f0a3372fac"
     },
     "NAMESPACE": {
-      "checksum": "e4d705956cbc0b1b5b1d6f8b1a6f1589"
+      "checksum": "7d5cde4a37b258ce011a6afb2c7bfbe7"
     },
     "R/apm_lookups.R": {
       "checksum": "789f9b58621e52ca1a842c6cc2aa3aa8"
     },
     "R/app_server.R": {
-      "checksum": "a0ec2b5d23b511e49633a8c5b0dfabf2"
+      "checksum": "a583536686332c8186dc312fb44b84e6"
     },
     "R/app_ui.R": {
-      "checksum": "714e149f71bc03e0e1bea6914067245a"
+      "checksum": "63c120c52d138bc3ee1bf62b181f5785"
     },
     "R/bar_charts.R": {
-      "checksum": "e3f1482689d29cb5f6e90dec965e05d0"
+      "checksum": "4c52ec041c4abc1c91f834b9b44728c5"
     },
     "R/data_preparation.R": {
-      "checksum": "d5d954c2775c268c581159d6cb0a1638"
+      "checksum": "62567580a1e3bddef17db9e19ce6814a"
     },
     "R/distribution_charts.R": {
-      "checksum": "3a0f64b267176276c4025f2810f29cb2"
+      "checksum": "09c172f70b1220d18ce223c6b67d985f"
     },
     "R/get_data.R": {
-      "checksum": "c6d38385645c368425db6b68a5d91bc4"
+      "checksum": "029a67aafdb6515959b4a2de44d22f7a"
     },
     "R/get_github_file.R": {
-      "checksum": "9698e5f3c912d2785e376c660e33efc8"
-    },
-    "R/get_tpma_label_lookup.R": {
-      "checksum": "aaae386448c41b0387294aec48422ce2"
+      "checksum": "4e82804cdc9d19720a4793eb042bbd73"
     },
     "R/mod_activity_avoidance_impact.R": {
-      "checksum": "031a31d18c580ee7cbe0443fdfb2329a"
+      "checksum": "2ffbbc74e013bf1d42ab5d761443bee7"
     },
     "R/mod_beeswarm.R": {
-      "checksum": "d3df9ce87f1f13e50a3ab888de30a894"
+      "checksum": "ad4ab6f8dbec36f65bbc39cf1efc88ea"
     },
     "R/mod_ecdf.R": {
-      "checksum": "256ff3a70e0c99eff3e38c6a5baa0951"
+      "checksum": "d6cd6996ba2dcb50206ca9385dc0138a"
     },
     "R/mod_efficiencies_impact.R": {
-      "checksum": "d114e93f15d5471983294a0b947aeedb"
+      "checksum": "eb53284384b68c05e3c3b79b5d9a79fa"
     },
     "R/mod_los.R": {
-      "checksum": "5741c2c200b8c159e52296121e127073"
+      "checksum": "ec10708f162a1bec917fd7c93a7d470e"
     },
-    "R/mod_p10_p90_bar.R": {
-      "checksum": "6abf46719484b1894beeb0a44efdbb97"
+    "R/mod_p10p90_bar.R": {
+      "checksum": "448cade0da376e8b8f8e9b901a8a1d4c"
     },
     "R/mod_processing_server.R": {
-      "checksum": "bca328eecaa4e1fb45903ee89eec44d3"
+      "checksum": "4029e50e31349fadb170ab512c33cc0b"
     },
     "R/mod_summary.R": {
-      "checksum": "0d65bc77f4920b9215e48168690aeaf5"
+      "checksum": "3f6cf32aebc2dc13606bfa1fff1c2a7c"
     },
     "R/mod_waterfall.R": {
-      "checksum": "47299c3eff9c7e7f7ca0341e73c81481"
+      "checksum": "80fd646fba5f8b61bfdec73575f03fe3"
     },
     "R/nhpscenarioanalysis-package.R": {
-      "checksum": "cf3dfb1b9651879558287459fb51675b"
+      "checksum": "0059b4a650f4b47eaa1030a43b531f26"
     },
     "R/README.md": {
       "checksum": "612d26f1ac05d21d8523d5e98fdbdfd7"
@@ -4331,7 +4198,7 @@
       "checksum": "50bce8ac075784a4c460c2b30bc1ae20"
     },
     "R/utils.R": {
-      "checksum": "60eaa0b23ce9c31e394a55742841bc59"
+      "checksum": "62188681ce3228167aa869c5c45d5469"
     }
   },
   "users": null
