@@ -6,7 +6,7 @@
 ^app[.]R$
 ^CODEOWNERS$
 ^.*[.]Rproj$
-^.*[.]code\\-workspace$
+^.*[.]code-workspace$
 ^LICENSE[.]md$
 ^[.]Renviron[.]sample$
 ^[.]rscignore$

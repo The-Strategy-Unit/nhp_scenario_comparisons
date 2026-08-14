@@ -1,4 +1,3 @@
-#' The application server-side
 app_server <- function(input, output, session) {
   nhp_model_runs <- shiny::reactive({
     allowed_datasets <- get_user_allowed_datasets(session$groups)

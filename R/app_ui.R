@@ -51,10 +51,7 @@ app_ui <- function(request) {
         bslib::card(
           id = "intro",
           bslib::card_body(
-            shiny::HTML(markdown::markdownToHTML(
-              "inst/app/intro_text.md",
-              fragment.only = TRUE
-            ))
+            shiny::HTML(litedown::mark("inst/app/intro_text.md"))
           )
         )
       ),
@@ -62,28 +59,20 @@ app_ui <- function(request) {
         "Guidance",
         bslib::card(
           id = "card_guidance",
-          shiny::HTML(markdown::mark_html(
-            "inst/app/model-version-warning.md",
-            output = FALSE,
-            template = FALSE
+          shiny::HTML(litedown::mark(
+            "inst/app/model-version-warning.md"
           )),
-          shiny::HTML(markdown::mark_html(
-            "inst/app/scenario-timespan-warning.md",
-            output = FALSE,
-            template = FALSE
+          shiny::HTML(litedown::mark(
+            "inst/app/scenario-timespan-warning.md"
           )),
-          shiny::HTML(markdown::mark_html(
-            "inst/app/model-naming-reminder.md",
-            output = FALSE,
-            template = FALSE
+          shiny::HTML(litedown::mark(
+            "inst/app/model-naming-reminder.md"
           )),
-          shiny::HTML(markdown::mark_html(
-            "inst/app/bed-days-note.md",
-            output = FALSE,
-            template = FALSE
+          shiny::HTML(litedown::mark(
+            "inst/app/bed-days-note.md"
           )),
-          tagList(
-            h3("Scenarios metadata"),
+          shiny::tagList(
+            shiny::tags$h3("Scenarios metadata"),
             DT::dataTableOutput("metadata")
           )
         )
@@ -91,7 +80,6 @@ app_ui <- function(request) {
       shiny::tabPanel(
         "View comparisons",
         bslib::card(
-          #bslib::card_header("Result"),
           shiny::uiOutput("result_text"),
           shiny::tabsetPanel(
             shiny::tabPanel("Summary", mod_summary_ui("summary")),
