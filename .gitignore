@@ -262,3 +262,5 @@ pyrightconfig.json
 app_data/
 
 rds/
+
+inst/testing.R
