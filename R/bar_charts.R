@@ -1,9 +1,12 @@
-create_summary_bar_chart <- function(summary_data, activity_type) {
-  title_text <- glue::glue("{activity_type} - Summary Comparison")
+create_summary_chart <- function(summary_data, activity_type, measure) {
+  title_text <- glue::glue("{activity_type} {measure} - Summary Comparison")
   fill_colours <- c("#f9bf07", "#686f73")
 
   summary_data |>
-    dplyr::filter(.data[["activity_type_label"]] == .env[["activity_type"]]) |>
+    dplyr::filter(
+      .data[["activity_type_label"]] == .env[["activity_type"]],
+      .data[["measure"]] == .env[["measure"]]
+    ) |>
     ggplot2::ggplot(ggplot2::aes(.data[["principal"]], .data[["pod_label"]])) +
     ggplot2::geom_col(
       ggplot2::aes(fill = .data[["scenario"]]),
@@ -11,20 +14,19 @@ create_summary_bar_chart <- function(summary_data, activity_type) {
     ) +
     ggplot2::scale_fill_manual(name = "Scenario", values = fill_colours) +
     ggplot2::scale_x_continuous(labels = scales::label_comma()) +
-    ggplot2::labs(title = title_text, x = NULL, y = "Point of delivery") +
+    ggplot2::labs(title = title_text, x = measure, y = "Point of delivery") +
     core_chart_theme()
 }
 
 
-create_los_bar_chart <- function(los_data, pod, measure) {
-  title_text <- glue::glue("{pod} {measure} - Length of Stay Comparison")
+create_los_chart <- function(los_data, pod) {
+  title_text <- glue::glue("{pod} - Length of Stay Comparison")
   fill_colours <- c("#f9bf07", "#686f73")
 
+  los_data <- los_data |>
+    dplyr::filter(.data[["pod_label"]] == .env[["pod"]])
+  measure <- pull_unique(los_data, "measure")
   los_data |>
-    dplyr::filter(
-      .data[["pod_label"]] == .env[["pod"]],
-      .data[["measure"]] == .env[["measure"]]
-    ) |>
     ggplot2::ggplot(ggplot2::aes(.data[["principal"]], .data[["los_group"]])) +
     ggplot2::geom_col(
       ggplot2::aes(fill = .data[["scenario"]]),
@@ -37,13 +39,16 @@ create_los_bar_chart <- function(los_data, pod, measure) {
 }
 
 
-create_principal_pi_bar_chart <- function(data, at, pod) {
-  pod_lab <- sub("patient ", "patients ", glue::glue("{at} {pod}"))
+create_principal_pi_chart <- function(principal_pi_data, at, pod) {
+  pod_lab <- glue::glue("{at} {pod}")
   titl <- glue::glue("{pod_lab} - Principal projection (with p10 and p90 bar)")
   fill_colours <- c("#f9bf07", "#686f73")
 
-  data |>
-    dplyr::filter(.data[["pod_label"]] == .env[["pod_lab"]]) |>
+  principal_pi_data |>
+    dplyr::filter(
+      .data[["activity_type_label"]] == .env[["at"]],
+      .data[["pod_label"]] == .env[["pod"]]
+    ) |>
     ggplot2::ggplot(ggplot2::aes(
       .data[["principal"]],
       .data[["measure"]],
@@ -64,7 +69,6 @@ create_principal_pi_bar_chart <- function(data, at, pod) {
 
 create_waterfall_chart <- function(waterfall_data, activity_type, measure) {
   waterfall_data |>
-    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]])) |>
     dplyr::filter(
       .data[["activity_type_label"]] == .env[["activity_type"]],
       .data[["measure_label"]] == .env[["measure"]]
@@ -75,23 +79,23 @@ create_waterfall_chart <- function(waterfall_data, activity_type, measure) {
 }
 
 
-create_impact_chart <- function(impact_data, cf, at, measure) {
+create_impact_chart <- function(icf_impact_data, cf, at, measure) {
   cf_label <- ifelse(cf == "efficiencies", "Efficiencies", "Activity Avoidance")
   title_2 <- glue::glue("Impact of Individual {cf_label} TPMA Assumptions")
   title_text <- glue::glue("{at} {measure} - {title_2}")
   fill_colours <- c("#f9bf07", "#686f73")
 
-  impact_data |>
-    dplyr::mutate(
-      dplyr::across("tpma_label", \(x) stringr::str_wrap(x, 60)),
-      measure_label = create_measure_label(.data[["measure"]])
-    ) |>
+  icf_impact_data |>
+    # In the app we will actually provide the data pre-filtered, but I have
+    # decided to superfluously retain the equivalent filter step in this
+    # function so that it would still work with unfiltered icf_impact_data
     dplyr::filter(
       .data[["change_factor"]] == .env[["cf"]],
       .data[["activity_type_label"]] == .env[["at"]],
       .data[["measure_label"]] == .env[["measure"]],
       .data[["value"]] < 0
     ) |>
+    dplyr::mutate(dplyr::across("tpma_label", \(x) stringr::str_wrap(x, 60))) |>
     ggplot2::ggplot(ggplot2::aes(.data[["value"]], .data[["tpma_label"]])) +
     ggplot2::geom_col(
       ggplot2::aes(fill = .data[["scenario"]]),

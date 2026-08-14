@@ -6,7 +6,7 @@ read_azure_results <- function(results_dir) {
   results_container_name <- Sys.getenv("AZ_STORAGE_CONTAINER_RESULTS")
   results_cont <- azkit::get_container(results_container_name, token = token)
 
-  app_version <- sub("^[^/]*/([^/]*)/.*$", "\\1", results_dir)
+  app_version <- sub("^aggregated-model-results/([^/]+).*$", "\\1", results_dir)
   tables <- c("default", "step_counts", get_tx_table_name(app_version))
   reskit::read_results_parquet_files(results_cont, results_dir, tables) |>
     shim_results(app_version)
@@ -54,20 +54,22 @@ get_results_metadata <- function(allowed_datasets) {
     select = select_cols
   ) |>
     dplyr::filter(
-      dplyr::if_any("dataset", \(x) x %in% allowed_datasets),
-      dplyr::if_any("app_version", \(x) x == "dev" | x >= "v3.1")
+      .data[["dataset"]] %in% allowed_datasets,
+      .data[["app_version"]] >= "v3.1"
     ) |>
     error_on_zero_rows() |>
-    dplyr::select(tidyselect::all_of(table_cols))
+    dplyr::select(tidyselect::all_of(table_cols)) |>
+    dplyr::mutate(dplyr::across("create_datetime", tidy_dttm))
 }
 
 
-get_user_allowed_datasets <- function(groups) {
-  codes <- names(yyjsonr::read_json_file("supporting_data/datasets.json"))
-  nhp_stub <- "^nhp_(national|icb|provider)_"
+get_user_allowed_datasets <- function(groups = NULL) {
+  groups <- groups %||% "nhp_devs"
+  codes <- names(yyjsonr::read_json_file("inst/data/datasets.json"))
   if (any(c("nhp_devs", "nhp_power_users") %in% groups)) {
-    c("synthetic", codes)
+    codes
   } else {
+    nhp_stub <- "^nhp_(national|icb|provider)_"
     allowed <- sub(nhp_stub, "", grepv(nhp_stub, groups))
     c("synthetic", intersect(codes, allowed))
   }
@@ -79,11 +81,10 @@ add_outputs_app_link <- function(results_metadata_tbl) {
   t <- "target='_blank'"
   # fmt: skip
   remove_cols <- c(
-    "url_app_version", "outputs_url", "viewable", "run_stage", "aggregated_results_path",
+    "url_app_version", "outputs_url", "outputs_app_uri", "viewable", "run_stage", "aggregated_results_path"
   )
   results_metadata_tbl |>
     dplyr::mutate(
-      dplyr::across("create_datetime", tidy_dttm),
       url_app_version = gsub("\\.", "-", .data[["app_version"]]),
       outputs_url = glue::glue("{connect_url}/nhp/{url_app_version}"),
       outputs_url = glue::glue("{outputs_url}/outputs/?{outputs_app_uri}"),

@@ -1,10 +1,14 @@
 #' Read the pods lookup table from a YAML file in the NHP Outputs repo
+#' @param file the name of the yaml file to be read in
+#' @keywords internal
 read_pods_lookup <- function(file = "golem-config.yml") {
   yaml12::parse_yaml(readr::read_lines(get_outputs_gh_url(file)))
 }
 possibly_read_pods_lookup <- \(...) purrr::possibly(read_pods_lookup)(...)
 
 #' Read the TPMAs lookup table from a CSV file in the TPMAs repo
+#' @param file the name of the csv file to be read in
+#' @keywords internal
 read_tpmas_lookup <- function(file = "tpma-lookup.csv") {
   readr::read_csv(get_tpmas_gh_url(file), col_types = "-ccccc---c")
 }

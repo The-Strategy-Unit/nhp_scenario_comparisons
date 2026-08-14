@@ -12,24 +12,21 @@ Authors@R: c(
         comment = c(ORCID = "0000-0002-5650-1176")
     )
   )
-Description: A Shiny app to compare model results across two different scenarios
+Description: A Shiny app to compare model results across two different
+    scenarios.
 License: MIT + file LICENSE
 Depends: R (>= 4.5.0)
 Imports:
     azkit (>= 0.3.1),
-    AzureAuth,
-    AzureStor,
     bslib,
     dplyr,
     DT,
     forcats,
     ggbeeswarm,
-    ggeasy,
     ggplot2,
     ggtext,
     glue,
     htmltools,
-    lubridate,
     markdown,
     purrr,
     readr,
@@ -39,12 +36,13 @@ Imports:
     shiny,
     shinybusy,
     shinyjs,
+    shinyWidgets,
     stats,
     stringr,
     tibble,
     tidyr,
     tidyselect,
-    utils,
+    vctrs,
     yaml12,
     yyjsonr
 Encoding: UTF-8

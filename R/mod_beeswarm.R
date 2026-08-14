@@ -6,11 +6,6 @@ mod_beeswarm_ui <- function(id) {
     shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
     shiny::includeMarkdown("inst/app/beeswarm-note.md"),
     shiny::uiOutput(ns("filters_ui")),
-    shiny::checkboxInput(
-      ns("show_origin"),
-      "Show Origin (zero)?",
-      value = TRUE
-    ),
     shiny::plotOutput(ns("plot"))
   )
 }
@@ -18,14 +13,7 @@ mod_beeswarm_ui <- function(id) {
 mod_beeswarm_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
-    # scn1 <- shiny::reactive(processed()$scenario_1_name)
-    # scn2 <- shiny::reactive(processed()$scenario_2_name)
     df <- shiny::reactive(processed_data()$beeswarm_data)
-    full_apm_lookup <- shiny::reactive(processed_data()$full_apm_lookup)
-
-    label_lookup <- full_apm_lookup() |>
-      dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
 
     output$filters_ui <- shiny::renderUI({
       shiny::tagList(
@@ -34,7 +22,7 @@ mod_beeswarm_server <- function(id, processed_data) {
           shiny::selectInput(
             ns("filter1"),
             "Activity Type",
-            choices = pull_unique(label_lookup, "activity_type_label")
+            choices = pull_unique(df(), "activity_type_label")
           ),
           shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
         )
@@ -42,12 +30,12 @@ mod_beeswarm_server <- function(id, processed_data) {
     })
 
     shiny::observe({
-      shiny::req(input$filter1)
+      shiny::req(df(), input$filter1)
 
-      filter2_choices <- label_lookup |>
+      filter2_choices <- df() |>
         dplyr::filter(.data[["activity_type_label"]] == input$filter1) |>
         pull_unique("measure_label")
-
+      shiny::freezeReactiveValue(input, "filter2")
       shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
     })
 

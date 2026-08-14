@@ -6,7 +6,7 @@ each other.
 This is based on the existing visualisation in the [main outputs app][outputs],
 providing side-by-side versions of the visualisations and figures therein.
 The documentation for the demand model is available on the NHP
-[Project Information site][proj_info].
+[Project Information website][proj_info].
 
 [outputs]: https://connect.strategyunitwm.nhs.uk/nhp/outputs/
 [proj_info]: https://connect.strategyunitwm.nhs.uk/nhp/project_information/

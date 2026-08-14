@@ -21,7 +21,7 @@ deploy <- function(type = c("dev", "prod")) {
       "app.R",
       "R/",
       "inst/app",
-      "supporting_data/",
+      "inst/data/",
       "DESCRIPTION"
     ),
     envVars = c(

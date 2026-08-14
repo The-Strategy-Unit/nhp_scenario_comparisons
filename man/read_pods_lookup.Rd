@@ -6,6 +6,10 @@
 \usage{
 read_pods_lookup(file = "golem-config.yml")
 }
+\arguments{
+\item{file}{the name of the yaml file to be read in}
+}
 \description{
 Read the pods lookup table from a YAML file in the NHP Outputs repo
 }
+\keyword{internal}

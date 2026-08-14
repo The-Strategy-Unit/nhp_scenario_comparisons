@@ -6,7 +6,7 @@
 \alias{nhpscenarioanalysis-package}
 \title{nhpscenarioanalysis: Scenario result comparison app}
 \description{
-A Shiny app to compare model results across two different scenarios
+A Shiny app to compare model results across two different scenarios.
 }
 \author{
 \strong{Maintainer}: Gabriel Hobro \email{gabriel.hobro@nhs.net}

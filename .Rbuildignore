@@ -1,3 +1,16 @@
 ^air[.]toml$
-^\.vscode$
+^manifest[.]json$
+^update_manifest[.]js$
+^[.]vscode$
 ^testing[.]R$
+^app[.]R$
+^CODEOWNERS$
+^.*[.]Rproj$
+^.*[.]code\\-workspace$
+^LICENSE[.]md$
+^[.]Renviron[.]sample$
+^[.]rscignore$
+^rds/.*$
+^dev/.*$
+^[.]cache/.*$
+^[.]github/.*$

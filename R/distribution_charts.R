@@ -1,179 +1,202 @@
 create_beeswarm_chart <- function(beeswarm_data, activity_type, measure) {
   beeswarm_data <- beeswarm_data |>
-    dplyr::filter()
+    dplyr::filter(
+      dplyr::if_any("activity_type_label", \(x) x == {{ activity_type }}),
+      dplyr::if_any("measure_label", \(x) x == {{ measure }})
+    )
+  title <- glue::glue("{activity_type} {measure} - Distribution of Model Runs")
   min_x_value <- min(beeswarm_data[["value"]], beeswarm_data[["baseline"]])
+
   summary_tbl <- beeswarm_data |>
     dplyr::summarise(
       dplyr::across(c("baseline", "principal"), unique),
       .by = "scenario"
     )
-  beeswarm_data |>
-    ggplot2::ggplot(ggplot2::aes(.data[["value"]], 1)) +
+
+  summary_tbl |>
+    ggplot2::ggplot() +
     ggbeeswarm::geom_quasirandom(
-      ggplot2::aes(colour = .data[["scenario"]]),
+      data = beeswarm_data,
+      ggplot2::aes(.data[["value"]], 1, colour = .data[["scenario"]]),
       orientation = "y",
-      size = 3,
+      size = 1.4,
       alpha = 0.5
     ) +
-    ggplot2::scale_colour_manual(values = c("red", "blue")) +
     ggplot2::geom_vline(
-      ggplot2::aes(xintercept = .data[["baseline"]]),
-      data = summary_tbl,
-      colour = "grey50",
+      ggplot2::aes(xintercept = .data[["principal"]]),
+      colour = "grey25",
+      show.legend = FALSE,
       linewidth = 1.2
     ) +
     ggplot2::geom_vline(
       ggplot2::aes(
-        xintercept = .data[["principal"]],
-        colour = .data[["scenario"]]
+        colour = .data[["scenario"]],
+        xintercept = .data[["principal"]]
       ),
-      data = summary_tbl,
-      linetype = "dashed",
+      show.legend = FALSE,
+      linewidth = 0.8
+    ) +
+    ggplot2::geom_vline(
+      ggplot2::aes(xintercept = .data[["baseline"]]),
+      colour = "grey50",
       linewidth = 1.2
     ) +
     ggplot2::expand_limits(x = min_x_value) +
+    ggplot2::scale_colour_manual(values = c("red", "blue")) +
     ggplot2::scale_x_continuous(
       breaks = scales::breaks_pretty(8),
       labels = scales::label_comma(),
       expand = ggplot2::expansion(0.01)
     ) +
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(0.15)) +
+    ggplot2::labs(title = title, x = measure) +
+    core_chart_theme() +
     ggplot2::theme(
-      text = ggplot2::element_text(family = "Segoe UI", size = 12),
-      plot.title = ggplot2::element_text(size = 14, hjust = 0.5),
-      legend.text = ggplot2::element_text(face = "bold", hjust = 0.1),
-      legend.position = "bottom",
-      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
       strip.text = ggplot2::element_blank(),
       strip.background = ggplot2::element_blank()
     ) +
     ggplot2::facet_grid(rows = dplyr::vars(.data[["scenario"]]))
-
-  ggplot2::labs(
-    y = input$filter2,
-    title = glue::glue(
-      "{input$filter1} {input$filter2} - Distribution of Model Runs"
-    )
-  )
 }
 
 
-mod_distribution_ecdf_plot <- function(ecdf_plot_data) {
-  min_x_value <- min(ecdf_plot_data[["value"]], ecdf_plot_data[["baseline"]])
-  quantiles <- c(0.1, 0.9)
-  summary_tbl <- ecdf_plot_data |>
+create_ecdf_chart <- function(ecdf_data, activity_type, measure) {
+  chart_info <- "S-curve\n(empirical cumulative distribution function)"
+  title_text <- glue::glue("{activity_type} {tolower(measure)} - {chart_info}")
+
+  ecdf_data <- ecdf_data |>
+    dplyr::filter(
+      dplyr::if_any("activity_type_label", \(x) x == {{ activity_type }}),
+      dplyr::if_any("measure_label", \(x) x == {{ measure }})
+    )
+  min_x_value <- min(ecdf_data[["value"]], ecdf_data[["baseline"]])
+
+  ecdf_data_list <- ecdf_data |>
+    tidyr::nest(.by = "scenario") |>
+    tibble::deframe()
+  scens <- names(ecdf_data_list)
+
+  p_quantiles <- c(0.1, 0.9)
+  get_quantiles <- \(x) stats::quantile(x, p_quantiles)
+  ecdf_fns <- purrr::map(ecdf_data_list, \(x) stats::ecdf(x[["value"]]))
+  x_quantiles <- purrr::map(ecdf_fns, get_quantiles)
+  y_vals <- purrr::map2(ecdf_data_list, ecdf_fns, \(x, y) sort(y(x[["value"]])))
+
+  summary_tbl <- ecdf_data |>
     dplyr::summarise(
       dplyr::across(c("baseline", "principal"), unique),
-      ecdf_fn = list(stats::ecdf(.data[["value"]])),
-      x_quantiles = list(stats::quantile(.data[["ecdf_fn"]], quantiles)),
       x_vals = list(sort(.data[["value"]])),
-      y_vals = list(sort(.data[["ecdf_fn"]])),
       .by = "scenario"
     ) |>
     dplyr::mutate(
-      principal_match_value = which.min(abs(
-        .data[["principal"]] - .data[["x_vals"]]
-      )),
-      principal_pct = .data[["y_vals"]][[.data[["principal_match_value"]]]],
+      principal_matched_value = purrr::map2_int(
+        .data[["principal"]],
+        .data[["x_vals"]],
+        \(x, y) which.min(abs(x - y))
+      ),
+      y_vals = y_vals,
+      x_quantiles = x_quantiles,
+      principal_matched_pct = purrr::map2_dbl(
+        .data[["y_vals"]],
+        .data[["principal_matched_value"]],
+        \(x, y) x[[y]]
+      )
+    )
+
+  line_guides <- summary_tbl |>
+    dplyr::reframe(
+      x = unlist(.data[["x_quantiles"]]),
+      y_start = 0,
+      y_end = unlist(p_quantiles),
       .by = "scenario"
     ) |>
-    dplyr::select(!c("ecdf_fn", "principal_match_value"))
-  # ecdf_fn <- stats::ecdf(ecdf_plot_data[["value"]])
-  # x_quantiles <- stats::quantile(ecdf_fn, quantiles)
-  # x_vals <- sort(ecdf_plot_data[["value"]])
-  # y_vals <- sort(ecdf_fn(ecdf_plot_data[["value"]]))
-  # principal_diffs <- abs(principal_value - x_vals)
-  # principal_match_value <- which.min(principal_diffs)
-  # principal_pct <- y_vals[[principal_match_value]]
+    # Try to distinguish some lines at least (we can affect dashed but not
+    # solid) in the case where the two scenarios have the same values and so
+    # their lines are overplotted and one scenario becomes invisible.
+    dplyr::mutate(
+      line_type = dplyr::case_when(
+        .data[["scenario"]] == scens[[1]] ~ "2262",
+        .data[["scenario"]] == scens[[2]] ~ "6222",
+        .default = "22"
+      )
+    )
 
-  line_guides <- tibble::tibble(
-    x_start = c(rep(min_x_value, 3), x_quantiles, principal),
-    x_end = rep(c(x_quantiles, principal), 2),
-    y_start = c(quantiles, principal_pct, rep(0, 3)),
-    y_end = rep(c(quantiles, principal_pct), 2),
-    colour = rep(c(rep(plot_blue, 2), plot_red), 2)
-  )
-  interim_plot <- tibble::tibble(x = x_vals, y = y_vals) |>
-    ggplot2::ggplot(ggplot2::aes(.data[["x"]], .data[["y"]]))
-  interim_plot +
-    ggplot2::geom_step(colour = "grey50", linewidth = 1.2) +
+  summary_tbl |>
+    dplyr::select(c("scenario", "baseline", "principal", "x_vals", "y_vals")) |>
+    tidyr::unnest_longer(c("x_vals", "y_vals")) |>
+    ggplot2::ggplot(ggplot2::aes(
+      .data[["x_vals"]],
+      .data[["y_vals"]],
+      colour = .data[["scenario"]]
+    )) +
+    ggplot2::geom_step(
+      ggplot2::aes(group = .data[["scenario"]]),
+      linewidth = 1.2
+    ) +
     ggplot2::geom_segment(
       data = line_guides,
       ggplot2::aes(
-        x = .data[["x_start"]],
+        x = .data[["x"]],
         y = .data[["y_start"]],
-        xend = .data[["x_end"]],
         yend = .data[["y_end"]],
-        colour = line_guides[["colour"]],
+        linetype = .data[["line_type"]]
       ),
-      linetype = "dashed",
-      linewidth = 1.2,
+      linewidth = 0.8,
       show.legend = FALSE
     ) +
-    ggplot2::geom_vline(
-      data = summary_tbl,
-      ggplot2::aes(xintercept = .data[["baseline_value"]]),
-      colour = "grey50",
-      linewidth = 1.2
+    ggplot2::geom_hline(
+      yintercept = c(0.1, 0.9),
+      colour = "dimgrey",
+      linetype = "dashed",
+      alpha = 0.6,
+      linewidth = 0.6
     ) +
-    ggplot2::expand_limits(x = min_x_value) +
+    ggplot2::geom_vline(
+      ggplot2::aes(xintercept = .data[["baseline"]]),
+      colour = "dimgrey",
+      linewidth = 1
+    ) +
+    ggplot2::geom_vline(
+      ggplot2::aes(xintercept = .data[["principal"]]),
+      colour = "white",
+      linewidth = 1.4
+    ) +
+    ggplot2::geom_vline(
+      ggplot2::aes(
+        xintercept = .data[["principal"]],
+        colour = .data[["scenario"]]
+      ),
+      show.legend = FALSE,
+      linewidth = 0.6
+    ) +
+    # Add text labels at the baseline positions
+    ggplot2::annotate(
+      "text",
+      x = unique(summary_tbl[["baseline"]]),
+      y = 0.95,
+      label = "baseline",
+      colour = "dimgrey",
+      angle = 90,
+      hjust = -1,
+      vjust = -1,
+      size = 4
+    ) +
+    ggplot2::scale_colour_manual(values = c("red", "blue")) +
+    ggplot2::scale_linetype_identity() +
     ggplot2::scale_x_continuous(
       breaks = scales::pretty_breaks(8),
       labels = scales::label_comma(),
-      expand = ggplot2::expansion(0.01)
+      expand = ggplot2::expansion(c(0.002, 0)),
+      limits = c(min_x_value, NA)
     ) +
     ggplot2::scale_y_continuous(
       breaks = seq(0, 1, 0.1),
-      labels = scales::label_percent,
+      labels = scales::label_percent(),
       expand = ggplot2::expansion(0)
     ) +
-    ggplot2::labs(y = "Percentage of model runs") +
-    ggplot2::theme(
-      text = ggplot2::element_text(size = 16),
-      axis.title.x = ggplot2::element_blank()
-    )
-
-  # Add text labels at the baseline positions
-  ggplot2::geom_text(
-    ggplot2::aes(x = .data$baseline, y = 0.5, label = "Baseline"),
-    colour = "dimgrey",
-    angle = 90,
-    hjust = 0,
-    vjust = -0.1
-  ) +
-    ggplot2::labs(
-      x = "Value",
-      y = "Percentage of model runs",
-      title = "S-curve (empirical cumulative distribution function)"
-    ) +
-    ggplot2::expand_limits(
-      x = ifelse(show_origin, 0, percentiles$baseline[[1]])
-    ) +
-    ggplot2::scale_x_continuous(
-      breaks = scales::pretty_breaks(10),
-      labels = scales::label_comma(),
-      expand = c(0.002, 0),
-      limits = c(min_x, NA)
-    ) +
-    ggplot2::scale_y_continuous(
-      breaks = c(seq(0, 1, 0.1)),
-      labels = scales::percent,
-      expand = c(0, 0)
-    ) +
-    ggplot2::theme(axis.title.x = ggplot2::element_blank()) +
-    ggplot2::scale_colour_manual(
-      values = c("red", "blue"),
-      labels = get_label_map(data, id_col = .data$scenario)
-    ) +
-    ggplot2::theme(
-      legend.text = ggtext::element_markdown(
-        family = "Segoe UI",
-        size = 12,
-        color = "black",
-        hjust = 0.5,
-        lineheight = 1.5
-      ),
-      legend.position = "bottom"
-    )
+    ggplot2::labs(title = title_text, y = "Percentage of model runs") +
+    ggplot2::xlab(measure) +
+    core_chart_theme()
 }

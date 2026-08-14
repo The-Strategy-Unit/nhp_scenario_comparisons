@@ -6,6 +6,10 @@
 \usage{
 read_tpmas_lookup(file = "tpma-lookup.csv")
 }
+\arguments{
+\item{file}{the name of the csv file to be read in}
+}
 \description{
 Read the TPMAs lookup table from a CSV file in the TPMAs repo
 }
+\keyword{internal}

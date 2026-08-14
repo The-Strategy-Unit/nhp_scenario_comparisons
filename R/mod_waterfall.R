@@ -15,7 +15,6 @@ mod_waterfall_server <- function(id, processed_data) {
     ns <- session$ns
 
     df <- shiny::reactive(processed_data()$waterfall_data)
-    cond_apm_lookup <- shiny::reactive(processed_data()$cond_apm_lookup)
 
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
@@ -26,7 +25,7 @@ mod_waterfall_server <- function(id, processed_data) {
           shiny::selectInput(
             ns("filter1"),
             "Activity type",
-            choices = c("Inpatient", "Outpatient", "A&E")
+            choices = pull_unique(df(), "activity_type_label")
           ),
           shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
         )
@@ -34,17 +33,11 @@ mod_waterfall_server <- function(id, processed_data) {
     })
 
     shiny::observe({
-      shiny::req(df(), cond_apm_lookup(), input$filter1)
-
-      label_lookup <- cond_apm_lookup() |>
-        dplyr::mutate(
-          measure_label = create_measure_label(.data[["measure"]]),
-          dplyr::across("activity_type_label", \(x) sub("s$", "", x))
-        ) |>
-        dplyr::filter(.data[["activity_type_label"]] == input$filter1)
-
-      filter2_choices <- pull_unique(label_lookup, "measure_label")
-
+      shiny::req(df(), input$filter1)
+      filter2_choices <- df() |>
+        dplyr::filter(.data[["activity_type_label"]] == input$filter1) |>
+        pull_unique("measure_label")
+      shiny::freezeReactiveValue(input, "filter2")
       shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
     })
 
@@ -53,7 +46,7 @@ mod_waterfall_server <- function(id, processed_data) {
         shiny::req(df(), input$filter1, input$filter2)
         create_waterfall_chart(df(), input$filter1, input$filter2)
       },
-      res = 100,
+      res = 100
     )
   })
 }

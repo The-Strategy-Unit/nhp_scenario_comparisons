@@ -9,16 +9,16 @@ mod_efficiencies_impact_ui <- function(id) {
   )
 }
 
-mod_efficiencies_impact_server <- function(id, processed) {
+mod_efficiencies_impact_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
-    df <- shiny::reactive(processed()$pcfs_comparison) #takes pcfs_comparison from processed
-
-    # could dynamically create UI here, based on the variables found within df?
+    df <- shiny::reactive(processed_data()$icf_impact_data)
+    filt_df <- shiny::reactive({
+      dplyr::filter(df(), .data[["change_factor"]] == "efficiencies")
+    })
 
     output$filters_ui <- shiny::renderUI({
-      shiny::req(df())
+      shiny::req(filt_df())
 
       shiny::tagList(
         shiny::tags$div(
@@ -26,7 +26,7 @@ mod_efficiencies_impact_server <- function(id, processed) {
           shiny::selectInput(
             ns("filter1"),
             "Activity Type",
-            choices = c("Inpatients", "Outpatients", "A&E")
+            choices = pull_unique(filt_df(), "activity_type_label")
           ),
           shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
         )
@@ -34,42 +34,47 @@ mod_efficiencies_impact_server <- function(id, processed) {
     })
 
     shiny::observe({
-      shiny::req(df(), input$filter1)
+      shiny::req(filt_df(), input$filter1)
 
-      filter2_choiced <- df() |>
+      filter2_choices <- filt_df() |>
         dplyr::filter(
-          .data[["activity_type"]] == input$filter1,
+          .data[["activity_type_label"]] == input$filter1,
           .data[["measure"]] != "admissions"
         ) |>
-        pull_unique("measure")
+        pull_unique("measure_label")
 
       shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
     })
 
     output$plot <- shiny::renderPlot(
       {
-        shiny::req(df(), input$filter1, input$filter2)
-        # shiny::validate(
-        #   shiny::need(!is.null(df()), message = "No data available"),
-        #   shiny::need(nrow(df()) > 0, message = "No data available")
-        # )
-        # # Add validation for filtered data
-        # filtered_data <- df() |>
-        #   dplyr::filter(
-        #     .data$change_factor == "efficiencies",
-        #     .data$activity_type == input$filter1,
-        #     .data$measure == input$filter2
-        #   )
-        # shiny::validate(
-        #   shiny::need(
-        #     nrow(filtered_data) > 0,
-        #     message = "No efficiency TPMAs impact this activity type and measure"
-        #   )
-        # )
+        shiny::req(filt_df(), input$filter1, input$filter2)
 
-        create_impact_chart(df(), "efficiencies", input$filter1, input$filter2)
+        filtered_data <- filt_df() |>
+          dplyr::filter(
+            .data[["activity_type_label"]] == input$filter1,
+            .data[["measure_label"]] == input$filter2,
+            .data[["value"]] < 0
+          )
+
+        shiny::validate(
+          shiny::need(
+            nrow(filtered_data) > 0,
+            message = paste0(
+              "No efficiency TPMAs affect this combination of ",
+              "activity type and measure"
+            )
+          )
+        )
+
+        create_impact_chart(
+          filtered_data,
+          "efficiencies",
+          input$filter1,
+          input$filter2
+        )
       },
-      res = 100,
+      res = 100
     )
   })
 }

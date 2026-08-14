@@ -1,10 +1,3 @@
-#' The application User-Interface
-#'
-#' @param request Internal parameter for `{shiny}`.
-#' @noRd
-#'
-#' @import shinyjs
-#' @import htmltools
 app_ui <- function(request) {
   bslib::page_sidebar(
     shinyjs::useShinyjs(),
@@ -24,17 +17,29 @@ app_ui <- function(request) {
     sidebar = bslib::sidebar(
       shiny::uiOutput("warning_text"),
       title = "Scenario selection",
-      shiny::selectInput("selected_scheme", "Select scheme", choices = NULL),
-      shiny::selectInput("scenario_1", "Select Scenario 1", choices = NULL),
-      shiny::selectInput(
-        "scenario_1_runtime",
-        "Scenario 1 runtime",
+      shinyWidgets::pickerInput(
+        "selected_scheme",
+        "Select scheme",
         choices = NULL
       ),
-      shiny::selectInput("scenario_2", "Select Scenario 2", choices = NULL),
-      shiny::selectInput(
-        "scenario_2_runtime",
-        "Scenario 2 runtime",
+      shinyWidgets::pickerInput(
+        "scenario1",
+        "Select Scenario 1",
+        choices = NULL
+      ),
+      shinyWidgets::pickerInput(
+        "scenario1_rt",
+        "Scenario 1 Runtime",
+        choices = NULL
+      ),
+      shinyWidgets::pickerInput(
+        "scenario2",
+        "Select Scenario 2",
+        choices = NULL
+      ),
+      shinyWidgets::pickerInput(
+        "scenario2_rt",
+        "Scenario 2 Runtime",
         choices = NULL
       ),
       shiny::actionButton("render_plot", "Render Plots", disabled = TRUE)
@@ -89,23 +94,23 @@ app_ui <- function(request) {
           #bslib::card_header("Result"),
           shiny::uiOutput("result_text"),
           shiny::tabsetPanel(
-            shiny::tabPanel("Summary", mod_summary_ui("summary1")),
-            shiny::tabPanel("Length of Stay", mod_los_ui("los1")),
-            shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall1")),
+            shiny::tabPanel("Summary", mod_summary_ui("summary")),
+            shiny::tabPanel("Length of Stay", mod_los_ui("los")),
+            shiny::tabPanel("Waterfall", mod_waterfall_ui("waterfall")),
             shiny::tabPanel(
               "Activity Avoidance Impact",
-              mod_activity_avoidance_impact_ui("activity_avoidance1")
+              mod_activity_avoidance_impact_ui("activity_avoidance")
             ),
             shiny::tabPanel(
               "Efficiencies Impact",
-              mod_efficiencies_impact_ui("efficiencies1")
+              mod_efficiencies_impact_ui("efficiencies")
             ),
             shiny::tabPanel(
               "P10-P90 Intervals",
-              mod_p10_p90_bar_ui("p10p90_bar1")
+              mod_p10p90_bar_ui("p10p90_bar")
             ),
-            shiny::tabPanel("Beeswarm", mod_beeswarm_ui("beeswarm1")),
-            shiny::tabPanel("S-curve", mod_ecdf_ui("ecdf1"))
+            shiny::tabPanel("Beeswarm", mod_beeswarm_ui("beeswarm")),
+            shiny::tabPanel("S-curve", mod_ecdf_ui("ecdf"))
           )
         )
       )

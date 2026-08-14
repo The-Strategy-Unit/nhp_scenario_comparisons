@@ -2,90 +2,57 @@ rds_root <- "rds/v3.1/RXN"
 scenario1_name <- "20240114NDG1V1"
 scenario2_name <- "20241212NDG2V1"
 
+
 list_dirs <- purrr::partial(dir, full.names = TRUE, recursive = TRUE)
 
-results1 <- readRDS(list_dirs(file.path(rds_root, scenario1_name)))
-results2 <- readRDS(list_dirs(file.path(rds_root, scenario2_name)))
+# grp <- "nhp_provider_RXN"
+# results_metadata_tbl <- get_results_metadata(get_user_allowed_datasets(grp))
+# scenario1_dir <- results_metadata_tbl |>
+#   dplyr::filter(
+#     .data[["scenario"]] == scenario1_name
+#   ) |>
+#   dplyr::pull("aggregated_results_path")
+# scenario2_dir <- results_metadata_tbl |>
+#   dplyr::filter(
+#     .data[["scenario"]] == scenario2_name
+#   ) |>
+#   dplyr::pull("aggregated_results_path")
+
+# results1 <- read_azure_results(scenario1_dir)
+# results2 <- read_azure_results(scenario2_dir)
+
+results1_file <- list_dirs(file.path(rds_root, scenario1_name))
+results2_file <- list_dirs(file.path(rds_root, scenario2_name))
+
+# readr::write_rds(results1, results1_file)
+# readr::write_rds(results2, results2_file)
+
+results1 <- readr::read_rds(results1_file)
+results2 <- readr::read_rds(results2_file)
 
 full_apm_lookup <- get_full_apm_lookup()
 cond_apm_lookup <- get_condensed_apm_lookup()
-full_apm_lookup2 <- dplyr::distinct(dplyr::select(full_apm_lookup, !"measure"))
-cond_apm_lookup2 <- dplyr::distinct(dplyr::select(cond_apm_lookup, !"measure"))
+full_ap_lookup <- dplyr::select(full_apm_lookup, !"measure") |>
+  dplyr::distinct()
+cond_ap_lookup <- dplyr::select(cond_apm_lookup, !"measure") |>
+  dplyr::distinct()
 
 tpma_lookup <- reskit::get_tpma_label_lookup()
 
 
-# Create core tables with a row for each pair of measure and activity_type,
-# for pmapping
-mat_combos_tbl <- cond_apm_lookup |>
+# Create core table with a row for each pair of measure and activity_type,
+# for pmapping over
+full_mat_lookup <- full_apm_lookup |>
   dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
-mat_combos_tbl_full <- full_apm_lookup |>
-  dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
-at_lookup <- cond_apm_lookup |>
-  dplyr::mutate(dplyr::across("activity_type_label", \(x) sub("s$", "", x))) |>
-  dplyr::distinct(dplyr::pick(c("activity_type", "activity_type_label")))
+# cond_mat_lookup <- cond_apm_lookup |>
+#   dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
+atl_lookup <- full_apm_lookup |>
+  dplyr::distinct(dplyr::pick(c("activity_type", "activity_type_label"))) |>
+  dplyr::mutate(dplyr::across("activity_type_label", \(x) sub("s$", "", x)))
 
-
-# listify_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
-#   mat_scenarios_tbl |>
-#     tidyr::pivot_longer(
-#       !c("measure", "activity_type"),
-#       names_to = "scenario"
-#     ) |>
-#     dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-#     tidyr::unnest("value") |>
-#     tidyr::nest(.by = "activity_type") |>
-#     tibble::deframe() |>
-#     purrr::map(\(x) tibble::deframe(tidyr::nest(x, .by = "measure"))) |>
-#     purrr::map_depth(2, \(x) list(data = x)) # not sure if data names needed
-# }
-
-unnest_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
-  mat_scenarios_tbl |>
-    tidyr::pivot_longer(
-      !c("measure", "activity_type"),
-      names_to = "scenario"
-    ) |>
-    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-    tidyr::unnest("value")
-}
-
-
-unnest_cfmat_scenarios_tbl <- function(mat_scenarios_tbl) {
-  mat_scenarios_tbl |>
-    dplyr::select(!"measure") |>
-    tidyr::pivot_longer(!"activity_type", names_to = "scenario") |>
-    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-    tidyr::unnest("value")
-}
-
-
-# listify_cfmat_scenarios_tbl <- function(cfmat_scenarios_tbl) {
-#   cfmat_scenarios_tbl |>
-#     tidyr::pivot_longer(
-#       !c("measure", "activity_type"),
-#       names_to = "scenario"
-#     ) |>
-#     dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-#     dplyr::select(!"measure") |>
-#     tidyr::unnest("value") |>
-#     tidyr::nest(.by = "change_factor") |>
-#     tibble::deframe() |>
-#     purrr::map(\(x) tibble::deframe(tidyr::nest(x, .by = "activity_type"))) |>
-#     purrr::map_depth(2, \(x) {
-#       tibble::deframe(tidyr::nest(x, .by = "measure"))
-#     }) |>
-#     purrr::map_depth(3, \(x) list(data = x)) # not sure if data names needed
-# }
 
 # Prepare data for Summary chart
 
-pt_compile_principal_pod_data <- function(...) {
-  purrr::partial(
-    reskit::compile_principal_pod_data,
-    pod_lookup = cond_apm_lookup2
-  )(...)
-}
 summary_data <- list(
   pt_compile_principal_pod_data(results1),
   pt_compile_principal_pod_data(results2)
@@ -111,7 +78,7 @@ create_summary_bar_chart(summary_data, "Inpatient Admissions")
 pt_compile_principal_los_data <- function(...) {
   purrr::partial(
     reskit::compile_principal_los_data,
-    pod_lookup = cond_apm_lookup2
+    pod_lookup = cond_ap_lookup
   )(...)
 }
 
@@ -137,7 +104,7 @@ create_los_bar_chart(los_data, "Elective Admission", "Admissions")
 pt_compile_cf_data <- function(...) {
   purrr::partial(
     reskit::compile_change_factor_data,
-    pod_lookup = cond_apm_lookup2,
+    pod_lookup = cond_ap_lookup,
     tpma_lookup = tpma_lookup
   )(...)
 }
@@ -149,10 +116,10 @@ pt_compile_cf_data2 <- function(...) {
 }
 
 
-waterfall_data <- mat_combos_tbl |>
+waterfall_data <- mat_combos_tbl_full |>
   dplyr::mutate(
-    !!scenario1_name := purrr::pmap(mat_combos_tbl, pt_compile_cf_data1),
-    !!scenario2_name := purrr::pmap(mat_combos_tbl, pt_compile_cf_data2)
+    !!scenario1_name := purrr::pmap(mat_combos_tbl_full, pt_compile_cf_data1),
+    !!scenario2_name := purrr::pmap(mat_combos_tbl_full, pt_compile_cf_data2)
   ) |>
   # listify_mat_scenarios_tbl()
   unnest_mat_scenarios_tbl() |>
@@ -168,7 +135,7 @@ create_waterfall_chart(waterfall_data, "Inpatient", "Admissions")
 pt_compile_icf_data <- function(...) {
   purrr::partial(
     reskit::compile_indiv_change_factor_data,
-    pod_lookup = cond_apm_lookup2,
+    pod_lookup = cond_ap_lookup,
     tpma_lookup = tpma_lookup
   )(...)
 }
@@ -223,7 +190,7 @@ create_principal_pi_bar_chart(
 pt_compile_distr_data <- function(...) {
   purrr::partial(
     reskit::compile_distribution_plot_data,
-    pod_lookup = full_apm_lookup2
+    pod_lookup = full_ap_lookup
   )(...)
 }
 pt_compile_dst_data1 <- function(...) {
@@ -238,4 +205,21 @@ beeswarm_data <- mat_combos_tbl_full |>
     !!scenario1_name := purrr::pmap(mat_combos_tbl_full, pt_compile_dst_data1),
     !!scenario2_name := purrr::pmap(mat_combos_tbl_full, pt_compile_dst_data2)
   ) |>
-  listify_mat_scenarios_tbl()
+  unnest_mat_scenarios_tbl() |>
+  dplyr::left_join(at_lookup, "activity_type") |>
+  dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
+
+
+# Test creation of beeswarm chart
+
+create_beeswarm_chart(beeswarm_data, "Inpatient", "Admissions")
+create_beeswarm_chart(beeswarm_data, "Outpatient", "Tele-attendances")
+create_beeswarm_chart(beeswarm_data, "A&E", "Ambulance")
+
+
+# Test creation of ecdf chart
+
+ecdf_data <- beeswarm_data
+create_ecdf_chart(ecdf_data, "Inpatient", "Admissions")
+create_ecdf_chart(ecdf_data, "Outpatient", "Tele-attendances")
+create_ecdf_chart(ecdf_data, "A&E", "Ambulance")
