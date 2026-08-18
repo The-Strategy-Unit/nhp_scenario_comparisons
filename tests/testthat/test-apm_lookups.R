@@ -1,5 +1,5 @@
 test_that("lookups have expected columns", {
-  full_apm_lookup <- get_full_apm_lookup()
+  # full_apm_lookup is sourced in helper.R
   at <- "activity_type"
   core_ap_names <- c(at, "pod")
   core_ap_names_plus <- c(core_ap_names, paste0(core_ap_names, "_label"))

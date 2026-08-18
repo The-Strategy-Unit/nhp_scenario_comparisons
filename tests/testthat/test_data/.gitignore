@@ -1,0 +1,4 @@
+*.rds
+!rds/full_apm_lookup.rds
+!rds/results1.rds
+!rds/results2.rds
