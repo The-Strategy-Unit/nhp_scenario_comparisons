@@ -11,3 +11,4 @@ create_results_list <- function(seed) {
 saveRDS(create_results_list(3456), test_rds_path("results1.rds"))
 saveRDS(create_results_list(5678), test_rds_path("results2.rds"))
 saveRDS(get_full_apm_lookup(), test_rds_path("full_apm_lookup.rds"))
+saveRDS(reskit::get_tpma_label_lookup(), test_rds_path("tpma_lookup.rds"))

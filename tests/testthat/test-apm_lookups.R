@@ -34,3 +34,14 @@ test_that("lookups have expected columns", {
     dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
   expect_shape(core_mat_tbl, dim = c(6, 2))
 })
+
+
+test_that("preloaded lookups are as expected", {
+  expect_snapshot(full_apm_lookup)
+  expect_snapshot(core_mat_tbl)
+  expect_snapshot(atl_lookup)
+  expect_snapshot(full_atp_lookup)
+  expect_snapshot(cond_apm_lookup)
+  expect_snapshot(cond_ap_lookup)
+  expect_snapshot(tpma_lookup)
+})
