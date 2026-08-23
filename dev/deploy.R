@@ -21,13 +21,13 @@ deploy <- function(type = c("dev", "prod")) {
       "app.R",
       "R/",
       "inst/app",
-      "supporting_data/",
+      "inst/ref",
       "DESCRIPTION"
     ),
     envVars = c(
       "AZ_STORAGE_EP",
+      "AZ_TABLE_EP",
       "AZ_STORAGE_CONTAINER_RESULTS",
-      "NHP_ENCRYPT_KEY",
       "FEEDBACK_FORM_URL"
     ),
     lint = FALSE,

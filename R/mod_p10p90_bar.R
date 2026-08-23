@@ -1,20 +1,19 @@
-mod_waterfall_ui <- function(id) {
+mod_p10p90_bar_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    htmltools::includeMarkdown("inst/app/waterfall-text.md"),
+    htmltools::includeMarkdown("inst/app/p10-p90-text.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::plotOutput(ns("plot"))
   )
 }
 
-
-mod_waterfall_server <- function(id, processed_data) {
+mod_p10p90_bar_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    df <- shiny::reactive(processed_data()$waterfall_data)
+    df <- shiny::reactive(processed_data()$principal_pi_data)
 
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
@@ -27,16 +26,17 @@ mod_waterfall_server <- function(id, processed_data) {
             "Activity type",
             choices = pull_unique(df(), "activity_type_label")
           ),
-          shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
+          shiny::selectInput(ns("filter2"), "Point of Delivery", choices = NULL)
         )
       )
     })
 
     shiny::observe({
       shiny::req(df(), input$filter1)
+
       filter2_choices <- df() |>
         dplyr::filter(.data[["activity_type_label"]] == input$filter1) |>
-        pull_unique("measure_label")
+        pull_unique("pod_label")
       shiny::freezeReactiveValue(input, "filter2")
       shiny::updateSelectInput(
         session,
@@ -49,7 +49,7 @@ mod_waterfall_server <- function(id, processed_data) {
     output$plot <- shiny::renderPlot(
       {
         shiny::req(df(), input$filter1, input$filter2)
-        create_waterfall_chart(df(), input$filter1, input$filter2)
+        create_principal_pi_chart(df(), input$filter1, input$filter2)
       },
       res = 100
     )

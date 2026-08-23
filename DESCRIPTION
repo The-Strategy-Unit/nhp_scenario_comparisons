@@ -1,52 +1,51 @@
 Package: nhpscenarioanalysis
 Title: Scenario result comparison app
-Version: 0.1.0
+Version: 0.9.0
 Authors@R: c(
-    person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
-    person("Zoë", "Turner",  , "zoe.turner3@nhs.net", role = "ctb"),
-    person("Ozayr", "Mohammed", , , role = "aut")
+    person("Gabriel", "Hobro", email = "gabriel.hobro@nhs.net", role = c("aut", "cre")),
+    person("Zoë", "Turner", email = "zoe.turner3@nhs.net", role = "ctb"),
+    person("Ozayr", "Mohammed", email = "ozayr.mohammed@nhs.net", role = "aut"),
+    person(
+        "Fran", "Barton",
+        email = "francis.barton@nhs.net",
+        role = "ctb",
+        comment = c(ORCID = "0000-0002-5650-1176")
+    )
   )
-Description: A shiny app for comparing model results for different
+Description: A Shiny app to compare model results across two different
     scenarios.
 License: MIT + file LICENSE
-Imports: 
-    azkit,
-    AzureStor,
+Depends: R (>= 4.5.0)
+Imports:
+    azkit (>= 0.3.1),
     bslib,
     dplyr,
     DT,
     forcats,
     ggbeeswarm,
-    ggeasy,
     ggplot2,
-    ggtext,
     glue,
     htmltools,
-    jsonlite,
-    lubridate,
-    markdown,
     purrr,
     readr,
+    reskit (>= 1.1.9),
     rlang,
     scales,
     shiny,
     shinybusy,
     shinyjs,
     shinyWidgets,
-    snakecase,
     stats,
     stringr,
     tibble,
     tidyr,
     tidyselect,
-    utils,
-    yaml,
-    yyjsonr,
-    zeallot
+    vctrs,
+    yaml12,
+    yyjsonr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Remotes:
-    The-Strategy-Unit/azkit
-Suggests: 
-    here
+    github::the-strategy-unit/azkit,
+    reskit=github::The-Strategy-Unit/nhp_reskit
 Config/roxygen2/version: 8.0.0

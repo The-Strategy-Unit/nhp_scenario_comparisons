@@ -3,36 +3,23 @@ mod_ecdf_ui <- function(id) {
 
   shiny::tagList(
     shiny::verbatimTextOutput(ns("debug")),
-    shiny::includeMarkdown("inst/app/probabilistic-model-note.md"),
-    shiny::includeMarkdown("inst/app/s-curve-note.md"),
+    htmltools::includeMarkdown("inst/app/probabilistic-model-note.md"),
+    htmltools::includeMarkdown("inst/app/s-curve-note.md"),
     shiny::uiOutput(ns("filters_ui")),
     shiny::checkboxInput(
-      ns("show_origin"),
-      "Show Origin (zero)?",
-      value = TRUE
+      ns("show_zero"),
+      "Extend x-axis to zero?",
+      value = FALSE
     ),
     shiny::plotOutput(ns("plot"))
   )
 }
 
-mod_ecdf_server <- function(id, processed) {
+mod_ecdf_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-
-    #will result_1 and result_2 always have the same activity_type and measures
-    #available? or will using result_1 to make the filters leave out some
-    #combinations sometimes?
-    df <- shiny::reactive(processed()$distribution_data$result_1) #takes result_1 from processed
-    df2 <- shiny::reactive(processed()$distribution_data$result_2)
-    scn1 <- shiny::reactive(processed()$distribution_data$scenario_1_name)
-    scn2 <- shiny::reactive(processed()$distribution_data$scenario_2_name)
-
-    pods <- shiny::reactive({
-      get_activity_type_pod_measure_options() |>
-        dplyr::filter(.data$pod %in% unique(df()$result$default$pod))
-    })
-
-    # could dynamically create UI here, based on the variables found within df?
+    # `beeswarm data` is valid for the ecdf plot as well
+    df <- shiny::reactive(processed_data()$beeswarm_data)
 
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
@@ -43,7 +30,7 @@ mod_ecdf_server <- function(id, processed) {
           shiny::selectInput(
             ns("filter1"),
             "Activity Type",
-            choices = unique(pods()$activity_type_name)
+            choices = pull_unique(df(), "activity_type_label")
           ),
           shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
         )
@@ -52,63 +39,24 @@ mod_ecdf_server <- function(id, processed) {
 
     shiny::observe({
       shiny::req(df(), input$filter1)
-
-      filter2_values <- pods() |>
-        dplyr::filter(.data$activity_type_name == input$filter1) |>
-        dplyr::pull(.data$measures) |>
-        unique()
-
-      filter2_choices <- measure_pretty_names[
-        measure_pretty_names %in% filter2_values
-      ]
-
-      shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
+      filter2_choices <- df() |>
+        dplyr::filter(.data[["activity_type_label"]] == input$filter1) |>
+        pull_unique("measure_label")
+      shiny::freezeReactiveValue(input, "filter2")
+      shiny::updateSelectInput(
+        session,
+        inputId = "filter2",
+        choices = filter2_choices,
+        selected = filter2_choices[[1]]
+      )
     })
 
     output$plot <- shiny::renderPlot(
       {
-        shiny::req(df(), df2(), scn1(), scn2(), input$filter1, input$filter2)
-
-        selected_pods <- pods() |>
-          dplyr::filter(.data$activity_type_name == input$filter1) |>
-          dplyr::pull(.data$pod)
-
-        result_1 <- get_model_run_distribution(
-          df(),
-          pod = selected_pods,
-          measure = input$filter2,
-          site_codes = NULL
-        )
-        result_2 <- get_model_run_distribution(
-          df2(),
-          pod = selected_pods,
-          measure = input$filter2,
-          site_codes = NULL
-        )
-
-        # Require at least one result has data
-        shiny::req(!is.null(result_1) || !is.null(result_2))
-
-        combined_dist <- dplyr::bind_rows(
-          add_scenario_safe(result_1, scn1()),
-          add_scenario_safe(result_2, scn2())
-        )
-
-        # Require combined_dist has rows
-        shiny::req(nrow(combined_dist) > 0)
-
-        mod_model_results_distribution_ecdf_plot_scenario(
-          combined_dist,
-          show_origin = input$show_origin
-        ) +
-          ggplot2::ggtitle(glue::glue(
-            input$filter1,
-            input$filter2,
-            "- S-curve (empirical cumulative distribution function)",
-            .sep = " "
-          ))
+        shiny::req(df(), input$filter1, input$filter2)
+        create_ecdf_chart(df(), input$filter1, input$filter2, input$show_zero)
       },
-      res = 100,
+      res = 100
     )
   })
 }

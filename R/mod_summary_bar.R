@@ -1,4 +1,4 @@
-mod_summary_ui <- function(id) {
+mod_summary_bar_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
@@ -8,13 +8,11 @@ mod_summary_ui <- function(id) {
   )
 }
 
-mod_summary_server <- function(id, processed) {
+mod_summary_bar_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    df <- shiny::reactive(processed()$data) #takes data from processed
-
-    # could dynamically create UI here, based on the variables found within df?
+    df <- shiny::reactive(processed_data()$summary_data)
 
     output$filters_ui <- shiny::renderUI({
       shiny::req(df())
@@ -25,7 +23,7 @@ mod_summary_server <- function(id, processed) {
           shiny::selectInput(
             ns("filter1"),
             "Activity Type",
-            choices = unique(df()$activity_type)
+            choices = pull_unique(df(), "activity_type_label")
           ),
           shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
         )
@@ -36,30 +34,23 @@ mod_summary_server <- function(id, processed) {
       shiny::req(df(), input$filter1)
 
       filter2_choices <- df() |>
-        dplyr::filter(.data$activity_type == input$filter1) |>
-        dplyr::pull(.data$measure) |>
-        unique()
-
-      shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
+        dplyr::filter(.data[["activity_type_label"]] == input$filter1) |>
+        pull_unique("measure")
+      shiny::freezeReactiveValue(input, "filter2")
+      shiny::updateSelectInput(
+        session,
+        inputId = "filter2",
+        choices = filter2_choices,
+        selected = filter2_choices[[1]]
+      )
     })
 
     output$plot <- shiny::renderPlot(
       {
         shiny::req(df(), input$filter1, input$filter2)
-
-        create_bar_plot(
-          df(),
-          input$filter1,
-          input$filter2,
-          glue::glue(
-            input$filter1,
-            input$filter2,
-            "- Summary Comparison",
-            .sep = " "
-          )
-        )
+        create_summary_chart(df(), input$filter1, input$filter2)
       },
-      res = 100,
+      res = 100
     )
   })
 }

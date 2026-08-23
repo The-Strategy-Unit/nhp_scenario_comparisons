@@ -260,4 +260,7 @@ pyrightconfig.json
 .cache/
 
 app_data/
-.positai
+
+rds/
+
+inst/testing.R
