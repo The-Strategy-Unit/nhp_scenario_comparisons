@@ -1,14 +1,5 @@
-mod_processing_server <- function(
-  id,
-  results_metadata_tbl,
-  selections,
-  scenario_selections,
-  trigger,
-  local_data_flag
-) {
+mod_processing_server <- function(id, selections, trigger, use_local_data) {
   shiny::moduleServer(id, function(input, output, session) {
-    #### LOOKUPS
-
     # This requires a call to GitHub to retrieve a file.
     # Run once and then pass data to reskit functions, rather than running
     # each time a function is called
@@ -31,58 +22,23 @@ mod_processing_server <- function(
     core_mat_tbl <- full_apm_lookup |>
       dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
 
+    # create pre-processed data bundle
     processed_data <- shiny::eventReactive(
       trigger(),
       {
-        shiny::req(selections$main_scenario, selections$comparator_scenario)
+        shiny::req(selections$main_scenario, selections$comp_scenario)
         shiny::req(
           nrow(selections$main_scenario) == 1,
-          nrow(selections$comparator_scenario) == 1,
-          !identical(
-            selections$main_scenario,
-            selections$comparator_scenario
-          ),
-          identical(
-            selections$main_scenario[c(
-              "start_year",
-              "end_year",
-              "app_version"
-            )],
-            selections$comparator_scenario[c(
-              "start_year",
-              "end_year",
-              "app_version"
-            )]
-          )
+          nrow(selections$comp_scenario) == 1
         )
 
         shiny::withProgress(message = "Fetching scenarios...", value = 0, {
-          shiny::req(
-            scenario_selections()$scenario1,
-            scenario_selections()$scenario1_rt,
-            scenario_selections()$scenario2,
-            scenario_selections()$scenario2_rt
-          )
+          scenario1_name <- selections$main_scenario[["scenario"]]
+          scenario2_name <- selections$comp_scenario[["scenario"]]
+          shiny::req(all(lengths(c(scenario1_name, scenario2_name)) == 1))
 
-          results_tbl <- results_metadata_tbl()
-
-          selected <- scenario_selections()
-          scenario1_name <- selected$scenario1
-          scenario2_name <- selected$scenario2
-
-          scenario1_dir <- results_tbl |>
-            dplyr::filter(
-              .data[["scenario"]] == scenario1_name,
-              .data[["create_datetime"]] == selected$scenario1_rt
-            ) |>
-            dplyr::pull("aggregated_results_path")
-
-          scenario2_dir <- results_tbl |>
-            dplyr::filter(
-              .data[["scenario"]] == scenario2_name,
-              .data[["create_datetime"]] == selected$scenario2_rt
-            ) |>
-            dplyr::pull("aggregated_results_path")
+          scenario1_dir <- selections$main_scenario[["aggregated_results_path"]]
+          scenario2_dir <- selections$comp_scenario[["aggregated_results_path"]]
 
           shiny::incProgress(0.1)
           shiny::req(all(lengths(c(scenario1_dir, scenario2_dir)) == 1))

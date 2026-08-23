@@ -56,6 +56,8 @@ prepare_principal_pi_data <- function(
     purrr::map(pt_compile_principal_pi_data) |>
     rlang::set_names(c(scenario1_name, scenario2_name)) |>
     purrr::list_rbind(names_to = "scenario") |>
+    # If https://github.com/The-Strategy-Unit/nhp_reskit/issues/185
+    # gets resolved and merged we should be able to ditch this step
     split_on_space("pod_label", names = c("activity_type_label", "pod_label"))
 }
 
@@ -124,7 +126,7 @@ prepare_waterfall_data <- function(
       !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data1),
       !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data2)
     ) |>
-    unnest_mat_scenarios_tbl() |>
+    unnest_cfmat_scenarios_tbl() |>
     dplyr::left_join(atl_lookup, "activity_type") |>
     dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
 }
@@ -200,19 +202,41 @@ split_on_space <- function(...) {
 }
 
 unnest_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
-  mat_scenarios_tbl |>
+  intermediate <- mat_scenarios_tbl |>
     tidyr::pivot_longer(
       !c("measure", "activity_type"),
       names_to = "scenario"
     ) |>
-    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-    tidyr::unnest("value")
+    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0)
+  if (nrow(intermediate) == 0) {
+    tibble::tibble(
+      activity_type = character(0),
+      scenario = character(0),
+      change_factor = character(0),
+      measure = character(0),
+      tpma_label = factor(0),
+      value = numeric(0)
+    )
+  } else {
+    tidyr::unnest(intermediate, "value")
+  }
 }
 
 unnest_cfmat_scenarios_tbl <- function(mat_scenarios_tbl) {
-  mat_scenarios_tbl |>
+  intermediate <- mat_scenarios_tbl |>
     dplyr::select(!"measure") |>
     tidyr::pivot_longer(!"activity_type", names_to = "scenario") |>
-    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0) |>
-    tidyr::unnest("value")
+    dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0)
+  if (nrow(intermediate) == 0) {
+    tibble::tibble(
+      activity_type = character(0),
+      scenario = character(0),
+      change_factor = character(0),
+      measure = character(0),
+      tpma_label = factor(0),
+      value = numeric(0)
+    )
+  } else {
+    tidyr::unnest(intermediate, "value")
+  }
 }

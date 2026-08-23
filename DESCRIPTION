@@ -49,3 +49,7 @@ Remotes:
     github::the-strategy-unit/azkit,
     reskit=github::The-Strategy-Unit/nhp_reskit
 Config/roxygen2/version: 8.0.0
+Suggests:
+    here,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
