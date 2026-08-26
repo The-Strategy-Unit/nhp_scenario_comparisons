@@ -1,104 +1,58 @@
-#' The application server-side
-#' @param input,output,session Internal parameters for {shiny}.
-#' @noRd
-
-#this should be commented out in live versions
-
-# load_local_data <- TRUE
-# nhp_model_runs <- readRDS("inst/app/tmp_runs_file.rds") |> #tmp_runs_file.rds is an rds of the output of get_nhp_result_sets()
-#   dplyr::filter(!app_version == "dev") |>
-#   dplyr::filter(stringr::str_extract(file, "[^/]+$") %in%
-#                   list.files("jsons/")
-#   )
-
 app_server <- function(input, output, session) {
-  get_comparable_scenarios <- function(model_runs, scheme) {
-    # Guard against NULL / character(0) / empty model_runs
-    if (!shiny::isTruthy(scheme) || is.null(model_runs) || nrow(model_runs) == 0) {
-      if (!is.null(model_runs) && nrow(model_runs) > 0) {
-        return(model_runs[0, , drop = FALSE])
-      }
-      return(tibble::tibble())
-    }
-    
-    model_runs |>
-      dplyr::filter(.data$dataset %in% scheme) |>   # %in% is safe
-      dplyr::mutate(
-        comparable_scenarios = dplyr::n() - 1,
-        .by = c("start_year", "end_year", "app_version")
-      ) |>
-      dplyr::filter(comparable_scenarios >= 1)
-  }
-
-  load_local_data <- FALSE
-
-  allowed_datasets <- shiny::reactive({
-    get_user_allowed_datasets(session$groups)
-  })
-
   nhp_model_runs <- shiny::reactive({
-    rs <- get_nhp_result_sets(
-      allowed_datasets = allowed_datasets()
-    )
+    allowed_datasets <- get_user_allowed_datasets(session$groups)
+    results_metadata_tbl <- get_results_metadata(allowed_datasets)
 
-    # if a user isn't in the nhp_dev group, then do not display un-viewable/dev results
-    if (any(c("nhp_devs") %in% session$groups) || is.null(session$groups)) {
-      return(rs)
+    # only show non-viewable and dev scenarios to members of nhp_devs group
+    if ("nhp_devs" %in% session$groups || is.null(session$groups)) {
+      results_metadata_tbl
+    } else {
+      results_metadata_tbl |>
+        dplyr::filter(.data[["viewable"]], .data[["app_version"]] != "dev") |>
+        require_rows()
     }
-
-    dplyr::filter(
-      rs,
-      .data[["viewable"]],
-      .data[["app_version"]] != "dev"
-    )
   })
 
-  # static data files ----
-  datasets_list <- jsonlite::read_json(
-    "supporting_data/datasets.json",
-    simplifyVector = TRUE
-  )
-  datasets_list <- purrr::set_names(names(datasets_list), unname(datasets_list))
-
-  # logic for improved selectInput logic, this should become a module ----
-  # once remaining code in this script is refactored to take reactive values
-  # instead of input$ values
+  all_schemes <- swap_names(yyjsonr::read_json_file(appfile("datasets.json")))
   selections <- shiny::reactiveValues()
 
-  shiny::observe({
-    # All possible schemes (trust codes)
-    all_schemes <- datasets_list
-    
-    # Those that actually have model runs
-    available <- datasets_list[datasets_list %in% nhp_model_runs()$dataset]
-    
-    # Disable the ones that are missing
-    disabled <- !all_schemes %in% available
-    
-    selected <- input$selected_scheme
-    # Only keep the current selection if it is still available (i.e. not disabled)
-    if (shiny::isTruthy(selected) && selected %in% available) {
-      shinyWidgets::updatePickerInput(
-        session,
-        "selected_scheme",
-        choices = all_schemes,
-        selected = selected,
-        choicesOpt = list(
-          disabled = disabled,
-          style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
+  shiny::observeEvent(nhp_model_runs(), {
+    runs_tbl <- nhp_model_runs()
+    all_schemes <- vctrs::vec_set_intersect(all_schemes, runs_tbl[["dataset"]])
+    comparable_scenarios <- runs_tbl |>
+      dplyr::mutate(
+        n_runs = dplyr::n(),
+        .by = c("dataset", "start_year", "end_year", "app_version")
+      ) |>
+      dplyr::filter(dplyr::if_any("n_runs", \(x) x >= 2)) |>
+      dplyr::select(!"n_runs")
+    available_schemes <- vctrs::vec_set_intersect(
+      all_schemes,
+      comparable_scenarios[["dataset"]]
+    )
+    unavailable_schemes <- vctrs::vec_set_difference(
+      all_schemes,
+      comparable_scenarios[["dataset"]]
+    )
+    all_schemes_sorted <- c(available_schemes, unavailable_schemes)
+    scheme_unavailable <- !(all_schemes_sorted %in% available_schemes)
+    selected_scheme <- shiny::isolate(input$selected_scheme)
+    keep <- shiny::isTruthy(selected_scheme) &&
+      selected_scheme %in% available_schemes
+    shinyWidgets::updatePickerInput(
+      session,
+      "selected_scheme",
+      choices = all_schemes_sorted,
+      selected = if (keep) selected_scheme else character(0),
+      choicesOpt = list(
+        disabled = scheme_unavailable,
+        style = ifelse(
+          scheme_unavailable,
+          "color: rgba(119, 119, 119, 0.5);",
+          ""
         )
       )
-    } else {
-      shinyWidgets::updatePickerInput(
-        session,
-        "selected_scheme",
-        choices = all_schemes,
-        choicesOpt = list(
-          disabled = disabled,
-          style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
-        )
-      )
-    }
+    )
   })
 
   shiny::observe({
@@ -106,209 +60,149 @@ app_server <- function(input, output, session) {
   })
 
   shiny::observe({
-    selections$scheme_scenarios <- get_comparable_scenarios(
-      nhp_model_runs(),
+    shiny::req(nhp_model_runs(), selections$scheme)
+    scheme_runs_tbl <- nhp_model_runs() |>
+      dplyr::filter(.data[["dataset"]] %in% selections$scheme)
+    comparable_scenarios <- get_comparable_scenarios(
+      scheme_runs_tbl,
       selections$scheme
     )
-  })
-
-  shiny::observe({
-    # Protect against NULL / empty scheme_scenarios
-    if (is.null(selections$scheme_scenarios) || nrow(selections$scheme_scenarios) == 0) {
-      shinyWidgets::updatePickerInput(
-        session,
-        "scenario_1",
-        choices = character(0)
-      )
-      return()
-    }
-    
-    choices <- selections$scheme_scenarios |>
-      dplyr::pull(.data$scenario) |>
-      unique()
-    selected <- input$scenario_1
-    if (shiny::isTruthy(selected) && selected %in% choices) {
-      shinyWidgets::updatePickerInput(
-        session,
-        "scenario_1",
-        choices = choices,
-        selected = selected
-      )
-    } else {
-      shinyWidgets::updatePickerInput(
-        session,
-        "scenario_1",
-        choices = choices
-      )
-    }
-  })
-
-  shiny::observe({
-    if (
-      !shiny::isTruthy(input$scenario_1) ||
-      is.null(selections$scheme_scenarios) ||
-      !input$scenario_1 %in% selections$scheme_scenarios$scenario
-    ) {
-      shiny::updateSelectInput(
-        session,
-        "scenario_1_runtime",
-        choices = character(0)
-      )
-      return()
-    }
-
-    runtime_choices <- selections$scheme_scenarios |>
-      dplyr::filter(.data$scenario == input$scenario_1) |>
-      dplyr::pull(.data$create_datetime)
-
-    shiny::updateSelectInput(
-      session,
-      "scenario_1_runtime",
-      choices = runtime_choices
-    )
-  })
-
-  shiny::observe({
-    if (is.null(selections$scheme_scenarios)) {
-      selections$main_scenario <- NULL
-      return()
-    }
-    # %in% safely handles NULL / character(0) → returns 0-row data.frame
-    selections$main_scenario <- selections$scheme_scenarios |>
-      dplyr::filter(
-        .data$scenario %in% input$scenario_1,
-        .data$create_datetime %in% input$scenario_1_runtime
-      )
-  })
-
-  shiny::observe({
-    shiny::req(input$scenario_1)
-
-    shiny::req(selections$scheme_scenarios)
-    shiny::req(selections$main_scenario)
-    
-    if (nrow(selections$main_scenario) == 0) {
-      shinyWidgets::updatePickerInput(
-        session,
-        "scenario_2",
-        choices = character(0)
-      )
-      return()
-    }
-    
-    criteria <- selections$main_scenario |>
-      dplyr::select(.data$start_year, .data$end_year, .data$app_version)
-
-    all_scenarios <- selections$scheme_scenarios |>
-      dplyr::pull(.data$scenario) |>
-      unique()
-    
-    comparable_scenarios <- selections$scheme_scenarios |>
-      # Inner join to get the list of comparable
-      dplyr::inner_join(
-        criteria,
-        by = dplyr::join_by("start_year", "end_year", "app_version")
-      ) |>
-      # Drop the one we are comparing to (to avoid comparing the scenario
-      # to itself)
-      dplyr::anti_join(
-        selections$main_scenario,
-        by = dplyr::join_by("scenario", "create_datetime")
-      ) |>
-      dplyr::pull(.data$scenario) |>
-      unique()
-
-    # Auto-select if only one comparable scenario exists
-    default <- if (length(comparable_scenarios) == 1) {
-      comparable_scenarios
-    } else if (shiny::isTruthy(input$scenario_2) && input$scenario_2 %in% comparable_scenarios) {
-      input$scenario_2
-    } else {
-      character(0)
-    }
-
-    disabled <- !all_scenarios %in% comparable_scenarios
-    
+    require_rows(comparable_scenarios)
+    selections$scheme_scenarios <- comparable_scenarios
+    other_scenarios <- dplyr::setdiff(scheme_runs_tbl, comparable_scenarios)
+    available_scenarios <- pull_unique(comparable_scenarios, "scenario")
+    unavailable_scenarios <- pull_unique(other_scenarios, "scenario")
+    all_scenarios_sorted <- c(available_scenarios, unavailable_scenarios)
+    scenario_unavailable <- !(all_scenarios_sorted %in% available_scenarios)
     shinyWidgets::updatePickerInput(
       session,
-      "scenario_2",
-      choices = all_scenarios,
-      selected = default,
+      "scenario1",
+      choices = all_scenarios_sorted,
+      selected = resolve_selection(
+        shiny::isolate(input$scenario1),
+        available_scenarios,
+        auto_max = 2
+      ),
       choicesOpt = list(
-        disabled = disabled,
-        style = ifelse(disabled, "color: rgba(119, 119, 119, 0.5);", "")
+        disabled = scenario_unavailable,
+        style = ifelse(
+          scenario_unavailable,
+          "color: rgba(119, 119, 119, 0.5);",
+          ""
+        )
       )
     )
-
-    selections$comparator_scenario <- selections$scheme_scenarios |>
-      dplyr::filter(
-        .data$scenario %in% default,
-        .data$create_datetime %in% input$scenario_2_runtime
-      )
   })
 
   shiny::observe({
-    shiny::req(input$scenario_2)
-    shiny::req(selections$main_scenario)
+    shiny::req(selections$scheme_scenarios, input$scenario1)
+    available_runtimes <- selections$scheme_scenarios |>
+      dplyr::filter(.data[["scenario"]] %in% input$scenario1) |>
+      dplyr::pull("create_datetime")
+    shinyWidgets::updatePickerInput(
+      session,
+      "scenario1_rt",
+      choices = available_runtimes,
+      selected = resolve_selection(
+        shiny::isolate(input$scenario1_rt),
+        available_runtimes
+      )
+    )
+  })
+
+  shiny::observe({
     shiny::req(selections$scheme_scenarios)
-    
-    criteria <- selections$main_scenario |>
-      dplyr::select(.data$start_year, .data$end_year, .data$app_version)
+    shiny::req(input$scenario1)
+    shiny::req(input$scenario1_rt)
+    selections$main_scenario <- selections$scheme_scenarios |>
+      dplyr::filter(
+        .data[["scenario"]] %in% input$scenario1,
+        .data[["create_datetime"]] %in% input$scenario1_rt
+      )
+    require_rows(selections$main_scenario)
+  })
+
+  shiny::observe({
+    shiny::req(selections$scheme_scenarios, selections$main_scenario)
+    criteria_cols <- c("start_year", "end_year", "app_version")
+    criteria_tbl <- selections$main_scenario |>
+      dplyr::select(tidyselect::all_of(criteria_cols))
+
+    comparable_scenarios <- selections$scheme_scenarios |>
+      dplyr::setdiff(selections$main_scenario) |>
+      dplyr::semi_join(criteria_tbl, criteria_cols) |>
+      pull_unique("scenario")
+    all_scenarios <- selections$scheme_scenarios |>
+      dplyr::setdiff(selections$main_scenario) |>
+      pull_unique("scenario")
+    unavailable_scenarios <- setdiff(all_scenarios, comparable_scenarios)
+    all_scenarios <- c(comparable_scenarios, unavailable_scenarios)
+    scenario_unavailable <- !(all_scenarios %in% comparable_scenarios)
+
+    shinyWidgets::updatePickerInput(
+      session,
+      "scenario2",
+      choices = all_scenarios,
+      selected = resolve_selection(
+        shiny::isolate(input$scenario2),
+        comparable_scenarios
+      ),
+      choicesOpt = list(
+        disabled = scenario_unavailable,
+        style = ifelse(
+          scenario_unavailable,
+          "color: rgba(119, 119, 119, 0.5);",
+          ""
+        )
+      )
+    )
+  })
+
+  shiny::observe({
+    shiny::req(selections$scheme_scenarios)
+    shiny::req(selections$main_scenario)
+    shiny::req(input$scenario2)
 
     comparable_runtimes <- selections$scheme_scenarios |>
-      dplyr::filter(.data$scenario == input$scenario_2) |>
-      # Inner join to get the list of comparable
-      dplyr::inner_join(
-        criteria,
-        by = dplyr::join_by("start_year", "end_year", "app_version")
-      ) |>
-      # Drop the one we are comparing to (to avoid comparing the scenario
-      # to itself)
-      dplyr::anti_join(
-        selections$main_scenario,
-        by = dplyr::join_by("scenario", "create_datetime")
-      ) |>
-      dplyr::pull(.data$create_datetime)
+      dplyr::setdiff(selections$main_scenario) |>
+      dplyr::filter(.data[["scenario"]] %in% input$scenario2) |>
+      dplyr::pull("create_datetime")
 
-    # Only set explicit selected if the current value is valid
-    if (shiny::isTruthy(input$scenario_2_runtime) && input$scenario_2_runtime %in% comparable_runtimes) {
-      shiny::updateSelectInput(
-        session,
-        "scenario_2_runtime",
-        choices = comparable_runtimes,
-        selected = input$scenario_2_runtime
+    shinyWidgets::updatePickerInput(
+      session,
+      "scenario2_rt",
+      choices = comparable_runtimes,
+      selected = resolve_selection(
+        shiny::isolate(input$scenario2_rt),
+        comparable_runtimes
       )
-    } else {
-      # Let Shiny auto-select the first choice (or leave empty if no choices)
-      shiny::updateSelectInput(
-        session,
-        "scenario_2_runtime",
-        choices = comparable_runtimes
-      )
-    }
-
-    selections$comparator_scenario <- selections$scheme_scenarios |>
-      dplyr::filter(
-        .data$scenario %in% input$scenario_2,
-        .data$create_datetime %in% input$scenario_2_runtime
-      )
+    )
   })
 
-  # End of selectInput reactive logic ----
+  shiny::observe({
+    shiny::req(selections$scheme_scenarios)
+    shiny::req(input$scenario2)
+    shiny::req(input$scenario2_rt)
+
+    selections$comp_scenario <- selections$scheme_scenarios |>
+      dplyr::filter(
+        .data[["scenario"]] %in% input$scenario2,
+        .data[["create_datetime"]] %in% input$scenario2_rt
+      )
+    require_rows(selections$comp_scenario)
+  })
 
   shiny::observe({
-    shiny::req(selections$main_scenario, selections$comparator_scenario)
+    require_rows(selections$main_scenario)
+    require_rows(selections$comp_scenario)
 
-    main <- selections$main_scenario
-    comparator <- selections$comparator_scenario
+    check_compatible <- dplyr::semi_join(
+      selections$main_scenario,
+      selections$comp_scenario,
+      c("dataset", "start_year", "end_year", "app_version")
+    )
 
-    if (
-      nrow(main) > 0 &&
-      nrow(comparator) > 0 &&
-      main$start_year == comparator$start_year &&
-      main$end_year == comparator$end_year &&
-      main$app_version == comparator$app_version
-    ) {
+    if (nrow(check_compatible) == 1) {
       shinyjs::enable("render_plot")
     } else {
       shinyjs::disable("render_plot")
@@ -316,68 +210,40 @@ app_server <- function(input, output, session) {
   })
 
   output$metadata <- DT::renderDT({
-    possibly_get_metadata <- purrr::possibly(
-      get_metadata,
-      otherwise = tibble::tibble()
+    df <- list(selections$main_scenario, selections$comp_scenario) |>
+      purrr::map(add_outputs_app_link) |>
+      purrr::list_rbind()
+    error_msg <- paste0(
+      "Fewer than 2 scenarios have been selected. ",
+      "Please ensure you have selected both scenario names and run times."
     )
-
-    df <- dplyr::bind_rows(
-      possibly_get_metadata(nhp_model_runs(), selections$main_scenario),
-      possibly_get_metadata(nhp_model_runs(), selections$comparator_scenario)
-    )
-
     if (nrow(df) < 2) {
-      return(
-        DT::datatable(
-          tibble::tibble(
-            Message = "Fewer than 2 scenarios have been selected. Please ensure you have selected both scenario names and run times."
-          ),
-          rownames = FALSE,
-          options = list(
-            paging = FALSE,
-            searching = FALSE,
-            ordering = FALSE,
-            dom = "t"
-          )
-        )
-      )
+      create_dt(tibble::tibble(Message = error_msg))
+    } else {
+      create_dt(df)
     }
-
-    DT::datatable(
-      df,
-      rownames = FALSE,
-      escape = FALSE,
-      options = list(
-        paging = FALSE,
-        searching = FALSE,
-        ordering = FALSE
-      )
-    )
   })
 
   last_render <- shiny::reactiveVal(NULL)
 
   shiny::observeEvent(input$render_plot, {
     shiny::req(
-      nhp_model_runs(),
-      input$scenario_1,
-      input$scenario_1_runtime,
-      input$scenario_2,
-      input$scenario_2_runtime
+      input$selected_scheme,
+      selections$main_scenario,
+      input$scenario1,
+      input$scenario1_rt,
+      input$scenario2,
+      input$scenario2_rt
     )
+    app_version <- pull_unique(selections$main_scenario, "app_version")
 
     last_render(list(
-      s1 = input$scenario_1,
-      s1_time = input$scenario_1_runtime,
-      s2 = input$scenario_2,
-      s2_time = input$scenario_2_runtime,
       scheme = input$selected_scheme,
-      version = nhp_model_runs() |>
-        dplyr::filter(
-          .data$scenario == input$scenario_1,
-          .data$create_datetime == input$scenario_1_runtime
-        ) |>
-        dplyr::pull(.data$app_version)
+      s1 = input$scenario1,
+      s1_rt = input$scenario1_rt,
+      s2 = input$scenario2,
+      s2_rt = input$scenario2_rt,
+      version = app_version
     ))
   })
 
@@ -385,102 +251,70 @@ app_server <- function(input, output, session) {
     state <- last_render()
     shiny::req(state)
 
-    shiny::tags$span(
-      "You have selected ",
-      shiny::tags$b(state$s1),
-      " (",
-      lubridate::as_datetime(state$s1_time),
-      ") and ",
-      shiny::tags$b(state$s2),
-      " (",
-      lubridate::as_datetime(state$s2_time),
-      ") from the scheme ",
-      state$scheme,
-      " and model version ",
-      nhp_model_runs() |>
-        dplyr::filter(
-          .data$scenario == input$scenario_1,
-          .data$create_datetime == input$scenario_1_runtime
-        ) |>
-        dplyr::pull(.data$app_version)
+    text <- glue::glue(
+      "You have selected {shiny::tags$strong(state$s1)} ({state$s1_rt}) and ",
+      "{shiny::tags$strong(state$s2)} ({state$s2_rt}) from ",
+      "{shiny::tags$strong(state$scheme)} (model version ",
+      "{shiny::tags$strong(state$version)})"
     )
+    shiny::tags$span(shiny::HTML(text))
   })
-  
-    shiny::observe({
-    warning_text <- c()
-    
-    model_runs <- nhp_model_runs()
-    
-    # No model runs at all
-    if (is.null(model_runs) || nrow(model_runs) == 0) {
-      warning_text <- c(
-        warning_text,
-        "<b><p style='color:red;'>No Scenarios have met inclusion criteria for your Scheme (v3.1+, viewable = TRUE)</p></b>"
-      )
-    } else if (shiny::isTruthy(selections$scheme)) {
-      comparable <- get_comparable_scenarios(model_runs, selections$scheme)
 
-      # No comparable scenarios
-      if (nrow(comparable) == 0) {
-        warning_text <- c(
-          warning_text,
-          "<b><p style='color:red;'>No comparable scenarios exist for the selected Scheme.</p></b>"
-        )
+  shiny::observe({
+    shiny::req(nhp_model_runs(), selections$scheme)
+    warning_text <- NULL
+    if (shiny::isTruthy(selections$scheme)) {
+      scheme_runs_tbl <- nhp_model_runs() |>
+        dplyr::filter(.data[["dataset"]] %in% selections$scheme)
+      comparable_scenarios <- get_comparable_scenarios(
+        scheme_runs_tbl,
+        selections$scheme
+      )
+      if (nrow(comparable_scenarios) == 0) {
+        txt <- "No comparable scenarios exist for the selected Scheme."
+        warning_text <- bold_red(txt)
       }
     }
 
     state <- last_render()
     if (!is.null(state)) {
       # detect if selections have changed since last render
-      changed <- state$s1 != input$scenario_1 ||
-        state$s1_time != input$scenario_1_runtime ||
-        state$s2 != input$scenario_2 ||
-        state$s2_time != input$scenario_2_runtime
-
-      if (changed) {
-        warning_text <- c(
-          warning_text,
-          "<b><p style='color:red;'>Scenario Selections have changed. Press Render Plots to view. </p><b>"
+      if (
+        any(
+          state$s1 != input$scenario1,
+          state$s1_rt != input$scenario1_rt,
+          state$s2 != input$scenario2,
+          state$s2_rt != input$scenario2_rt
         )
+      ) {
+        txt <- "Scenario Selections have changed. Press Render Plots to view."
+        warning_text <- c(warning_text, bold_red(txt))
       }
     }
 
-    if (length(warning_text) > 0) {
-      output$warning_text <- shiny::renderUI(shiny::HTML(paste(
-        warning_text,
-        collapse = "<br>"
-      )))
-    } else {
-      output$warning_text <- shiny::renderUI(NULL)
-    }
+    output$warning_text <- shiny::renderUI({
+      if (length(warning_text) > 0) {
+        shiny::HTML(paste0(warning_text, collapse = "<br />"))
+      } else {
+        NULL
+      }
+    })
   })
 
-  processed <-
-    mod_processing_server(
-      "processing1",
-      result_sets = nhp_model_runs(),
-      selections = selections,
-      scenario_selections = shiny::reactive(
-        list(
-          scenario_1 = input$scenario_1,
-          scenario_1_runtime = input$scenario_1_runtime,
-          scenario_2 = input$scenario_2,
-          scenario_2_runtime = input$scenario_2_runtime
-        )
-      ),
-      trigger = shiny::reactive(input$render_plot),
-      local_data_flag = load_local_data
-    )
-
-  mod_summary_server("summary1", processed = processed)
-  mod_los_server("los1", processed = processed)
-  mod_waterfall_server("waterfall1", processed = processed)
-  mod_activity_avoidance_impact_server(
-    "activity_avoidance1",
-    processed = processed
+  use_local <- Sys.getenv("NHPSCENARIOCOMP_USE_LOCAL_DATA")
+  processed_data <- mod_processing_server(
+    id = "processing",
+    selections = selections,
+    trigger = shiny::reactive(input$render_plot),
+    use_local_data = ifelse(nzchar(use_local), as.logical(use_local), FALSE)
   )
-  mod_efficiencies_impact_server("efficiencies1", processed = processed)
-  mod_p10_p90_bar_server("p10p90_bar1", processed = processed)
-  mod_beeswarm_server("beeswarm1", processed = processed)
-  mod_ecdf_server("ecdf1", processed = processed)
+
+  mod_summary_bar_server("summary", processed_data)
+  mod_los_bar_server("los", processed_data)
+  mod_waterfall_server("waterfall", processed_data)
+  mod_activity_avoidance_impact_server("activity_avoidance", processed_data)
+  mod_efficiencies_impact_server("efficiencies", processed_data)
+  mod_p10p90_bar_server("p10p90_bar", processed_data)
+  mod_beeswarm_server("beeswarm", processed_data)
+  mod_ecdf_server("ecdf", processed_data)
 }

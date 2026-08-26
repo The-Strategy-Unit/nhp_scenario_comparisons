@@ -1,11 +1,15 @@
-This chart shows the impacts of different factors on activity changes between the model baseline and in the model horizon years based on the principal projection.
+This chart shows the impacts of different factors on activity changes between
+the model baseline year and the model horizon year, based on the principal
+projection.
 
-Yellow bars are used to indicate the impact of factors which are increasing projected activity relative to the baseline year.
+* Yellow bars indicate the impact of factors that are projected to increase
+  activity relative to the baseline.
+* Black bars indicate the impact of factors that are projected to reduce
+  activity relative to the baseline.
+* The principal projection of activity in the horizon year is shown as the red
+  bar at the bottom of the chart.
+* The “model interaction term” shows the effects of factors compounding within
+  the model.
 
-Black bars are used to indicate the impact of factors which are reducing projected activity relative to the baseline year.
-
-The principal projection of activity in the horizon year is shown as the red bar at the bottom of the chart.
-
-The “model interaction term” shows the effects of factors compounding within the model.
-
-Note that the decomposition of activity changes over the model factors impact of changes should be viewed as indicative rather than precise exact figures.
+Note that the decomposition of projected activity change across all factors
+should be viewed as indicative rather than exact.
