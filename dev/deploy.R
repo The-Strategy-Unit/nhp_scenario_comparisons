@@ -2,12 +2,12 @@ deploy <- function(type = c("dev", "prod")) {
   type <- match.arg(type)
 
   # prod details
-  app_id <- 311
+  app_id <- "3f637c36-ce17-4074-b025-508adcb416ee"
   app_name <- "scenario-comparison-app"
   app_title <- "Scenario Comparison App"
 
   if (type == "dev") {
-    app_id <- 310
+    app_id <- "65075613-082e-4c53-acc1-b5e6a1c2a092"
     app_name <- paste0(app_name, "-dev")
     app_title <- paste(app_title, "(dev)")
   }
