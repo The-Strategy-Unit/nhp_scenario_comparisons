@@ -29,10 +29,3 @@ jobs:
 
       - name: Format
         run: air format .
-
-      - name: Suggest
-        uses: reviewdog/action-suggester@v1
-        with:
-          level: error
-          fail_level: error
-          tool_name: air
