@@ -65,7 +65,7 @@ mod_activity_avoidance_impact_server <- function(id, processed_data) {
           )
         )
 
-        create_impact_chart(
+        create_tpma_impact_chart(
           filtered_data,
           "activity_avoidance",
           input$filter1,

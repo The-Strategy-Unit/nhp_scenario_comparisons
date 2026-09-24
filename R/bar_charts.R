@@ -71,22 +71,22 @@ create_waterfall_chart <- function(waterfall_data, activity_type, measure) {
       .data[["activity_type_label"]] == .env[["activity_type"]],
       .data[["measure_label"]] == .env[["measure"]]
     ) |>
-    reskit::make_overall_cf_plot() +
+    reskit::make_grouped_impact_plot() +
     core_chart_theme() +
     ggplot2::facet_grid(rows = dplyr::vars(.data[["scenario"]]))
 }
 
 
-create_impact_chart <- function(icf_impact_data, cf, at, measure) {
+create_tpma_impact_chart <- function(tpma_impact_data, cf, at, measure) {
   cf_label <- ifelse(cf == "efficiencies", "Efficiencies", "Activity Avoidance")
   title_2 <- glue::glue("Impact of Individual {cf_label} TPMA Assumptions")
   title_text <- glue::glue("{at} {measure} - {title_2}")
   fill_colours <- c("#f9bf07", "#686f73")
 
-  icf_impact_data |>
+  tpma_impact_data |>
     # In the app we will actually provide the data pre-filtered, but I have
     # decided to superfluously retain the equivalent filter step in this
-    # function so that it would still work with unfiltered icf_impact_data
+    # function so that it would still work with unfiltered tpma_impact_data
     dplyr::filter(
       .data[["change_factor"]] == .env[["cf"]],
       .data[["activity_type_label"]] == .env[["at"]],

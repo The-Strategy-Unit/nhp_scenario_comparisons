@@ -17,7 +17,7 @@ Description: A Shiny app to compare model results across two different
 License: MIT + file LICENSE
 Depends: R (>= 4.5.0)
 Imports:
-    azkit (>= 0.3.1),
+    azkit (>= 0.3.2),
     bslib,
     dplyr,
     DT,
@@ -28,7 +28,7 @@ Imports:
     htmltools,
     purrr,
     readr,
-    reskit (== 1.1.9),
+    reskit (== 1.2.0),
     rlang,
     scales,
     shiny,
@@ -48,4 +48,4 @@ Roxygen: list(markdown = TRUE)
 Remotes:
     github::the-strategy-unit/azkit,
     reskit=github::The-Strategy-Unit/nhp_reskit
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

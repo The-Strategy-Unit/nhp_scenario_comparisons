@@ -1,3 +1,60 @@
+# Process-level cache for the lookup tables. Each is derived from a file
+# fetched over the network - the NHP Outputs `golem-config.yml` and reskit's
+# TPMA lookup - and is identical for every user, so fetch once per R process
+# rather than once per session or once per render.
+the <- new.env(parent = emptyenv())
+
+#' Every lookup table the data preparation functions need
+#'
+#' Built on first use and cached for the lifetime of the R process, so the
+#' first caller pays for the two GitHub requests and every later session
+#' reuses the result. Deliberately lazy rather than fetched at app start: a
+#' session that never renders a plot never triggers the fetch, and a network
+#' failure cannot stop the app from loading. Use `reset_app_lookups()` to
+#' force a refetch.
+#'
+#' @returns A named list of lookup tables, plus `core_mat_tbl`.
+#' @keywords internal
+#' @noRd
+get_app_lookups <- function() {
+  if (is.null(the[["lookups"]])) {
+    the[["lookups"]] <- build_app_lookups()
+  }
+  the[["lookups"]]
+}
+
+#' Clear the cached lookup tables so that the next call refetches them
+#' @keywords internal
+#' @noRd
+reset_app_lookups <- function() {
+  the[["lookups"]] <- NULL
+  invisible(NULL)
+}
+
+#' Assemble the lookup tables. Call `get_app_lookups()` instead.
+#' @keywords internal
+#' @noRd
+build_app_lookups <- function() {
+  full_apm_lookup <- get_full_apm_lookup()
+  cond_apm_lookup <- get_condensed_apm_lookup(full_apm_lookup)
+  full_ap_lookup <- full_apm_lookup |>
+    dplyr::distinct(dplyr::pick(c("pod", "pod_label", "activity_type_label")))
+  cond_ap_lookup <- cond_apm_lookup |>
+    dplyr::distinct(dplyr::pick(c("pod", "pod_label", "activity_type_label")))
+  atl_lookup <- full_apm_lookup |>
+    dplyr::distinct(dplyr::pick(c("activity_type", "activity_type_label")))
+
+  list(
+    full_apm_lookup = full_apm_lookup,
+    cond_apm_lookup = cond_apm_lookup,
+    full_ap_lookup = full_ap_lookup,
+    cond_ap_lookup = cond_ap_lookup,
+    atl_lookup = atl_lookup,
+    tpma_lookup = reskit::get_tpma_label_lookup()
+  )
+}
+
+
 #' Read in a lookup table for PoD, activity type and measure compatibility
 #' @keywords internal
 #' @noRd

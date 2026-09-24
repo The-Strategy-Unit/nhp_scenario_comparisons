@@ -1,131 +1,31 @@
-prepare_beeswarm_data <- function(
+prepare_summary_data <- function(
   results1,
   results2,
   scenario1_name,
   scenario2_name,
-  core_mat_tbl,
-  full_ap_lookup,
-  atl_lookup
+  cond_ap_lookup
 ) {
-  pt_compile_distr_data <- purrr::partial(
-    reskit::compile_distribution_plot_data,
-    pod_lookup = full_ap_lookup
-  )
-  pt_compile_dst_data1 <- purrr::partial(
-    pt_compile_distr_data,
-    results = results1
-  )
-  pt_compile_dst_data2 <- purrr::partial(
-    pt_compile_distr_data,
-    results = results2
-  )
-  if (scenario1_name == scenario2_name) {
-    scenario1_name <- paste0(scenario1_name, " (s1)")
-    scenario2_name <- paste0(scenario2_name, " (s2)")
-  }
-  core_mat_tbl |>
-    dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data1),
-      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data2)
-    ) |>
-    unnest_mat_scenarios_tbl() |>
-    dplyr::left_join(atl_lookup, "activity_type") |>
-    dplyr::mutate(
-      measure_label = create_measure_label(.data[["measure"]])
-    )
-}
-
-
-prepare_principal_pi_data <- function(
-  results1,
-  results2,
-  scenario1_name,
-  scenario2_name,
-  full_atp_lookup
-) {
-  pt_compile_principal_pi_data <- purrr::partial(
-    reskit::compile_distribution_summary_data,
-    value_type = "principal",
-    pod_lookup = full_atp_lookup
+  pt_compile_principal_pod_data <- purrr::partial(
+    reskit::compile_principal_pod_data,
+    pod_lookup = cond_ap_lookup
   )
   if (scenario1_name == scenario2_name) {
     scenario1_name <- paste0(scenario1_name, " (s1)")
     scenario2_name <- paste0(scenario2_name, " (s2)")
   }
   list(results1, results2) |>
-    purrr::map(pt_compile_principal_pi_data) |>
+    purrr::map(pt_compile_principal_pod_data) |>
     rlang::set_names(c(scenario1_name, scenario2_name)) |>
-    purrr::list_rbind(names_to = "scenario")
-}
-
-
-prepare_icf_impact_data <- function(
-  results1,
-  results2,
-  scenario1_name,
-  scenario2_name,
-  core_mat_tbl,
-  cond_ap_lookup,
-  tpma_lookup,
-  atl_lookup
-) {
-  pt_compile_icf_data <- purrr::partial(
-    reskit::compile_indiv_change_factor_data,
-    pod_lookup = cond_ap_lookup,
-    tpma_lookup = tpma_lookup
-  )
-  pt_compile_icf_data1 <- purrr::partial(
-    pt_compile_icf_data,
-    results = results1
-  )
-  pt_compile_icf_data2 <- purrr::partial(
-    pt_compile_icf_data,
-    results = results2
-  )
-  if (scenario1_name == scenario2_name) {
-    scenario1_name <- paste0(scenario1_name, " (s1)")
-    scenario2_name <- paste0(scenario2_name, " (s2)")
-  }
-  core_mat_tbl |>
+    purrr::list_rbind(names_to = "scenario") |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_icf_data1),
-      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_icf_data2)
-    ) |>
-    unnest_cfmat_scenarios_tbl() |>
-    dplyr::left_join(atl_lookup, "activity_type") |>
-    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
-}
-
-
-prepare_waterfall_data <- function(
-  results1,
-  results2,
-  scenario1_name,
-  scenario2_name,
-  core_mat_tbl,
-  full_ap_lookup,
-  tpma_lookup,
-  atl_lookup
-) {
-  pt_compile_cf_data <- purrr::partial(
-    reskit::compile_change_factor_data,
-    pod_lookup = full_ap_lookup,
-    tpma_lookup = tpma_lookup
-  )
-  pt_compile_cf_data1 <- purrr::partial(pt_compile_cf_data, results = results1)
-  pt_compile_cf_data2 <- purrr::partial(pt_compile_cf_data, results = results2)
-  if (scenario1_name == scenario2_name) {
-    scenario1_name <- paste0(scenario1_name, " (s1)")
-    scenario2_name <- paste0(scenario2_name, " (s2)")
-  }
-  core_mat_tbl |>
-    dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data1),
-      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_cf_data2)
-    ) |>
-    unnest_cfmat_scenarios_tbl() |>
-    dplyr::left_join(atl_lookup, "activity_type") |>
-    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
+      dplyr::across("activity_type_label", \(x) {
+        dplyr::if_else(grepl("^Inp", x), x, paste0(x, " Activity"))
+      }),
+      dplyr::across("pod_label", \(x) {
+        x <- sub(" (Admission|Bed Days)$", "", x)
+        forcats::fct_reorder(x, .data[["baseline"]])
+      })
+    )
 }
 
 
@@ -158,34 +58,128 @@ prepare_los_data <- function(
 }
 
 
-prepare_summary_data <- function(
+prepare_waterfall_data <- function(
   results1,
   results2,
   scenario1_name,
   scenario2_name,
-  cond_ap_lookup
+  core_mat_tbl,
+  full_ap_lookup,
+  tpma_lookup
 ) {
-  pt_compile_principal_pod_data <- purrr::partial(
-    reskit::compile_principal_pod_data,
-    pod_lookup = cond_ap_lookup
+  pt_compile_gi_data <- purrr::partial(
+    reskit::compile_grouped_impact_data,
+    pod_lookup = full_ap_lookup,
+    tpma_lookup = tpma_lookup
+  )
+  pt_compile_gi_data1 <- purrr::partial(pt_compile_gi_data, results = results1)
+  pt_compile_gi_data2 <- purrr::partial(pt_compile_gi_data, results = results2)
+  if (scenario1_name == scenario2_name) {
+    scenario1_name <- paste0(scenario1_name, " (s1)")
+    scenario2_name <- paste0(scenario2_name, " (s2)")
+  }
+  core_mat_tbl |>
+    dplyr::mutate(
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_gi_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_gi_data2)
+    ) |>
+    unnest_cfmat_scenarios_tbl() |>
+    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
+}
+
+
+prepare_tpma_impact_data <- function(
+  results1,
+  results2,
+  scenario1_name,
+  scenario2_name,
+  core_mat_tbl,
+  cond_ap_lookup,
+  tpma_lookup
+) {
+  pt_compile_tpma_impact_data <- purrr::partial(
+    reskit::compile_tpma_impact_data,
+    pod_lookup = cond_ap_lookup,
+    tpma_lookup = tpma_lookup
+  )
+  pt_compile_tpma_imp_data1 <- purrr::partial(
+    pt_compile_tpma_impact_data,
+    results = results1
+  )
+  pt_compile_tpma_imp_data2 <- purrr::partial(
+    pt_compile_tpma_impact_data,
+    results = results2
+  )
+  if (scenario1_name == scenario2_name) {
+    scenario1_name <- paste0(scenario1_name, " (s1)")
+    scenario2_name <- paste0(scenario2_name, " (s2)")
+  }
+  core_mat_tbl |>
+    dplyr::mutate(
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_tpma_imp_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_tpma_imp_data2)
+    ) |>
+    unnest_cfmat_scenarios_tbl() |>
+    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
+}
+
+
+prepare_principal_pi_data <- function(
+  results1,
+  results2,
+  scenario1_name,
+  scenario2_name,
+  full_ap_lookup
+) {
+  pt_compile_principal_pi_data <- purrr::partial(
+    reskit::compile_distribution_summary_data,
+    value_type = "principal",
+    pod_lookup = full_ap_lookup
   )
   if (scenario1_name == scenario2_name) {
     scenario1_name <- paste0(scenario1_name, " (s1)")
     scenario2_name <- paste0(scenario2_name, " (s2)")
   }
   list(results1, results2) |>
-    purrr::map(pt_compile_principal_pod_data) |>
+    purrr::map(pt_compile_principal_pi_data) |>
     rlang::set_names(c(scenario1_name, scenario2_name)) |>
-    purrr::list_rbind(names_to = "scenario") |>
+    purrr::list_rbind(names_to = "scenario")
+}
+
+
+prepare_beeswarm_data <- function(
+  results1,
+  results2,
+  scenario1_name,
+  scenario2_name,
+  core_mat_tbl,
+  full_ap_lookup,
+  atl_lookup
+) {
+  pt_compile_distr_data <- purrr::partial(
+    reskit::compile_distribution_plot_data,
+    pod_lookup = full_ap_lookup
+  )
+  pt_compile_dst_data1 <- purrr::partial(
+    pt_compile_distr_data,
+    results = results1
+  )
+  pt_compile_dst_data2 <- purrr::partial(
+    pt_compile_distr_data,
+    results = results2
+  )
+  if (scenario1_name == scenario2_name) {
+    scenario1_name <- paste0(scenario1_name, " (s1)")
+    scenario2_name <- paste0(scenario2_name, " (s2)")
+  }
+  core_mat_tbl |>
     dplyr::mutate(
-      dplyr::across("activity_type_label", \(x) {
-        dplyr::if_else(grepl("^Inp", x), x, paste0(x, " Activity"))
-      }),
-      dplyr::across("pod_label", \(x) {
-        x <- sub(" (Admission|Bed Days)$", "", x)
-        forcats::fct_reorder(x, .data[["baseline"]])
-      })
-    )
+      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data1),
+      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_dst_data2)
+    ) |>
+    unnest_mat_scenarios_tbl() |>
+    dplyr::left_join(atl_lookup, "activity_type") |>
+    dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
 }
 
 
@@ -198,17 +192,19 @@ unnest_mat_scenarios_tbl <- function(mat_scenarios_tbl) {
     dplyr::filter_out(purrr::map_int(.data[["value"]], nrow) == 0)
   if (nrow(intermediate) == 0) {
     tibble::tibble(
+      measure = character(0),
       activity_type = character(0),
       scenario = character(0),
-      change_factor = character(0),
-      measure = character(0),
-      tpma_label = factor(0),
-      value = numeric(0)
+      model_run = integer(0),
+      value = numeric(0),
+      baseline = numeric(0),
+      principal = numeric(0)
     )
   } else {
     tidyr::unnest(intermediate, "value")
   }
 }
+
 
 unnest_cfmat_scenarios_tbl <- function(mat_scenarios_tbl) {
   intermediate <- mat_scenarios_tbl |>
@@ -220,9 +216,11 @@ unnest_cfmat_scenarios_tbl <- function(mat_scenarios_tbl) {
       activity_type = character(0),
       scenario = character(0),
       change_factor = character(0),
+      activity_type_label = character(0),
       measure = character(0),
-      tpma_label = factor(0),
-      value = numeric(0)
+      value = numeric(0),
+      hide = numeric(0),
+      total = numeric(0)
     )
   } else {
     tidyr::unnest(intermediate, "value")

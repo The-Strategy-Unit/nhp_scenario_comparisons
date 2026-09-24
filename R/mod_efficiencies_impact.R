@@ -72,7 +72,7 @@ mod_efficiencies_impact_server <- function(id, processed_data) {
           )
         )
 
-        create_impact_chart(
+        create_tpma_impact_chart(
           filtered_data,
           "efficiencies",
           input$filter1,

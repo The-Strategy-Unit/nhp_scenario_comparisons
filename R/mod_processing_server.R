@@ -91,21 +91,19 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             scenario2_name,
             core_mat_tbl,
             full_ap_lookup,
-            tpma_lookup,
-            atl_lookup
+            tpma_lookup
           )
           shiny::incProgress(0.05)
 
           # Prepare data for individual change factor (TPMA) impact charts
-          icf_impact_data <- prepare_icf_impact_data(
+          tpma_impact_data <- prepare_tpma_impact_data(
             results1,
             results2,
             scenario1_name,
             scenario2_name,
             core_mat_tbl,
             cond_ap_lookup,
-            tpma_lookup,
-            atl_lookup
+            tpma_lookup
           )
           shiny::incProgress(0.05)
 
@@ -115,7 +113,7 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             results2,
             scenario1_name,
             scenario2_name,
-            full_atp_lookup
+            full_ap_lookup
           )
           shiny::incProgress(0.05)
 
@@ -136,7 +134,7 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             summary_data = summary_data,
             los_data = los_data,
             waterfall_data = waterfall_data,
-            icf_impact_data = icf_impact_data,
+            tpma_impact_data = tpma_impact_data,
             principal_pi_data = principal_pi_data,
             beeswarm_data = beeswarm_data
           )
