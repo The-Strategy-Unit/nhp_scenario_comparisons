@@ -33,7 +33,12 @@ test_that("filtering works", {
     )
   expect_gt(nrow(filtered_data), 0)
 
-  chart <- create_beeswarm_chart(beeswarm_data, input$filter1, input$filter2) |>
+  chart <- create_beeswarm_chart(
+    beeswarm_data,
+    input$filter1,
+    input$filter2,
+    FALSE
+  ) |>
     expect_no_error()
   expect_s3_class(chart, "ggplot")
 })

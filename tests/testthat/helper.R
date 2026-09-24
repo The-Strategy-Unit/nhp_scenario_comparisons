@@ -4,7 +4,10 @@ results1 <- readRDS(test_rds_path("results1.rds"))
 results2 <- readRDS(test_rds_path("results2.rds"))
 
 full_apm_lookup <- readRDS(test_rds_path("full_apm_lookup.rds"))
+cond_apm_lookup <- get_condensed_apm_lookup(full_apm_lookup)
 full_ap_lookup <- dplyr::select(full_apm_lookup, !"measure") |>
+  dplyr::distinct()
+cond_ap_lookup <- dplyr::select(cond_apm_lookup, !"measure") |>
   dplyr::distinct()
 full_atp_lookup <- dplyr::select(full_ap_lookup, !"activity_type")
 atl_lookup <- full_apm_lookup |>
