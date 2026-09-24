@@ -35,7 +35,7 @@ create_beeswarm_chart <- function(beeswarm_data, at, measure, show_zero) {
     ggplot2::annotate(
       "text",
       x = baseline_value,
-      y = 0.5,
+      y = 0.9,
       label = "baseline",
       colour = "dimgrey",
       angle = 90,
