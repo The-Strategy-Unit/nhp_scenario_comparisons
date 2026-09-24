@@ -3,7 +3,10 @@ create_beeswarm_chart <- function(beeswarm_data, at, measure, show_zero) {
     dplyr::filter(
       dplyr::if_any("activity_type_label", \(x) x == {{ at }}),
       dplyr::if_any("measure_label", \(x) x == {{ measure }})
-    )
+    ) |>
+    # without this `min()` below returns `Inf` with a warning and the x-axis
+    # limits are silently nonsense
+    validate_rows(glue::glue("No model runs for {at} {measure}."))
   title <- glue::glue("{at} {measure} - Distribution of Model Runs")
   min_x_value <- min(beeswarm_data[["value"]], beeswarm_data[["baseline"]])
   min_x_value <- ifelse(show_zero, 0, min_x_value)
@@ -87,6 +90,10 @@ create_ecdf_chart <- function(ecdf_data, activity_type, measure, show_zero) {
     dplyr::filter(
       dplyr::if_any("activity_type_label", \(x) x == {{ activity_type }}),
       dplyr::if_any("measure_label", \(x) x == {{ measure }})
+    ) |>
+    # guards `min()` below, and the quantile / ecdf calls that follow
+    validate_rows(
+      glue::glue("No model runs for {activity_type} {tolower(measure)}.")
     )
   min_x_value <- min(ecdf_data[["value"]], ecdf_data[["baseline"]])
   min_x_value <- ifelse(show_zero, 0, min_x_value)

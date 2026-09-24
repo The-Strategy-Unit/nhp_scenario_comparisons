@@ -1,29 +1,7 @@
 mod_processing_server <- function(id, selections, trigger, use_local_data) {
   shiny::moduleServer(id, function(input, output, session) {
-    # This requires a call to GitHub to retrieve a file.
-    # Run once and then pass data to reskit functions, rather than running
-    # each time a function is called
-    full_apm_lookup <- get_full_apm_lookup()
-    cond_apm_lookup <- get_condensed_apm_lookup(full_apm_lookup)
-    full_ap_lookup <- dplyr::select(full_apm_lookup, !"measure") |>
-      dplyr::distinct()
-    cond_ap_lookup <- dplyr::select(cond_apm_lookup, !"measure") |>
-      dplyr::distinct()
-    # matches reskit's get_detailed_pods()
-    full_atp_lookup <- dplyr::select(full_ap_lookup, !"activity_type")
-    atl_lookup <- full_apm_lookup |>
-      dplyr::distinct(dplyr::pick(tidyselect::starts_with(
-        "activity_type"
-      )))
-    tpma_lookup <- reskit::get_tpma_label_lookup()
-
-    # Create core table with a row for each pair of measure and
-    # activity_type, for pmapping over
-    core_mat_tbl <- full_apm_lookup |>
-      dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
-
     # create pre-processed data bundle
-    processed_data <- shiny::eventReactive(
+    rendered_data <- shiny::eventReactive(
       trigger(),
       {
         shiny::req(selections$main_scenario, selections$comp_scenario)
@@ -62,6 +40,22 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             results2 <- read_azure_results(scenario2_dir)
             shiny::incProgress(0.3)
           }
+
+          # Fetched from GitHub on first use, then cached for the lifetime of
+          # the R process, so only the first render in this process pays.
+          lookups <- get_app_lookups()
+          full_apm_lookup <- lookups[["full_apm_lookup"]]
+          full_ap_lookup <- lookups[["full_ap_lookup"]]
+          cond_ap_lookup <- lookups[["cond_ap_lookup"]]
+          full_atp_lookup <- lookups[["full_atp_lookup"]]
+          atl_lookup <- lookups[["atl_lookup"]]
+          tpma_lookup <- lookups[["tpma_lookup"]]
+
+          # one row per measure / activity_type pair, for `pmap()`ping over
+          core_mat_tbl <- dplyr::distinct(
+            full_apm_lookup,
+            dplyr::pick(c("measure", "activity_type"))
+          )
 
           # Prepare data for Summary chart
           summary_data <- prepare_summary_data(
@@ -142,6 +136,22 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
       },
       ignoreInit = TRUE
     )
-    processed_data
+    shiny::observe(rendered_data())
+
+    # Until Render Plots is first clicked the event reactive holds no value and
+    # reading it pauses dependent outputs silently, leaving every tab blank.
+    # Wrapping it in a validation turns that into a prompt for the user.
+    shiny::reactive({
+      shiny::validate(
+        shiny::need(
+          isTRUE(trigger() > 0),
+          paste(
+            "Select a scheme and two scenarios in the sidebar,",
+            "then press Render Plots to view."
+          )
+        )
+      )
+      rendered_data()
+    })
   })
 }

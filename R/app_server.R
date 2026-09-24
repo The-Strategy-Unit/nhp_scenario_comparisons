@@ -9,7 +9,7 @@ app_server <- function(input, output, session) {
     } else {
       results_metadata_tbl |>
         dplyr::filter(.data[["viewable"]], .data[["app_version"]] != "dev") |>
-        require_rows()
+        validate_rows("No viewable scenarios are available.")
     }
   })
 
@@ -66,8 +66,8 @@ app_server <- function(input, output, session) {
     comparable_scenarios <- get_comparable_scenarios(
       scheme_runs_tbl,
       selections$scheme
-    )
-    require_rows(comparable_scenarios)
+    ) |>
+      validate_rows("No comparable scenarios are available for this scheme.")
     selections$scheme_scenarios <- comparable_scenarios
     other_scenarios <- dplyr::setdiff(scheme_runs_tbl, comparable_scenarios)
     available_scenarios <- pull_unique(comparable_scenarios, "scenario")
@@ -118,8 +118,8 @@ app_server <- function(input, output, session) {
       dplyr::filter(
         .data[["scenario"]] %in% input$scenario1,
         .data[["create_datetime"]] %in% input$scenario1_rt
-      )
-    require_rows(selections$main_scenario)
+      ) |>
+      validate_rows("The main scenario was not available.")
   })
 
   shiny::observe({
@@ -188,13 +188,12 @@ app_server <- function(input, output, session) {
       dplyr::filter(
         .data[["scenario"]] %in% input$scenario2,
         .data[["create_datetime"]] %in% input$scenario2_rt
-      )
-    require_rows(selections$comp_scenario)
+      ) |>
+      validate_rows("The comparison scenario was not found.")
   })
 
   shiny::observe({
-    require_rows(selections$main_scenario)
-    require_rows(selections$comp_scenario)
+    shiny::req(selections$main_scenario, selections$comp_scenario)
 
     check_compatible <- dplyr::semi_join(
       selections$main_scenario,

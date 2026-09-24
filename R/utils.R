@@ -20,6 +20,12 @@ get_comparable_scenarios <- function(model_runs, scheme) {
 #' @return A length-1 character vector, or `character(0)` for no selection.
 #' @noRd
 resolve_selection <- function(current, available, auto_max = 1) {
+  # label columns are often factors; picker values must be plain character so
+  # that comparisons against browser input, and against a differently-levelled
+  # factor in a newly loaded dataset, behave predictably
+  available <- as.character(available)
+  current <- as.character(current)
+
   if (length(current) == 1 && nzchar(current) && current %in% available) {
     current
   } else if (length(available) > 0 && length(available) <= auto_max) {
@@ -27,6 +33,47 @@ resolve_selection <- function(current, available, auto_max = 1) {
   } else {
     character(0)
   }
+}
+
+
+#' Push a fresh set of choices to a `selectInput`
+#'
+#' Keeps the current selection when it is still valid, otherwise falls back to
+#' the first available choice. Used instead of re-rendering the input via
+#' `renderUI()`, which would blank the widget whenever the underlying data
+#' changed while the tab was hidden.
+#'
+#' @param session The (module) session object.
+#' @param id Un-namespaced input id.
+#' @param choices Character vector of available choices.
+#' @return Invisibly, the resolved selection.
+#' @noRd
+sync_select_input <- function(session, id, choices) {
+  choices <- as.character(choices)
+  current <- shiny::isolate(session[["input"]][[id]])
+  selected <- resolve_selection(current, choices, auto_max = Inf)
+
+  # only freeze when the value is actually changing: freezing unnecessarily
+  # blanks dependent outputs until the client round trip completes
+  if (!identical(current, selected)) {
+    shiny::freezeReactiveValue(session[["input"]], id)
+  }
+
+  shiny::updateSelectInput(
+    session,
+    inputId = id,
+    choices = choices,
+    selected = if (length(selected) > 0) selected else character(0)
+  )
+
+  invisible(selected)
+}
+
+
+#' Lay out module filter inputs side by side
+#' @noRd
+filter_row <- function(...) {
+  shiny::tags$div(style = "display: flex; gap: 15px;", ...)
 }
 
 
@@ -70,3 +117,17 @@ error_on_zero_rows <- \(df) stopifnot(`Table has no rows` = nrow(df) > 0)
 
 sysfile <- \(...) system.file(..., package = "nhpscenarioanalysis")
 appfile <- \(...) sysfile("app", ...)
+
+
+#' Require a non-empty table, with an explanation if it is empty
+#'
+#' This function produces `message` in place of the output if `tbl` is empty.
+#' The function and its documentation were originally suggested by an LLM.
+#' @param tbl A data frame
+#' @param message Text to display when `tbl` has no rows.
+#' @returns `tbl`, invisibly stopping the calling reactive if it is empty.
+#' @noRd
+validate_rows <- function(tbl, message) {
+  shiny::validate(shiny::need(nrow(tbl) > 0, message))
+  tbl
+}
