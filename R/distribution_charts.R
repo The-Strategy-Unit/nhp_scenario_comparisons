@@ -16,7 +16,7 @@ create_beeswarm_chart <- function(beeswarm_data, at, measure, show_zero) {
       dplyr::across(c("baseline", "principal"), unique),
       .by = "scenario"
     )
-
+  baseline_value <- summary_tbl[["baseline"]][[1]] # should be 1 value
   summary_tbl |>
     ggplot2::ggplot() +
     ggbeeswarm::geom_quasirandom(

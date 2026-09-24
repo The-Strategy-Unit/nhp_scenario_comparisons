@@ -113,7 +113,7 @@ pull_unique <- \(df, col) unique(df[[col]])
 
 uppercase_init <- \(x) sub("^([[:alpha:]])(.+)", "\\U\\1\\E\\2", x, perl = TRUE)
 
-error_on_zero_rows <- \(df) stopifnot(`Table has no rows` = nrow(df) > 0)
+error_on_zero_rows <- \(df) if (nrow(df) > 0) df else stop("Table has no rows")
 
 sysfile <- \(...) system.file(..., package = "nhpscenarioanalysis")
 appfile <- \(...) sysfile("app", ...)

@@ -73,7 +73,10 @@ create_waterfall_chart <- function(waterfall_data, activity_type, measure) {
     ) |>
     reskit::make_grouped_impact_plot() +
     core_chart_theme() +
-    ggplot2::facet_grid(rows = dplyr::vars(.data[["scenario"]]))
+    ggplot2::facet_grid(
+      rows = dplyr::vars(.data[["scenario"]]),
+      scales = "free_x"
+    )
 }
 
 
