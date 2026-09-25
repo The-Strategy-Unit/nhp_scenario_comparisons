@@ -43,6 +43,12 @@ Imports:
     vctrs,
     yaml12,
     yyjsonr
+Suggests:
+    chromote,
+    codetools,
+    shinytest2,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Remotes:

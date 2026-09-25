@@ -234,3 +234,11 @@ app_data/
 rds/
 
 AGENTS.md
+
+# Test fixtures must be committed so the tests run in CI. The rds/ and *.rds
+# rules above would otherwise exclude them; the directory has to be
+# re-included before the files inside it can be.
+!tests/testthat/test_data/rds/
+!tests/testthat/test_data/rds/*.rds
+# testthat saves failing-test snippets here
+tests/testthat/_problems/
