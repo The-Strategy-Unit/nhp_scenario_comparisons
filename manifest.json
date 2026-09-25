@@ -4053,7 +4053,7 @@
       "checksum": "90d7b1569146d23a00176cbd5ed6f9d4"
     },
     "DESCRIPTION": {
-      "checksum": "590973b149da49cb6e330fb73a7e4a04"
+      "checksum": "6b227391c9ccbefc17b5fac1f665a9c3"
     },
     "inst/app/aa-impact-text.md": {
       "checksum": "016a03edd418edeb7b5d24fa7d780d91"
@@ -4107,7 +4107,7 @@
       "checksum": "6b516d95abeffc3214b66b6138edf868"
     },
     "R/data_preparation.R": {
-      "checksum": "e69578636dbf3320106ec332628a3739"
+      "checksum": "96e07b220018c6e9405c13547a970adf"
     },
     "R/distribution_charts.R": {
       "checksum": "890bdd705ee4a879b99fd19391233007"
@@ -4119,7 +4119,7 @@
       "checksum": "4e82804cdc9d19720a4793eb042bbd73"
     },
     "R/lookups.R": {
-      "checksum": "84494248f3686f3700c6f6a7234660f1"
+      "checksum": "d92f607aa1a9bedba7495b77dad95665"
     },
     "R/mod_activity_avoidance_impact.R": {
       "checksum": "710dfea56d6048e8484ad74ba1aebf93"
@@ -4140,7 +4140,7 @@
       "checksum": "9944f58b566ca9c855c579896f8393b3"
     },
     "R/mod_processing_server.R": {
-      "checksum": "1450d29a60078f2f672490a84c6e1c1e"
+      "checksum": "f85aa9f4711f655c6e4715e454b32c3b"
     },
     "R/mod_summary_bar.R": {
       "checksum": "f601314b6c07d8c20edd88e005736d0a"
