@@ -44,18 +44,14 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
           # Fetched from GitHub on first use, then cached for the lifetime of
           # the R process, so only the first render in this process pays.
           lookups <- get_app_lookups()
-          full_apm_lookup <- lookups[["full_apm_lookup"]]
           full_ap_lookup <- lookups[["full_ap_lookup"]]
           cond_ap_lookup <- lookups[["cond_ap_lookup"]]
-          full_atp_lookup <- lookups[["full_atp_lookup"]]
           atl_lookup <- lookups[["atl_lookup"]]
           tpma_lookup <- lookups[["tpma_lookup"]]
-
-          # one row per measure / activity_type pair, for `pmap()`ping over
-          core_mat_tbl <- dplyr::distinct(
-            full_apm_lookup,
-            dplyr::pick(c("measure", "activity_type"))
-          )
+          # `results$default` has A&E walk-in + ambulance measures, whereas
+          # `results$step_counts` (change factors) has only A&E "arrivals"
+          core_mat_tbl <- lookups[["core_mat_tbl"]]
+          cond_mat_tbl <- lookups[["cond_mat_tbl"]]
 
           # Prepare data for Summary chart
           summary_data <- prepare_summary_data(
@@ -83,7 +79,7 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             results2,
             scenario1_name,
             scenario2_name,
-            core_mat_tbl,
+            cond_mat_tbl,
             full_ap_lookup,
             tpma_lookup
           )
@@ -95,8 +91,9 @@ mod_processing_server <- function(id, selections, trigger, use_local_data) {
             results2,
             scenario1_name,
             scenario2_name,
-            core_mat_tbl,
-            cond_ap_lookup,
+            cond_mat_tbl,
+            # step_counts pods are aae_type-XX, which cond_ap_lookup lacks
+            full_ap_lookup,
             tpma_lookup
           )
           shiny::incProgress(0.05)

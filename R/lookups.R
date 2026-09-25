@@ -13,7 +13,8 @@ the <- new.env(parent = emptyenv())
 #' failure cannot stop the app from loading. Use `reset_app_lookups()` to
 #' force a refetch.
 #'
-#' @returns A named list of lookup tables, plus `core_mat_tbl`.
+#' @returns A named list of lookup tables, plus `core_mat_tbl` and
+#'   `cond_mat_tbl`.
 #' @keywords internal
 #' @noRd
 get_app_lookups <- function() {
@@ -32,26 +33,45 @@ reset_app_lookups <- function() {
 }
 
 #' Assemble the lookup tables. Call `get_app_lookups()` instead.
+#'
+#' The two source tables are arguments so that tests can supply fixtures
+#' rather than fetching from GitHub.
 #' @keywords internal
 #' @noRd
-build_app_lookups <- function() {
-  full_apm_lookup <- get_full_apm_lookup()
+build_app_lookups <- function(
+  full_apm_lookup = get_full_apm_lookup(),
+  tpma_lookup = reskit::get_tpma_label_lookup()
+) {
   cond_apm_lookup <- get_condensed_apm_lookup(full_apm_lookup)
   full_ap_lookup <- full_apm_lookup |>
-    dplyr::distinct(dplyr::pick(c("pod", "pod_label", "activity_type_label")))
+    dplyr::distinct(dplyr::pick(c("activity_type_label", "pod", "pod_label")))
   cond_ap_lookup <- cond_apm_lookup |>
-    dplyr::distinct(dplyr::pick(c("pod", "pod_label", "activity_type_label")))
+    dplyr::distinct(dplyr::pick(c("activity_type_label", "pod", "pod_label")))
   atl_lookup <- full_apm_lookup |>
     dplyr::distinct(dplyr::pick(c("activity_type", "activity_type_label")))
 
   list(
     full_apm_lookup = full_apm_lookup,
-    cond_apm_lookup = cond_apm_lookup,
     full_ap_lookup = full_ap_lookup,
     cond_ap_lookup = cond_ap_lookup,
     atl_lookup = atl_lookup,
-    tpma_lookup = reskit::get_tpma_label_lookup()
+    tpma_lookup = tpma_lookup,
+    # For `pmap()`ping over `results$default` (A&E: walk-in, ambulance)
+    core_mat_tbl = build_mat_tbl(full_apm_lookup),
+    # For `pmap()`ping over `results$step_counts` (A&E: arrivals only)
+    cond_mat_tbl = build_mat_tbl(cond_apm_lookup)
   )
+}
+
+
+#' One row per measure / activity_type pair, for `pmap()`ping over
+#'
+#' `pmap()` passes columns by name as arguments, so the result must contain
+#' exactly these two columns.
+#' @keywords internal
+#' @noRd
+build_mat_tbl <- function(apm_lookup) {
+  dplyr::distinct(apm_lookup, dplyr::pick(c("measure", "activity_type")))
 }
 
 
