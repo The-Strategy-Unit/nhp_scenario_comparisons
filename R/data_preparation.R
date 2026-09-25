@@ -94,12 +94,12 @@ prepare_tpma_impact_data <- function(
   scenario1_name,
   scenario2_name,
   core_mat_tbl,
-  cond_ap_lookup,
+  full_ap_lookup,
   tpma_lookup
 ) {
   pt_compile_tpma_impact_data <- purrr::partial(
     reskit::compile_tpma_impact_data,
-    pod_lookup = cond_ap_lookup,
+    pod_lookup = full_ap_lookup,
     tpma_lookup = tpma_lookup
   )
   pt_compile_tpma_imp_data1 <- purrr::partial(
