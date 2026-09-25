@@ -31,7 +31,7 @@ test_that("principal pi data prep works with reskit demo data", {
     results2,
     scenario1_name,
     scenario2_name,
-    full_atp_lookup
+    full_ap_lookup
   ) |>
     expect_no_error()
   expect_shape(principal_pi_data, ncol = 10)
@@ -53,10 +53,9 @@ test_that("waterfall data prep works with reskit demo data", {
     results2,
     scenario1_name,
     scenario2_name,
-    core_mat_tbl,
+    cond_mat_tbl,
     full_ap_lookup,
-    tpma_lookup,
-    atl_lookup
+    tpma_lookup
   ) |>
     expect_no_error()
   expect_shape(waterfall_data, ncol = 9)
@@ -66,27 +65,26 @@ test_that("waterfall data prep works with reskit demo data", {
 })
 
 
-test_that("icf data prep works with reskit demo data", {
+test_that("tpma impact data prep works with reskit demo data", {
   scenario1_name <- "test1"
   scenario2_name <- "test2"
 
   # results1, results2, lookups and core_mat_tbl are sourced in helper.R
-  icf_impact_data <- prepare_icf_impact_data(
+  tpma_impact_data <- prepare_tpma_impact_data(
     results1,
     results2,
     scenario1_name,
     scenario2_name,
-    core_mat_tbl,
-    cond_ap_lookup,
-    tpma_lookup,
-    atl_lookup
+    cond_mat_tbl,
+    full_ap_lookup,
+    tpma_lookup
   ) |>
     expect_no_error()
-  expect_shape(icf_impact_data, ncol = 8)
-  expect_gt(nrow(icf_impact_data), 0)
+  expect_shape(tpma_impact_data, ncol = 8)
+  expect_gt(nrow(tpma_impact_data), 0)
   atm <- c("activity_type", "measure")
   xpec_nms <- c(atm, "change_factor", paste0(atm, "_label"))
-  expect_contains(colnames(icf_impact_data), xpec_nms)
+  expect_contains(colnames(tpma_impact_data), xpec_nms)
 })
 
 
@@ -100,7 +98,7 @@ test_that("p10p90 data prep works with reskit demo data", {
     results2,
     scenario1_name,
     scenario2_name,
-    full_atp_lookup
+    full_ap_lookup
   ) |>
     expect_no_error()
   expect_shape(principal_pi_data, ncol = 10)

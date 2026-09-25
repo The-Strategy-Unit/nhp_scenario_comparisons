@@ -3,16 +3,15 @@ test_rds_path <- \(...) testthat::test_path("test_data", "rds", ...)
 results1 <- readRDS(test_rds_path("results1.rds"))
 results2 <- readRDS(test_rds_path("results2.rds"))
 
-full_apm_lookup <- readRDS(test_rds_path("full_apm_lookup.rds"))
-cond_apm_lookup <- get_condensed_apm_lookup(full_apm_lookup)
-full_ap_lookup <- dplyr::select(full_apm_lookup, !"measure") |>
-  dplyr::distinct()
-cond_ap_lookup <- dplyr::select(cond_apm_lookup, !"measure") |>
-  dplyr::distinct()
-full_atp_lookup <- dplyr::select(full_ap_lookup, !"activity_type")
-atl_lookup <- full_apm_lookup |>
-  dplyr::distinct(dplyr::pick(tidyselect::starts_with("activity_type")))
-core_mat_tbl <- full_apm_lookup |>
-  dplyr::distinct(dplyr::pick(c("measure", "activity_type")))
-
-tpma_lookup <- readRDS(test_rds_path("tpma_lookup.rds"))
+lookups <- build_app_lookups(
+  full_apm_lookup = readRDS(test_rds_path("full_apm_lookup.rds")),
+  tpma_lookup = readRDS(test_rds_path("tpma_lookup.rds"))
+)
+full_ap_lookup <- lookups[["full_ap_lookup"]]
+cond_ap_lookup <- lookups[["cond_ap_lookup"]]
+atl_lookup <- lookups[["atl_lookup"]]
+tpma_lookup <- lookups[["tpma_lookup"]]
+# `results$default` has A&E walk-in + ambulance measures, whereas
+# `results$step_counts` (change factors) has only A&E "arrivals"
+core_mat_tbl <- lookups[["core_mat_tbl"]]
+cond_mat_tbl <- lookups[["cond_mat_tbl"]]
