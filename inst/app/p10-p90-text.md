@@ -1,1 +1,3 @@
-This shows the principal projection as well as the 10th and 90th percentiles (p10 and p90) of each scenario for each point of delivery (chosen via drop down).
+This shows the principal projection as well as the 10th and 90th percentiles
+(p10 and p90) of each scenario for each point of delivery (chosen via
+drop-down).

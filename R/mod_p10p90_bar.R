@@ -1,28 +1,22 @@
-mod_beeswarm_ui <- function(id) {
+mod_p10p90_bar_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
-    htmltools::includeMarkdown(appfile("probabilistic-model-note.md")),
-    htmltools::includeMarkdown(appfile("beeswarm-note.md")),
+    htmltools::includeMarkdown(appfile("p10-p90-text.md")),
     filter_row(
-      shiny::selectInput(ns("filter1"), "Activity Type", choices = NULL),
-      shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
-    ),
-    shiny::checkboxInput(
-      ns("show_zero"),
-      "Extend x-axis to zero?",
-      value = FALSE
+      shiny::selectInput(ns("filter1"), "Activity type", choices = NULL),
+      shiny::selectInput(ns("filter2"), "Point of Delivery", choices = NULL)
     ),
     shiny::plotOutput(ns("plot"))
   )
 }
 
-mod_beeswarm_server <- function(id, processed_data) {
+mod_p10p90_bar_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
     df <- shiny::reactive(
       validate_rows(
-        processed_data()$beeswarm_data,
-        "No model run data is available for these two scenarios."
+        processed_data()$principal_pi_data,
+        "No prediction interval data is available for these two scenarios."
       )
     )
 
@@ -37,7 +31,7 @@ mod_beeswarm_server <- function(id, processed_data) {
       shiny::req(filter1())
       df() |>
         dplyr::filter(.data[["activity_type_label"]] == filter1()) |>
-        pull_unique("measure_label")
+        pull_unique("pod_label")
     })
     filter2 <- shiny::reactive(
       resolve_selection(input$filter2, filter2_choices(), auto_max = Inf)
@@ -49,7 +43,7 @@ mod_beeswarm_server <- function(id, processed_data) {
     output$plot <- shiny::renderPlot(
       {
         shiny::req(filter1(), filter2())
-        create_beeswarm_chart(df(), filter1(), filter2(), input$show_zero)
+        create_principal_pi_chart(df(), filter1(), filter2())
       },
       res = 100
     )
