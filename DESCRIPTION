@@ -2,9 +2,25 @@ Package: nhpscenarioanalysis
 Title: Scenario result comparison app
 Version: 0.1.0
 Authors@R: c(
-    person("Gabriel", "Hobro", , "gabriel.hobro@nhs.net", role = c("aut", "cre")),
-    person("Zoë", "Turner",  , "zoe.turner3@nhs.net", role = "ctb"),
-    person("Ozayr", "Mohammed", , , role = "aut")
+    person(
+        "Zoë", "Turner", , 
+        email = "zoe.turner3@nhs.net", 
+        role = c("aut", "cre"), 
+        comment = c(ORCID = "0000-0003-1033-9158")
+        ),
+    person(
+        "Fran", "Barton",
+        email = "francis.barton@nhs.net",
+        role = "aut",
+        comment = c(ORCID = "0000-0002-5650-1176")
+        ),
+    person(
+        "Gabriel", "Hobro", , , 
+        role = "aut"
+        ),
+    person(
+        "Ozayr", "Mohammed", , , 
+        role = "aut")
   )
 Description: A shiny app for comparing model results for different
     scenarios.
@@ -49,4 +65,4 @@ Remotes:
     The-Strategy-Unit/azkit
 Suggests: 
     here
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
