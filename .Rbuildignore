@@ -6,12 +6,15 @@
 ^app[.]R$
 ^CODEOWNERS$
 ^.*[.]Rproj$
+^.*[.]Rproj[.]user$
 ^.*[.]code-workspace$
 ^LICENSE[.]md$
 ^[.]Renviron[.]sample$
 ^[.]rscignore$
 ^rds/.*$
 ^dev/.*$
+^rsconnect/.*$
 ^[.]cache/.*$
 ^[.]github/.*$
-^rsconnect/.*$
+^[.]positai$
+^[.]claude$

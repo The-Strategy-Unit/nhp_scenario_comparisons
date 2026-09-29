@@ -4053,7 +4053,7 @@
       "checksum": "90d7b1569146d23a00176cbd5ed6f9d4"
     },
     "DESCRIPTION": {
-      "checksum": "590973b149da49cb6e330fb73a7e4a04"
+      "checksum": "6f260631d4034bd7aaf8e015eb22b56e"
     },
     "inst/app/aa-impact-text.md": {
       "checksum": "016a03edd418edeb7b5d24fa7d780d91"
@@ -4098,13 +4098,13 @@
       "checksum": "177acc6a1dfb7bc228f2d044394d02ce"
     },
     "R/app_server.R": {
-      "checksum": "5728d37f12ca55d6165f255f30f0da6d"
+      "checksum": "6da4d26c201ad409a8c0822f25ff7243"
     },
     "R/app_ui.R": {
       "checksum": "e7625fc5c5cbc860a689810f68ea921d"
     },
     "R/bar_charts.R": {
-      "checksum": "6b516d95abeffc3214b66b6138edf868"
+      "checksum": "009f63639c8b494da2e606a04c69b894"
     },
     "R/data_preparation.R": {
       "checksum": "8cfc2746aba7b2a493faf238bc015a6f"
@@ -4155,7 +4155,7 @@
       "checksum": "25a0a1ac9a751c26f497b6f885199376"
     },
     "R/utils.R": {
-      "checksum": "4fb6d6b7dad6a69c2a8b29e60454144e"
+      "checksum": "5dfcca407e8db5e08bf673cc748aa1e3"
     }
   },
   "users": null
