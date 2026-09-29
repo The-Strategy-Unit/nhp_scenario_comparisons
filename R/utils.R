@@ -9,6 +9,32 @@ get_comparable_scenarios <- function(model_runs, scheme) {
 }
 
 
+#' Filter `candidates` down to rows compatible with a `reference` scenario
+#'
+#' "Compatible" means matching on `cols`, checked via `semi_join()`. Used at
+#' both the two places `app_server` needs to know whether one scenario (or a
+#' set of them) can be plotted against another: filtering the Scenario 2
+#' picker's choices, and gating the Render Plots button.
+#'
+#' @param candidates,reference Scenario metadata tibbles (as returned by
+#'   `nhp_model_runs()` / `get_comparable_scenarios()`).
+#' @param cols Columns that must match. Defaults to the three that vary within
+#'   a scheme; pass `c("dataset", "start_year", "end_year", "app_version")`
+#'   when `candidates`/`reference` might come from different schemes.
+#' @keywords internal
+filter_compatible_scenarios <- function(
+  candidates,
+  reference,
+  cols = c("start_year", "end_year", "app_version")
+) {
+  candidates |>
+    dplyr::semi_join(
+      dplyr::select(reference, tidyselect::all_of(cols)),
+      cols
+    )
+}
+
+
 #' Resolve a picker selection
 #'
 #' Keeps the user's current selection if it is still valid, otherwise

@@ -195,7 +195,7 @@ app_server <- function(input, output, session) {
   shiny::observe({
     shiny::req(selections$main_scenario, selections$comp_scenario)
 
-    check_compatible <- dplyr::semi_join(
+    check_compatible <- filter_compatible_scenarios(
       selections$main_scenario,
       selections$comp_scenario,
       c("dataset", "start_year", "end_year", "app_version")
