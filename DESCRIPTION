@@ -36,7 +36,6 @@ Imports:
     shinyjs,
     shinyWidgets,
     stats,
-    stringr,
     tibble,
     tidyr,
     tidyselect,

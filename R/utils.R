@@ -131,3 +131,48 @@ validate_rows <- function(tbl, message) {
   shiny::validate(shiny::need(nrow(tbl) > 0, message))
   tbl
 }
+
+
+#' Wrap long strings to a line length (approximately)
+#'
+#' A home-made replacement for the core functionality of `stringr::str_wrap()`.
+#'
+#' Set line length using the `width` argument (confusingly) - this matches the
+#' argument name in `stringr::str_wrap()` and `stringi::stri_wrap()` at least.
+#'
+#' This function will find the nearest appropriate breaks to your desired width;
+#' this does however mean that final line lengths may be longer than the
+#' specified width, and if a particularly long word is unfortunately placed, the
+#' resulting line may be much longer than `width`.
+#' The default line length is 72 characters, to increase the chance that all
+#' resulting line lengths will be 80 characters at most.
+#' Any existing new line characters in a string will not be retained; they will
+#' be converted to spaces and treated as potential break points. If you wish to
+#' ensure existing new line breaks are kept, replace them with another marker
+#' character before wrapping and then restore them afterwards manually.
+#'
+#' @param vec A character vector
+#' @param width integer The desired line length of the wrapped text (default 72)
+#' @returns A character vector
+str_wrap <- \(vec, width = 72) purrr::map_chr(vec, \(x) wrap_str(x, width))
+
+#' @inheritParams str_wrap
+#' @keywords internal
+wrap_str <- function(x, width = 72) {
+  stopifnot(width >= 1)
+  if (is.na(x)) {
+    return(NA_character_)
+  }
+  x <- gsub("\\s+", " ", trimws(x))
+  if (!grepl("\\s", x) || nchar(x) <= width) {
+    return(x)
+  }
+  spl <- unlist(strsplit(x, ""))
+  spaces <- which(spl == " ")
+  lines_expected <- ceiling(length(spl) / width)
+  splits_expected <- lines_expected - 1
+  targets <- round(seq(splits_expected) * (length(spl) / lines_expected))
+  breaks <- purrr::map_int(targets, \(t) spaces[[which.min(abs(spaces - t))]])
+  spl[breaks] <- "\n"
+  paste0(spl, collapse = "")
+}

@@ -96,7 +96,7 @@ create_tpma_impact_chart <- function(tpma_impact_data, cf, at, measure) {
       .data[["measure_label"]] == .env[["measure"]],
       .data[["value"]] < 0
     ) |>
-    dplyr::mutate(dplyr::across("tpma_label", \(x) stringr::str_wrap(x, 60))) |>
+    dplyr::mutate(dplyr::across("tpma_label", \(x) str_wrap(x, 60))) |>
     ggplot2::ggplot(ggplot2::aes(.data[["value"]], .data[["tpma_label"]])) +
     ggplot2::geom_col(
       ggplot2::aes(fill = .data[["scenario"]]),
