@@ -2,90 +2,74 @@ mod_efficiencies_impact_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
-    shiny::verbatimTextOutput(ns("debug")),
-    shiny::includeMarkdown("inst/app/efficiencies-impact-text.md"),
-    shiny::uiOutput(ns("filters_ui")),
+    htmltools::includeMarkdown(appfile("efficiencies-impact-text.md")),
+    filter_row(
+      shiny::selectInput(ns("filter1"), "Activity Type", choices = NULL),
+      shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
+    ),
     shiny::plotOutput(ns("plot"), height = "800px")
   )
 }
 
-mod_efficiencies_impact_server <- function(id, processed) {
+mod_efficiencies_impact_server <- function(id, processed_data) {
   shiny::moduleServer(id, function(input, output, session) {
-    ns <- session$ns
-
-    df <- shiny::reactive(processed()$pcfs_comparison) #takes pcfs_comparison from processed
-
-    # could dynamically create UI here, based on the variables found within df?
-
-    output$filters_ui <- shiny::renderUI({
-      shiny::req(df())
-
-      shiny::tagList(
-        shiny::tags$div(
-          style = "display: flex; gap: 15px;",
-          shiny::selectInput(
-            ns("filter1"),
-            "Activity Type",
-            choices = activity_type_pretty_names
-          ),
-          shiny::selectInput(ns("filter2"), "Measure", choices = NULL)
+    df <- shiny::reactive({
+      processed_data()$tpma_impact_data |>
+        dplyr::filter(.data[["change_factor"]] == "efficiencies") |>
+        validate_rows(
+          "No efficiency TPMAs are present in these two scenarios."
         )
-      )
     })
 
-    shiny::observe({
-      shiny::req(df(), input$filter1)
+    filter1_choices <- shiny::reactive(
+      pull_unique(df(), "activity_type_label")
+    )
+    filter1 <- shiny::reactive(
+      resolve_selection(input$filter1, filter1_choices(), auto_max = Inf)
+    )
 
-      filter2_values <- df() |>
-        dplyr::filter(
-          .data$activity_type == input$filter1,
-          .data$measure != "admissions"
-        ) |>
-        dplyr::pull(.data$measure) |>
-        unique()
-
-      filter2_choices <- measure_pretty_names[
-        measure_pretty_names %in% filter2_values
-      ]
-
-      shiny::updateSelectInput(inputId = "filter2", choices = filter2_choices)
+    filter2_choices <- shiny::reactive({
+      shiny::req(filter1())
+      df() |>
+        dplyr::filter(.data[["activity_type_label"]] == filter1()) |>
+        pull_unique("measure_label")
     })
+    filter2 <- shiny::reactive(
+      resolve_selection(input$filter2, filter2_choices(), auto_max = Inf)
+    )
+
+    shiny::observe(sync_select_input(session, "filter1", filter1_choices()))
+    shiny::observe(sync_select_input(session, "filter2", filter2_choices()))
 
     output$plot <- shiny::renderPlot(
       {
-        shiny::req(df(), input$filter1, input$filter2)
-        shiny::validate(
-          shiny::need(!is.null(df()), message = "No data available"),
-          shiny::need(nrow(df()) > 0, message = "No data available")
-        )
-        # Add validation for filtered data
+        shiny::req(filter1(), filter2())
+
         filtered_data <- df() |>
           dplyr::filter(
-            .data$change_factor == "efficiencies",
-            .data$activity_type == input$filter1,
-            .data$measure == input$filter2
+            .data[["activity_type_label"]] == filter1(),
+            .data[["measure_label"]] == filter2(),
+            .data[["value"]] < 0
           )
+
         shiny::validate(
           shiny::need(
             nrow(filtered_data) > 0,
-            message = "No efficiency TPMAs impact this activity type and measure"
+            message = paste0(
+              "No efficiency TPMAs affect this combination of ",
+              "activity type and measure"
+            )
           )
         )
 
-        impact_bar_plot(
-          data = df(),
-          chosen_change_factor = "efficiencies",
-          chosen_activity_type = input$filter1,
-          chosen_measure = input$filter2,
-          title_text = glue::glue(
-            "{get_label(input$filter1, activity_type_pretty_names)}",
-            "{get_label(input$filter2, measure_pretty_names)}",
-            "- Impact of Individual Efficiencies TPMA Assumptions",
-            .sep = " "
-          )
+        create_tpma_impact_chart(
+          filtered_data,
+          "efficiencies",
+          filter1(),
+          filter2()
         )
       },
-      res = 100,
+      res = 100
     )
   })
 }
