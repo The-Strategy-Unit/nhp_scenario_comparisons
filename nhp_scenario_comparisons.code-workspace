@@ -1,0 +1,63 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"projectColors.mainColor": "#bb97d3",
+		"window.title": "nhp_scenario_comparisons",
+		"workbench.colorCustomizations": {
+			"editorRuler.foreground": "#ff4081",
+			"statusBarItem.warningBackground": "#bb97d3",
+			"statusBarItem.warningForeground": "#000000",
+			"statusBarItem.warningHoverBackground": "#bb97d3",
+			"statusBarItem.warningHoverForeground": "#00000090",
+			"statusBarItem.remoteBackground": "#c8a4e0",
+			"statusBarItem.remoteForeground": "#000000",
+			"statusBarItem.remoteHoverBackground": "#d5b1ed",
+			"statusBarItem.remoteHoverForeground": "#00000090",
+			"statusBar.background": "#bb97d3",
+			"statusBar.foreground": "#000000",
+			"statusBar.border": "#bb97d3",
+			"statusBar.debuggingBackground": "#bb97d3",
+			"statusBar.debuggingForeground": "#000000",
+			"statusBar.debuggingBorder": "#bb97d3",
+			"statusBar.noFolderBackground": "#bb97d3",
+			"statusBar.noFolderForeground": "#000000",
+			"statusBar.noFolderBorder": "#bb97d3",
+			"statusBar.prominentBackground": "#bb97d3",
+			"statusBar.prominentForeground": "#000000",
+			"statusBar.prominentHoverBackground": "#bb97d3",
+			"statusBar.prominentHoverForeground": "#00000090",
+			"focusBorder": "#bb97d399",
+			"progressBar.background": "#bb97d3",
+			"textLink.foreground": "#fbd7ff",
+			"textLink.activeForeground": "#ffe4ff",
+			"selection.background": "#ae8ac6",
+			"list.highlightForeground": "#bb97d3",
+			"list.focusAndSelectionOutline": "#bb97d399",
+			"button.background": "#bb97d3",
+			"button.foreground": "#000000",
+			"button.hoverBackground": "#c8a4e0",
+			"tab.activeBorderTop": "#c8a4e0",
+			"pickerGroup.foreground": "#c8a4e0",
+			"list.activeSelectionBackground": "#bb97d34d",
+			"panelTitle.activeBorder": "#c8a4e0",
+			"activityBar.activeBorder": "#bb97d3",
+			"activityBarBadge.foreground": "#000000",
+			"activityBarBadge.background": "#bb97d3",
+			"titleBar.activeBackground": "#bb97d3",
+			"titleBar.activeForeground": "#000000",
+			"titleBar.inactiveBackground": "#bb97d3",
+			"titleBar.inactiveForeground": "#00000090"
+		},
+		"projectColors.name": "nhp_scenario_comparisons",
+		"projectColors.isActivityBarColored": false,
+		"projectColors.isTitleBarColored": true,
+		"projectColors.isStatusBarColored": true,
+		"projectColors.isProjectNameColored": true,
+		"projectColors.isActiveItemsColored": true,
+		"projectColors.setWindowTitle": true
+	}
+}
