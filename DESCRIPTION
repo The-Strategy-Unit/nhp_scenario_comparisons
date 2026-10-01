@@ -47,7 +47,7 @@ Suggests:
     chromote,
     codetools,
     shinytest2,
-    testthat (>= 3.0.0)
+    testthat (>= 3.2.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -55,3 +55,4 @@ Remotes:
     github::the-strategy-unit/azkit,
     reskit=github::The-Strategy-Unit/nhp_reskit
 Config/roxygen2/version: 8.1.0
+Config/testthat/edition: 3
