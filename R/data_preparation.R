@@ -63,7 +63,7 @@ prepare_waterfall_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  core_mat_tbl,
+  cond_mat_tbl,
   full_ap_lookup,
   tpma_lookup
 ) {
@@ -78,10 +78,10 @@ prepare_waterfall_data <- function(
     scenario1_name <- paste0(scenario1_name, " (s1)")
     scenario2_name <- paste0(scenario2_name, " (s2)")
   }
-  core_mat_tbl |>
+  cond_mat_tbl |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_gi_data1),
-      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_gi_data2)
+      !!scenario1_name := purrr::pmap(cond_mat_tbl, pt_compile_gi_data1),
+      !!scenario2_name := purrr::pmap(cond_mat_tbl, pt_compile_gi_data2)
     ) |>
     unnest_cfmat_scenarios_tbl() |>
     dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))
@@ -93,7 +93,7 @@ prepare_tpma_impact_data <- function(
   results2,
   scenario1_name,
   scenario2_name,
-  core_mat_tbl,
+  cond_mat_tbl,
   full_ap_lookup,
   tpma_lookup
 ) {
@@ -114,10 +114,10 @@ prepare_tpma_impact_data <- function(
     scenario1_name <- paste0(scenario1_name, " (s1)")
     scenario2_name <- paste0(scenario2_name, " (s2)")
   }
-  core_mat_tbl |>
+  cond_mat_tbl |>
     dplyr::mutate(
-      !!scenario1_name := purrr::pmap(core_mat_tbl, pt_compile_tpma_imp_data1),
-      !!scenario2_name := purrr::pmap(core_mat_tbl, pt_compile_tpma_imp_data2)
+      !!scenario1_name := purrr::pmap(cond_mat_tbl, pt_compile_tpma_imp_data1),
+      !!scenario2_name := purrr::pmap(cond_mat_tbl, pt_compile_tpma_imp_data2)
     ) |>
     unnest_cfmat_scenarios_tbl() |>
     dplyr::mutate(measure_label = create_measure_label(.data[["measure"]]))

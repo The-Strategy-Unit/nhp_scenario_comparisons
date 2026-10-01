@@ -46,6 +46,7 @@ Imports:
 Suggests:
     chromote,
     codetools,
+    here,
     shinytest2,
     testthat (>= 3.2.0)
 Config/testthat/edition: 3
