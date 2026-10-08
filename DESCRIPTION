@@ -2,15 +2,25 @@ Package: nhpscenarioanalysis
 Title: Scenario result comparison app
 Version: 0.9.0
 Authors@R: c(
-    person("Gabriel", "Hobro", email = "gabriel.hobro@nhs.net", role = c("aut", "cre")),
-    person("Zoë", "Turner", email = "zoe.turner3@nhs.net", role = "ctb"),
-    person("Ozayr", "Mohammed", email = "ozayr.mohammed@nhs.net", role = "aut"),
+    person(
+        "Zoë", "Turner", , 
+        email = "zoe.turner3@nhs.net", 
+        role = c("aut", "cre"), 
+        comment = c(ORCID = "0000-0003-1033-9158")
+        ),
     person(
         "Fran", "Barton",
         email = "francis.barton@nhs.net",
-        role = "ctb",
+        role = "aut",
         comment = c(ORCID = "0000-0002-5650-1176")
-    )
+        ),
+    person(
+        "Gabriel", "Hobro", , , 
+        role = "aut"
+        ),
+    person(
+        "Ozayr", "Mohammed", , , 
+        role = "aut")
   )
 Description: A Shiny app to compare model results across two different
     scenarios.
